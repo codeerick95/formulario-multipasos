@@ -8,7 +8,7 @@ import store from './store'
 
 // Vee validate
 import { ValidationProvider, extend, configure } from 'vee-validate';
-import { required, email, numeric, min} from 'vee-validate/dist/rules';
+import { required, email, numeric} from 'vee-validate/dist/rules';
 
 configure({
   classes: {
@@ -33,8 +33,11 @@ extend('numeric', {
 });
 
 extend('min', {
-  ...min,
-  message: 'Debe ingresar mínimo 8 números'
+  validate(value, { length }) {
+    return value.length >= length;
+  },
+  params: ['length'],
+  message: 'El campo debe tener mínimo {length} números'
 });
 
 // Register it globally

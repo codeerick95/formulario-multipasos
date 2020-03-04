@@ -55,23 +55,33 @@
 
                 <!-- Select tipo de documento -->
                 <div class="col-md-6">
-                  <ValidationProvider rules="required" v-slot="{ errors }">
-                    <select class="custom-select" v-model="step1.typeDocument">
-                      <option value="">Tipo de documento</option>
-                      <option value="DNI">DNI</option>
-                      <option value="PASAPORTE">Pasaporte</option>
-                      <option value="CE">C.E.</option>
-                    </select>
-                    <span class="text-danger">{{ errors[0] }}</span>
-                  </ValidationProvider>
+                  <div class="form-group">
+                    <ValidationProvider rules="required" v-slot="{ errors }">
+                      <select class="custom-select" v-model="step1.typeDocument" @change="changeInputDocument()">
+                        <option value="">Tipo de documento</option>
+                        <option value="DNI">DNI</option>
+                        <option value="PASAPORTE">Pasaporte</option>
+                        <option value="CE">C.E.</option>
+                      </select>
+                      <span class="text-danger">{{ errors[0] }}</span>
+                    </ValidationProvider>
+                  </div>
                 </div>
                 <!----------------->
 
                 <!-- Campo tipo de documento -->
                 <div class="col-md-6">
                   <div class="form-group">
-                    <ValidationProvider rules="required|numeric|min:8" v-slot="{ errors }">
-                      <input v-model="step1.typeDocumentField" type="text" placeholder="DNI" class="form-control">
+                    <ValidationProvider rules="required|numeric|min:8" v-slot="{ errors }" v-if="step1.selectTypeDocument === 'DNI' ">
+                      <input v-model=" step1.typeDocumentField" type="number" placeholder="DNI" class="form-control">
+                      <span class="text-danger">{{ errors[0] }}</span>
+                    </ValidationProvider>
+                    <ValidationProvider rules="required|numeric|min:10" v-slot="{ errors }" v-if="step1.selectTypeDocument === 'PT' ">
+                      <input v-model=" step1.typeDocumentField" type="number" placeholder="Pasaporte" class="form-control">
+                      <span class="text-danger">{{ errors[0] }}</span>
+                    </ValidationProvider>
+                    <ValidationProvider rules="required|numeric|min:8" v-slot="{ errors }" v-if="step1.selectTypeDocument === 'CE' ">
+                      <input v-model=" step1.typeDocumentField" type="number" placeholder="Carnet de extranjería" class="form-control">
                       <span class="text-danger">{{ errors[0] }}</span>
                     </ValidationProvider>
                   </div>
@@ -172,10 +182,12 @@
                 </div>
 
                 <div class="col-md-6">
-                  <ValidationProvider rules="required|numeric|min:8" v-slot="{ errors }">
-                      <input v-model="step3.WorkPhone" type="number" placeholder="Teléfono principal" class="form-control">
-                      <span class="text-danger">{{ errors[0] }}</span>
+                  <div class="form-group">
+                    <ValidationProvider rules="required|numeric|min:8" v-slot="{ errors }">
+                        <input v-model="step3.WorkPhone" type="number" placeholder="Teléfono principal" class="form-control">
+                        <span class="text-danger">{{ errors[0] }}</span>
                     </ValidationProvider>
+                  </div>
                 </div>
 
               </div>
@@ -230,15 +242,17 @@
                 </div>
 
                 <div class="col-md-6">
-                  <ValidationProvider rules="required" v-slot="{ errors }">
-                    <select class="custom-select" v-model="step4.city">
-                      <option value="">Ciudad</option>
-                      <option value="Ciudad 1">Ciudad 1</option>
-                      <option value="Ciudad 2">Ciudad 2</option>
-                      <option value="Ciudad 3">Ciudad 3</option>
-                    </select>
-                    <span class="text-danger">{{ errors[0] }}</span>
-                  </ValidationProvider>
+                  <div class="form-group">
+                    <ValidationProvider rules="required" v-slot="{ errors }">
+                      <select class="custom-select" v-model="step4.city">
+                        <option value="">Ciudad</option>
+                        <option value="Ciudad 1">Ciudad 1</option>
+                        <option value="Ciudad 2">Ciudad 2</option>
+                        <option value="Ciudad 3">Ciudad 3</option>
+                      </select>
+                      <span class="text-danger">{{ errors[0] }}</span>
+                    </ValidationProvider>
+                  </div>
                 </div>
 
               </div>
@@ -322,12 +336,12 @@
                         <span>{{ step2.lastname1 }} {{ step2.lastname2 }}</span>
                       </p>
                       <p>
-                        <span class="text-muted mr-3">Fecha de nacimiento:</span>
+                        <span class="text-muted mr-1 mr-md-3">Fecha de nacimiento:</span>
                         <span>{{ step2.date }}</span>
                       </p>
                     </div>
 
-                    <div class="col-md-5">
+                    <div class="col-md-5 mb-5">
                       <!-- Datos de contacto -->
                       <h3 class="font-weight-bold lead mb-3">Datos de contacto</h3>
                       <p>
@@ -352,7 +366,7 @@
                       </p>
                     </div>
 
-                    <div class="col-md-5">
+                    <div class="col-md-5 mb-5">
                       <!-- Datos de ubicación -->
                       <h3 class="font-weight-bold lead mb-3">Datos de ubicación</h3>
                       <p>
@@ -429,7 +443,8 @@ export default {
         disabled: false,
         completed: false,
         typeDocument: '',
-        typeDocumentField: ''
+        typeDocumentField: '',
+        selectTypeDocument: 'DNI'
       },
       step2: {
         value: false,
@@ -509,6 +524,17 @@ export default {
     }
   },
   methods: {
+    changeInputDocument() {
+      this.step1.typeDocumentField = ''
+      
+      if(this.step1.typeDocument === 'DNI') {
+        this.step1.selectTypeDocument = 'DNI'
+      } else if(this.step1.typeDocument === 'PASAPORTE') {
+        this.step1.selectTypeDocument = 'PT'
+      } else if(this.step1.typeDocument === 'CE') {
+        this.step1.selectTypeDocument = 'CE'
+      }
+    },
     submit() {
       if(this.currentView === 1) {
         this.step1.completed = true
