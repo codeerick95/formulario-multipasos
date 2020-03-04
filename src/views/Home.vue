@@ -6,10 +6,14 @@
       </div>
     </div>
     <div class="row justify-content-center">
-      <div :class="{classColumns}">
+      <div :class="classColumns">
         <validation-observer v-slot="{ handleSubmit }">
           <form action="" @submit.prevent="handleSubmit(submit)">
-            <h2 class="title">Registro de usuario</h2>
+            
+
+            <div class="card">
+              <div class="card-body">
+                <h2 class="title">Registro de usuario</h2>
             <div class="controls mt-3">
               <!-- paso 1 -->
               <div class="custom-control custom-control-inline custom-checkbox">
@@ -384,6 +388,8 @@
                 </div>
               </div>
             </div>
+              </div>
+            </div>
 
 
             <!-- Submit -->
@@ -484,7 +490,13 @@ export default {
       return subtitle
     },
     classColumns: function() {
-      return this.currentView === 5 ? 'col-md-12' : 'col-md-6'
+      let cols = 7
+
+      if(this.currentView === 5) {
+        cols = 12
+      }
+
+      return `col-md-${cols}`
     },
     setButtonText: function() {
       let text = 'Siguiente'
