@@ -1,17 +1,13 @@
 <template>
   <div class="container mt-5">
     <div class="row justify-content-center">
-      <div class="col-md-3">
-        <img src="@/assets/logo.png" alt="Logo JB Enterprise Group" class="img-fluid w-75">
-      </div>
-    </div>
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h1 class="title mb-3">Ingresa a tú cuenta</h1>
-                    <validation-observer v-slot="{ handleSubmit }">
-                        <form action="" @submit.prevent="handleSubmit(submit)">
+        <div class="col-md-4">
+            <validation-observer v-slot="{ handleSubmit }">
+                <form action="" @submit.prevent="handleSubmit(submit)">
+
+                    <div class="card">
+                        <h1 class="title mt-3">Ingresa a tú cuenta</h1>
+                        <div class="card-body">
                             <div class="form-group">
                                 <ValidationProvider rules="required|email" v-slot="{ errors }">
                                     <input v-model="email" type="email" placeholder="Email" class="form-control">
@@ -24,17 +20,17 @@
                                     <span class="text-danger">{{ errors[0] }}</span>
                                 </ValidationProvider>
                             </div>
-                            <div class="form-group mb-0">
-                                <input type="submit" value="Ingresar" class="btn btn-primary" />
-                            </div>
-                            <div class="form-group mt-4">
-                                <router-link :to="{name: 'Home'}">Quiero registrarme</router-link>
-                            </div>
-                        </form>
-                    </validation-observer>
-                </div>
-            </div>
-        </div>
+                        </div>
+
+                        <div class="card-footer d-flex justify-content-between align-items-center bg-dark">
+                            <router-link :to="{name: 'Home'}" class="text-white">Quiero registrarme</router-link>
+                            <input type="submit" value="Ingresar" class="btn btn-danger" />
+                        </div>
+                    </div>
+
+                </form>
+            </validation-observer>
+        </div>  
     </div>
   </div>
 </template>
@@ -48,9 +44,15 @@ export default {
     },
     data() {
         return {
-            email: ''
+            email: '',
+            password: ''
         }
-    }
+    },
+    methods: {
+        submit() {
+            this.$router.push({name: 'Dashboard'})
+        }
+    },
 }
 </script>
 
