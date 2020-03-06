@@ -52,11 +52,13 @@ extend('min', {
 Vue.component('ValidationProvider', ValidationProvider);
 
 import 'bootstrap/dist/css/bootstrap.css'
+import vuetify from './plugins/vuetify';
 
 Vue.config.productionTip = false
 
 new Vue({
   router,
   store,
+  vuetify,
   render: h => h(App)
 }).$mount('#app')
