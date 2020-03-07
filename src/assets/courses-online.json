@@ -1,0 +1,78 @@
+[
+	   {
+   			"id":"01",
+			  "descripcion":"CV010 - Digital Marketing Professional Certificate (DMPC)",
+				"tipo":"Certificación"
+	   },
+	   {
+         "id":"02",
+         "descripcion":"CV020 - Scrum Foundation Professional Certificate (SFPC)",
+ 				 "tipo":"Certificación"
+ 	   },
+	   {
+         "id":"03",
+         "descripcion":"CV030 - Scrum Master Professional Certificate (SMPC)",
+ 				 "tipo":"Certificación"
+      },
+      {
+         "id":"04",
+         "descripcion":"CV040 - Scrum Master Professional Certificate (SMPC)",
+ 				 "tipo":"Certificación"
+      },
+			{
+				 "id":"05",
+				 "descripcion":"CV050 - Scrum Developer Professional Certificate (SDPC)",
+ 				 "tipo":"Certificación"
+			},
+			{
+				 "id":"06",
+				 "descripcion":"CV060 - Scrum Advanced Professional Certificate (SAPC)",
+ 				 "tipo":"Certificación"
+			},
+			{
+				 "id":"07",
+				 "descripcion":"CV070 - CertiProf Certified ISO/IEC 27001 Auditor/Lead Auditor (I27001A/LA)",
+ 				 "tipo":"Certificación"
+			},
+			{
+				 "id":"08",
+				 "descripcion":"CV080 - CertiProf Certified ISO 22301 Auditor/Lead Auditor (I22301A/LA)",
+ 				 "tipo":"Certificación"
+			},
+			{
+				 "id":"09",
+				 "descripcion":"CV090 - Certified ISO/IEC 20000 Auditor/Lead Auditor (I20000A/LA)",
+ 				 "tipo":"Certificación"
+			},
+			{
+				 "id":"10",
+				 "descripcion":"CV0100 - DevOps Essentials Professional Certificate (DEPC)",
+ 				 "tipo":"Certificación"
+			},
+			{
+				 "id":"11",
+				 "descripcion":"CV0110 - Service Desk Leader Professional Certificate (SDLPC)",
+ 				 "tipo":"Certificación"
+			},
+			{
+				 "id":"12",
+				 "descripcion":"CV0120 - Kanban Essentials Professional Certificate (KEPC)",
+ 				 "tipo":"Certificación"
+			},
+			{
+				 "id":"13",
+				 "descripcion":"CV0130 - Innovation Management Certified Professional (IMCP)",
+ 				 "tipo":"Certificación"
+			},
+			{
+				 "id":"14",
+				 "descripcion":"CV0140 - Design Thinking Professional Certificate (DTPC)",
+ 				 "tipo":"Certificación",
+ 				 "tipo":"Certificación"
+			},
+			{
+				 "id":"15",
+				 "descripcion":"CV0150 - Blockchain Professional Certificate [Próximamente]",
+ 				 "tipo":"Certificación"
+			}
+]

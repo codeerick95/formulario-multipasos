@@ -3,7 +3,7 @@
     <div class="container">
       <div class="row justify-content-center">
         <!-- <form-register :currentViewForm="currentView" class="mt-5"></form-register> -->
-        <new-form :currentViewForm="1" class="mt-5"></new-form>
+        <form-register class="mt-5"></form-register>
       </div>
       <!-- <img alt="Vue logo" src="../assets/logo.png">
       <HelloWorld msg="Welcome to Your Vue.js App"/> -->
@@ -18,13 +18,12 @@
 
 
 // import FormRegister from '@/components/FormRegister.vue'
-import NewForm from '@/components/NewForm.vue'
+import FormRegister from '@/components/FormRegister.vue'
 
 export default {
   name: 'Home',
   components: {
-    // FormRegister,
-    NewForm
+    FormRegister
   },
   data() {
     return {

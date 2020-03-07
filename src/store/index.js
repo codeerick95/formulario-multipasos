@@ -28,7 +28,15 @@ export default new Vuex.Store({
         country: 'Perú',
         observations: 'Observación',
         typeCourse: 'Presencial',
-        course: 'Javascript'
+        course: 'CP010 - Preparación y Certificación SCRUM PRODUCT OWNER',
+        payment: 'Total',
+        currency: 'Dólares',
+        amount: 1000,
+        typePayment: 'transferencia',
+        nroOperation: 1,
+        datePayment: '1995-09-12',
+        voucher: 'https://solucionestpv.mx/wp-content/uploads/2018/11/ticket-santander.jpg',
+        bank: 'BCP'
     },
     {
         id: 2,
@@ -51,8 +59,16 @@ export default new Vuex.Store({
         province: 'Lima',
         country: 'Perú',
         observations: 'Observación',
-        typeCourse: 'Online',
-        course: 'Marketing'
+        typeCourse: 'Virtual',
+        course: 'CV010 - Digital Marketing Professional Certificate (DMPC)',
+        payment: 'Total',
+        currency: 'Dólares',
+        amount: 1000,
+        typePayment: 'transferencia',
+        nroOperation: 1,
+        datePayment: '1995-09-12',
+        voucher: 'https://solucionestpv.mx/wp-content/uploads/2018/11/ticket-santander.jpg',
+        bank: 'BCP'
     },
     {
         id: 3,
@@ -75,8 +91,16 @@ export default new Vuex.Store({
         province: 'Lima',
         country: 'Perú',
         observations: 'Observación',
-        typeCourse: 'Online',
-        course: 'Programación'
+        typeCourse: 'Presencial',
+        course: 'CP010 - Preparación y Certificación SCRUM PRODUCT OWNER',
+        payment: 'Total',
+        currency: 'Dólares',
+        amount: 1000,
+        typePayment: 'transferencia',
+        nroOperation: 1,
+        datePayment: '1995-09-12',
+        voucher: 'https://solucionestpv.mx/wp-content/uploads/2018/11/ticket-santander.jpg',
+        bank: 'BCP'
     },
     {
         id: 4,
@@ -99,8 +123,16 @@ export default new Vuex.Store({
         province: 'Lima',
         country: 'Perú',
         observations: 'Observación',
-        typeCourse: 'Online',
-        course: 'Programación'
+        typeCourse: 'Presencial',
+        course: 'CP010 - Preparación y Certificación SCRUM PRODUCT OWNER',
+        payment: 'Total',
+        currency: 'Dólares',
+        amount: 1000,
+        typePayment: 'transferencia',
+        nroOperation: 1,
+        datePayment: '1995-09-12',
+        voucher: 'https://solucionestpv.mx/wp-content/uploads/2018/11/ticket-santander.jpg',
+        bank: 'BCP'
     },
     {
         id: 5,
@@ -124,7 +156,15 @@ export default new Vuex.Store({
         country: 'Perú',
         observations: 'Observación',
         typeCourse: 'Presencial',
-        course: 'Inglés'
+        course: 'CP010 - Preparación y Certificación SCRUM PRODUCT OWNER',
+        payment: 'Total',
+        currency: 'Dólares',
+        amount: 1000,
+        typePayment: 'transferencia',
+        nroOperation: 1,
+        datePayment: '1995-09-12',
+        voucher: 'https://solucionestpv.mx/wp-content/uploads/2018/11/ticket-santander.jpg',
+        bank: 'BCP'
     }
     ]
   },

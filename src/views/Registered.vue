@@ -2,10 +2,23 @@
   <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <h1 class="mt-5">Gracias por registrarte</h1>
-            <p class="lead">Validaremos tus datos y te enviaremos tus credenciales de acceso al email que registraste.</p>
-            <router-link :to="{name: 'Home'}" class="btn btn-danger mt-3 py-md-2 px-md-5">Regresar</router-link>
-            <router-link :to="{name: 'Dashboard'}" class="btn btn-primary mt-3 ml-md-3 py-md-2 px-md-5">Ver usuarios</router-link>
+            <v-card outlined class="p-3 text-center">
+              <h1 class="mt-3">Gracias por registrarte</h1>
+              <p class="lead">Validaremos tus datos y te enviaremos tus credenciales de acceso al email que registraste.</p>
+              <v-btn
+                  to="/"
+                  color="red darken-2 white--text"
+                  class="mr-3"
+              >
+                  Regresar
+              </v-btn>
+              <v-btn
+                  to="/dashboard"
+                  color="primary white--text"
+              >
+                  Ver usuarios
+              </v-btn>
+            </v-card>
         </div>
     </div>
   </div>

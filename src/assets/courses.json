@@ -1,0 +1,122 @@
+[
+	{
+		"id": "01",
+		"descripcion": "CP010 - Preparación y Certificación SCRUM PRODUCT OWNER",
+		"tipo": "Certificación"
+	},
+	{
+		"id": "02",
+		"descripcion": "CP020 - Preparación y Certificación SCRUM MASTER CERTIFIED + SCRUM DEVELOPER CERTIFIED",
+		"tipo": "Certificación"
+	},
+	{
+		"id": "03",
+		"descripcion": "CP030 - Preparación y Certificación: DEVOPS MASTER",
+		"tipo": "Certificación"
+	},
+	{
+		"id": "04",
+		"descripcion": "CP040 - Implementación Devops: Integración y Entrega Continua",
+		"tipo": "Especialización"
+	},
+	{
+		"id": "05",
+		"descripcion": "CP050 - Metodología y Diseño de Pruebas de Software 'Tecnicas y Herramientas'",
+		"tipo": "Especialización"
+	},
+	{
+		"id": "06",
+		"descripcion": "CP060 - Programacion para Testers 'Habilidades Tecnicas'",
+		"tipo": "Especialización"
+	},
+	{
+		"id": "07",
+		"descripcion": "CP070 - Automatizacion de Pruebas funcionales de Software 'Con Selenium y Java en Aplicaciones Web'",
+		"tipo": "Especialización"
+	},
+	{
+		"id": "08",
+		"descripcion": "CP080 - ISTQB Foundation Level + Preparación para Certificación + Examen Certificación Internacional",
+		"tipo": "Certificación"
+	},
+	{
+		"id": "09",
+		"descripcion": "CP090 - AGIL TESTER + Preparación para Certificación + Examen Certificación Internacional",
+		"tipo": "Certificación"
+	},
+	{
+		"id": "10",
+		"descripcion": "CP0100 - A35  ISTQB TEST MANAGER + Preparación para Certificación + Examen Certificación Internacional",
+		"tipo": "Certificación"
+	},
+	{
+		"id": "11",
+		"descripcion": "CP0110 - ITIL  Foundation V04 + Preparación para Certificación",
+		"tipo": "Certificación"
+	},
+	{
+		"id": "12",
+		"descripcion": "CP0120 - BPM: Business Process Management  'Transformacion Digital'",
+		"tipo": "Especialización"
+	},
+	{
+		"id": "13",
+		"descripcion": "CP0130 - Scrum Day Dojo 'Taller Vivencial'",
+		"tipo": "Especialización"
+	},
+	{
+		"id": "14",
+		"descripcion": "CP0140 - Design Thinking",
+		"tipo": "Certificación"
+	},
+	{
+		"id": "15",
+		"descripcion": "CP0150 - Service Desk Manager",
+		"tipo": "Certificación"
+	},
+	{
+		"id": "16",
+		"descripcion": "CP0160 - Seguimiento y Control de Proyectos según PMI Técnicas y Herramientas'",
+		"tipo": "Certificación"
+	},
+	{
+		"id": "17",
+		"descripcion": "CP0170 - Lean - Six Sigma 'Mejora Continua de Procesos'",
+		"tipo": "Especialización"
+	},
+	{
+		"id": "18",
+		"descripcion": "CP0180 - Mejora continua de Procesos: Six Sigma 'Puesta en marcha en la empresa'",
+		"tipo": "Especialización"
+	},
+	{
+		"id": "19",
+		"descripcion": "PP010 - PAE 1 Programa de Especialización:  Gestión y Mejora de Procesos en la Organización.",
+		"tipo": "Especialización"
+	},
+	{
+		"id": "20",
+		"descripcion": "PP020 - PAE 2 Programa de Especialización:  Gestión y Calidad de Software.",
+		"tipo": "Especialización"
+	},
+	{
+		"id": "21",
+		"descripcion": "PP030 - PAE 3 Programa de Especialización:  Gestión y Mejora de procesos de Software y Servicios TI.",
+		"tipo": "Especialización"
+	},
+	{
+		"id": "22",
+		"descripcion": "PP040 - A47  PAE 4 Programa de Especialización:  Gestión y Desarrollo de Proyectos de TI.",
+		"tipo": "Especialización"
+	},
+	{
+		"id": "23",
+		"descripcion": "PP050 - PCI 1 Programa de Certificación Internacional: Gestión Ágil de Proyectos.",
+		"tipo": "Especialización"
+	},
+	{
+		"id": "24",
+		"descripcion": "PP060 - PCI 2 Programa de Certificación Internacional: 'Test Expert' en Gestión de Calidad de Software y Pruebas Ágiles.",
+		"tipo": "Especialización"
+	}
+]
