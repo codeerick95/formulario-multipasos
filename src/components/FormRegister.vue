@@ -1053,9 +1053,6 @@ export default {
       }
     },
     methods: {
-      console() {
-        console.log(this.step6.voucher)
-      },
         nextStep (n) {
         if (n === this.steps) {
           this.e1 = 1
