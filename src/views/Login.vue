@@ -1,56 +1,71 @@
 <template>
   <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-4">
-            <validation-observer v-slot="{ handleSubmit }">
-                <form action="" @submit.prevent="handleSubmit(submit)">
+        <div class="col-md-5">
+            <v-card outlined class="">
+                <h1 class="title mt-3 text-center">Ingresa a tú cuenta</h1>
 
-                    <div class="card">
-                        <h1 class="title mt-3">Ingresa a tú cuenta</h1>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <ValidationProvider rules="required|email" v-slot="{ errors }">
-                                    <input v-model="email" type="email" placeholder="Email" class="form-control">
-                                    <span class="text-danger">{{ errors[0] }}</span>
-                                </ValidationProvider>
-                            </div>
-                            <div class="form-group">
-                                <ValidationProvider rules="required" v-slot="{ errors }">
-                                    <input v-model="password" type="password" placeholder="Contraseña" class="form-control">
-                                    <span class="text-danger">{{ errors[0] }}</span>
-                                </ValidationProvider>
-                            </div>
-                        </div>
-
-                        <div class="card-footer d-flex justify-content-between align-items-center bg-dark">
-                            <router-link :to="{name: 'Home'}" class="text-white">Quiero registrarme</router-link>
-                            <input type="submit" value="Ingresar" class="btn btn-danger" />
-                        </div>
+                <v-form @submit.prevent="submit()" ref="formLogin" v-model="valid" lazy-validation>
+                    <!-- Email -->
+                    <div class="px-3 mt-5">
+                        <v-text-field
+                        v-model="email"
+                        :rules="rules.email"
+                        label="Email principal"
+                        outlined
+                        ></v-text-field>
                     </div>
 
-                </form>
-            </validation-observer>
+                    <!-- Password -->
+                    <div class="px-3">
+                        <v-text-field
+                            :type="showPassword ? 'text' : 'password'"
+                            v-model="password"
+                            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                            :rules="rules.password"
+                            label="Contraseña"
+                            outlined
+                            @click:append="showPassword = !showPassword"
+                        ></v-text-field>
+                    </div>
+                    <v-card-actions class="bg-dark d-flex justify-content-between mt-5">
+                        <router-link :to="{name: 'Home'}" class="text-white">Quiero registrarme</router-link>
+                        <v-btn type="submit" color="red darken-2 white--text">
+                            Ingresar
+                        </v-btn>
+                    </v-card-actions>
+                </v-form>
+            </v-card>
         </div>  
     </div>
   </div>
 </template>
 
 <script>
-import { ValidationObserver } from 'vee-validate';
 
 export default {
-    components: {
-        ValidationObserver
-    },
     data() {
         return {
+            valid: true,
+            rules: {
+                email: [
+                    v => !!v || 'Este campo es requerido',
+                    v => /.+@.+/.test(v) || 'El email debe ser válido',
+                ],
+                password: [
+                    v => !!v || 'Este campo es requerido'
+                ],
+            },
             email: '',
-            password: ''
+            password: '',
+            showPassword: false
         }
     },
     methods: {
         submit() {
-            this.$router.push({name: 'Dashboard'})
+            if(this.$refs.formLogin.validate()) {
+                this.$router.push({name: 'Dashboard'})
+            }
         }
     },
 }

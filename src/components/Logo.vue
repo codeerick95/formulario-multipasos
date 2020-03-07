@@ -12,8 +12,7 @@
 
 <style lang="scss" scoped>
 .logo-image {
-    width: 90%;
+    width: 80px;
     display: inline-block;
-    margin: 0 auto;
 }
 </style>
