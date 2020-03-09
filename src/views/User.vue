@@ -5,15 +5,20 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <h2 class="title m-0">Datos de usuario {{ user.id }}</h2>
+                        <h2 class="title m-0 text-center">Datos de usuario: #{{ user.id }}</h2>
                     </div>
                 </div>
                 
-                <form>
+                <v-form
+                    ref="mainForm"
+                    v-model="valid"
+                    lazy-validation
+                    @submit.prevent="submit()">
                     <div role="tablist">
+                        <!-- Collapse 1 -->
                         <b-card no-body class="mb-1">
                             <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
-                                <a href="#" v-b-toggle.accordion-1 class="btn-link text-dark lead">Identificación</a>
+                                <a href="#" v-b-toggle.accordion-1 class="btn-link text-dark lead font-weight-bold">Identificación</a>
                             </b-card-header>
                             <b-collapse id="accordion-1" visible accordion="my-accordion" role="tabpanel">
                                 <b-card-body>
@@ -71,37 +76,28 @@
                                         </div>
 
                                     </div>
-                                    <v-row class="justify-content-center">
-                                        <div class="col-md-6 text-center">
-                                            <v-form
-                                                ref="validate1"
-                                                v-model="valid"
-                                                lazy-validation
-                                                @submit.prevent="submit(n)">
-                                                <v-select
-                                                    :items="itemsStatus"
-                                                    label="Estado"
-                                                    outlined
-                                                    v-model="step1.status"
-                                                    ref="selectTypeDocument"
-                                                    >
-                                                </v-select>
-                                            </v-form>
-                                            <v-btn
-                                                type="submit"
-                                                color="red darken-2 white--text"
-                                            >
-                                                Guardar
-                                            </v-btn>
+                                    <v-row class="justify-content-center mt-5">
+                                        <div class="col-md-8 col-lg-6 text-center py-0">
+                                            <v-select
+                                                :items="itemsStatus"
+                                                label="Estado"
+                                                outlined
+                                                v-model="step1.status"
+                                                ref="selectTypeDocument"
+                                                :rules="rules.requireRule"
+                                                required
+                                                >
+                                            </v-select>
                                         </div>
                                     </v-row>
                                 </b-card-body>
                             </b-collapse>
                         </b-card>
 
+                        <!-- Collapse 2 -->
                         <b-card no-body class="mb-1">
                             <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
-                                <a href="#" v-b-toggle.accordion-2 class="btn-link text-dark lead">Datos personales</a>
+                                <a href="#" v-b-toggle.accordion-2 class="btn-link text-dark lead font-weight-bold">Datos personales</a>
                             </b-card-header>
                             <b-collapse id="accordion-2" accordion="my-accordion" role="tabpanel">
                                 <b-card-body>
@@ -166,28 +162,18 @@
 
                                     </div>
 
-                                    <v-row class="justify-content-center">
-                                        <div class="col-md-6 text-center">
-                                            <v-form
-                                                ref="validate1"
-                                                v-model="valid"
-                                                lazy-validation
-                                                @submit.prevent="submit(n)">
-                                                <v-select
-                                                    :items="itemsStatus"
-                                                    label="Estado"
-                                                    outlined
-                                                    v-model="step1.status"
-                                                    ref="selectTypeDocument"
-                                                    >
-                                                </v-select>
-                                            </v-form>
-                                            <v-btn
-                                                type="submit"
-                                                color="red darken-2 white--text"
-                                            >
-                                                Guardar
-                                            </v-btn>
+                                    <v-row class="justify-content-center mt-5">
+                                        <div class="col-md-6 text-center py-0">
+                                            <v-select
+                                                :items="itemsStatus"
+                                                label="Estado"
+                                                outlined
+                                                v-model="step1.status"
+                                                ref="selectTypeDocument"
+                                                :rules="rules.requireRule"
+                                                required
+                                                >
+                                            </v-select>
                                         </div>
                                     </v-row>
                                 </b-card-body>
@@ -196,7 +182,7 @@
 
                         <b-card no-body class="mb-1">
                             <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
-                                <a href="#" v-b-toggle.accordion-3 class="btn-link text-dark lead">Datos de contacto</a>
+                                <a href="#" v-b-toggle.accordion-3 class="btn-link text-dark lead font-weight-bold">Datos de contacto</a>
                             </b-card-header>
                             <b-collapse id="accordion-3" accordion="my-accordion" role="tabpanel">
                                 <b-card-body>
@@ -264,28 +250,18 @@
                                         </div>
 
                                     </div>
-                                    <v-row class="justify-content-center">
-                                        <div class="col-md-6 text-center">
-                                            <v-form
-                                                ref="validate1"
-                                                v-model="valid"
-                                                lazy-validation
-                                                @submit.prevent="submit(n)">
-                                                <v-select
-                                                    :items="itemsStatus"
-                                                    label="Estado"
-                                                    outlined
-                                                    v-model="step1.status"
-                                                    ref="selectTypeDocument"
-                                                    >
-                                                </v-select>
-                                            </v-form>
-                                            <v-btn
-                                                type="submit"
-                                                color="red darken-2 white--text"
-                                            >
-                                                Guardar
-                                            </v-btn>
+                                    <v-row class="justify-content-center mt-5">
+                                        <div class="col-md-6 text-center py-0">
+                                            <v-select
+                                                :items="itemsStatus"
+                                                label="Estado"
+                                                outlined
+                                                v-model="step1.status"
+                                                ref="selectTypeDocument"
+                                                :rules="rules.requireRule"
+                                                required
+                                                >
+                                            </v-select>
                                         </div>
                                     </v-row>
                                 </b-card-body>
@@ -294,7 +270,7 @@
 
                         <b-card no-body class="mb-1">
                             <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
-                                <a href="#" v-b-toggle.accordion-4 class="btn-link text-dark lead">Datos de ubicación</a>
+                                <a href="#" v-b-toggle.accordion-4 class="btn-link text-dark lead font-weight-bold">Datos de ubicación</a>
                             </b-card-header>
                             <b-collapse id="accordion-4" accordion="my-accordion" role="tabpanel">
                                 <b-card-body>
@@ -385,28 +361,18 @@
 
                                 </div>
 
-                                <v-row class="justify-content-center">
-                                    <div class="col-md-6 text-center">
-                                        <v-form
-                                            ref="validate1"
-                                            v-model="valid"
-                                            lazy-validation
-                                            @submit.prevent="submit(n)">
-                                            <v-select
-                                                :items="itemsStatus"
-                                                label="Estado"
-                                                outlined
-                                                v-model="step1.status"
-                                                ref="selectTypeDocument"
-                                                >
-                                            </v-select>
-                                        </v-form>
-                                        <v-btn
-                                            type="submit"
-                                            color="red darken-2 white--text"
-                                        >
-                                            Guardar
-                                        </v-btn>
+                                <v-row class="justify-content-center mt-5">
+                                    <div class="col-md-6 text-center py-0">
+                                        <v-select
+                                            :items="itemsStatus"
+                                            label="Estado"
+                                            outlined
+                                            v-model="step1.status"
+                                            ref="selectTypeDocument"
+                                            :rules="rules.requireRule"
+                                            required
+                                            >
+                                        </v-select>
                                     </div>
                                 </v-row>
 
@@ -416,7 +382,7 @@
 
                         <b-card no-body class="mb-1">
                             <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
-                                <a href="#" v-b-toggle.accordion-5 class="btn-link text-dark lead">Datos de curso</a>
+                                <a href="#" v-b-toggle.accordion-5 class="btn-link text-dark lead font-weight-bold">Datos de curso</a>
                             </b-card-header>
                             <b-collapse id="accordion-5" accordion="my-accordion" role="tabpanel">
                                 <b-card-body>
@@ -456,28 +422,17 @@
 
                                 </div>
 
-                                <v-row class="justify-content-center">
-                                    <div class="col-md-6 text-center">
-                                        <v-form
-                                            ref="validate1"
-                                            v-model="valid"
-                                            lazy-validation
-                                            @submit.prevent="submit(n)">
-                                            <v-select
-                                                :items="itemsStatus"
-                                                label="Estado"
-                                                outlined
-                                                v-model="step1.status"
-                                                ref="selectTypeDocument"
-                                                >
-                                            </v-select>
-                                        </v-form>
-                                        <v-btn
-                                            type="submit"
-                                            color="red darken-2 white--text"
-                                        >
-                                            Guardar
-                                        </v-btn>
+                                <v-row class="justify-content-center mt-5">
+                                    <div class="col-md-8 col-lg-6 text-center py-0">
+                                        <v-select
+                                            :items="itemsStatus"
+                                            label="Estado"
+                                            outlined
+                                            v-model="step1.status"
+                                            ref="selectTypeDocument"
+                                            required
+                                            >
+                                        </v-select>
                                     </div>
                                 </v-row>
 
@@ -487,7 +442,7 @@
 
                         <b-card no-body class="mb-1">
                             <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
-                                <a href="#" v-b-toggle.accordion-6 class="btn-link text-dark lead">Datos de pago</a>
+                                <a href="#" v-b-toggle.accordion-6 class="btn-link text-dark lead font-weight-bold">Datos de pago</a>
                             </b-card-header>
                             <b-collapse id="accordion-6" accordion="my-accordion" role="tabpanel">
                                 <b-card-body>
@@ -627,28 +582,18 @@
                                         </div>
                                     </v-row>
 
-                                <v-row class="justify-content-center">
-                                    <div class="col-md-6 text-center">
-                                        <v-form
-                                            ref="validate1"
-                                            v-model="valid"
-                                            lazy-validation
-                                            @submit.prevent="submit(n)">
-                                            <v-select
-                                                :items="itemsStatus"
-                                                label="Estado"
-                                                outlined
-                                                v-model="step1.status"
-                                                ref="selectTypeDocument"
-                                                >
-                                            </v-select>
-                                        </v-form>
-                                        <v-btn
-                                            type="submit"
-                                            color="red darken-2 white--text"
-                                        >
-                                            Guardar
-                                        </v-btn>
+                                <v-row class="justify-content-center mt-5">
+                                    <div class="col-md-8 col-lg-6 text-center py-0">
+                                        <v-select
+                                            :items="itemsStatus"
+                                            label="Estado"
+                                            outlined
+                                            v-model="step1.status"
+                                            ref="selectTypeDocument"
+                                            :rules="rules.requireRule"
+                                            required
+                                            >
+                                        </v-select>
                                     </div>
                                 </v-row>
 
@@ -656,7 +601,15 @@
                             </b-collapse>
                         </b-card>
                     </div>
-                </form>
+                    <div class="text-center mt-3">
+                        <v-btn
+                            type="submit"
+                            color="red darken-2 white--text"
+                        >
+                            Guardar
+                        </v-btn>
+                    </div>
+                </v-form>
 
             </div>
         </div>
@@ -665,7 +618,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { itemsTypePayment } from '@/utilities/data-selects.js'
+import { itemsTypePayment, itemsStatus, itemsTypeDocument } from '@/utilities/data-selects.js'
 import countries from '@/assets/countries.json'
 import coursesPresenciales from '@/assets/courses.json'
 import coursesOnline from '@/assets/courses-online.json'
@@ -674,14 +627,20 @@ export default {
     data() {
         return {
             valid: true,
-            itemsStatus: [{value: null, text: 'Estado'}, {value: 'Pendiente', text: 'Pendiente'}, {value: 'Revisando', text: 'Revisando'}, {value: 'Validado', text: 'Validado'}],
+            itemsStatus,
             user: {},
+            rules: {
+                require: 'Este campo es requerido',
+                requireRule: [
+                    v => !!v || this.rules.require
+                ]
+            },
             step1: {
                 value: true,
                 current: true,
                 disabled: false,
                 completed: false,
-                itemsTypeDocument: [{value: null, text: 'Tipo de documento'}, {value: 'DNI', text: 'DNI'}, {value: 'PASAPORTE', text: 'PASAPORTE'}, {value: 'CE', text: 'C.E.'}],
+                itemsTypeDocument,
                 typeDocument: '',
                 typeDocumentField: '',
                 selectTypeDocument: 'DNI',
@@ -793,6 +752,12 @@ export default {
                     this.step6.bank = this.user.bank
                 }
             })
+        },
+        submit() {
+            // Si el formulario está validado, enviamos los datos.
+            if(this.$refs.mainForm.validate()) {
+                alert('Datos guardados')
+            }
         },
         getCountries() {
             let newCountries = []

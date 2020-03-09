@@ -1,12 +1,13 @@
 <template>
     <div :class="classColumns">
-        <v-card>
+        <v-card class="mt-5">
 
-            <h2 class="display-1 text-center pt-3">Registro de usuarios</h2>
-            <h2 class="title text-center font-weight-regular mt-5">{{ setSubtitle }}</h2>
+            <h2 class="form-title text-center pt-3">Registro de usuarios</h2>
+            <h2 class="subtitle text-center font-weight-regular mt-5">{{ setSubtitle }}</h2>
 
                 <v-stepper
                 v-model="e1"
+                class="pb-0"
                 >
                     <v-stepper-header>
                         <template v-for="n in steps">
@@ -39,7 +40,7 @@
                                     lazy-validation
                                     @submit.prevent="submit(n)"
                                 >
-                                    <v-row class="mt-5">
+                                    <v-row class="my-5 pb-5">
                                         <!-- Select tipo de documento -->
                                         <div class="col-md-6 py-0">
                                             <v-select
@@ -92,7 +93,7 @@
                                     </v-row>
 
                                     <!-- Button submit -->
-                                    <div class="d-flex justify-content-end blue-grey darken-4 py-2 px-5 button-form-container">
+                                    <div class="d-flex justify-content-end blue-grey darken-4 py-2 px-5 mb-0 button-form-container">
                                         <v-btn
                                             type="submit"
                                             color="red darken-2 white--text"
@@ -111,7 +112,7 @@
                                     lazy-validation
                                     @submit.prevent="submit(n)"
                                 >
-                                    <div class="form-row mt-5">
+                                    <div class="form-row mt-5 pb-5">
 
                                         <div class="col-md-6 py-0">
                                             <v-text-field
@@ -135,7 +136,7 @@
 
                                     </div>
 
-                                    <div class="form-row">
+                                    <div class="form-row mb-5 pb-5">
 
                                         <div class="col-md-6 py-0">
                                             <v-text-field
@@ -174,7 +175,7 @@
                                     </div>
 
                                     <!-- Botones anterior y siguiente -->
-                                    <div class="d-flex justify-content-between blue-grey darken-4 py-2 px-5 button-form-container">
+                                    <div class="form-row justify-content-between blue-grey darken-4 py-2 px-5 button-form-container">
 
                                         <!-- Anterior -->
                                         <v-btn
@@ -245,7 +246,7 @@
                                             <v-text-field
                                                 type="number"
                                                 v-model="step3.WorkPhone"
-                                                :rules="rules.WorkPhone"
+                                                :rules="rules.requireRule"
                                                 label="Teléfono de trabajo"
                                                 required
                                                 outlined
@@ -254,13 +255,13 @@
                                     </v-row>
 
 
-                                    <div class="form-row">
+                                    <div class="form-row mb-5 pb-5">
 
                                         <div class="col-md-6 py-0">
                                             <v-text-field
                                                 type="number"
                                                 v-model="step3.mobile"
-                                                :rules="rules.mobile"
+                                                :rules="rules.requireRule"
                                                 label="Celular"
                                                 required
                                                 outlined
@@ -373,7 +374,7 @@
 
                                 </div>
 
-                                <div class="form-row">
+                                <div class="form-row mb-5 pb-5">
 
                                     <div class="col py-0">
                                         <v-textarea
@@ -422,7 +423,7 @@
                                 >
 
                                 
-                                    <div class="form-row mt-5">
+                                    <div class="form-row mt-5 mb-5 pb-5">
 
                                         <div class="col-md-6 py-0 mt-5 mt-md-0">
                                             <v-select
@@ -575,9 +576,9 @@
                                     </div>
                                   </v-row>
 
-                                  <v-row>
+                                  <v-row class="mb-5 pb-5">
                                     <div class="col-md-6">
-                                      <v-file-input v-model="step6.voucher" :rules="rules.requireRule" outlined label="Subir voucher" @change="console()"></v-file-input>
+                                      <v-file-input v-model="step6.voucher" :rules="rules.requireRule" required outlined label="Subir voucher"></v-file-input>
                                     </div>
                                     <!-- Solo se mostrará si selecciona transferencia -->
                                     <div class="col-md-6" v-if="step6.typePayment === 'transferencia'">
@@ -880,9 +881,11 @@
 
 <script>
 import { itemsTypePayment } from '@/utilities/data-selects.js'
+import { rules } from '@/utilities/rules.js'
+
 import countries from '@/assets/countries.json'
 import coursesPresenciales from '@/assets/courses.json'
-import coursesOnline from '@/assets/courses-online.json' 
+import coursesOnline from '@/assets/courses-online.json'
 
 export default {
     data() {
@@ -890,37 +893,7 @@ export default {
             e1: 1,
             steps: 7,
             valid: true,
-            rules: {
-                require: 'Este campo es requerido',
-                requireRule: [
-                    v => !!v || this.rules.require
-                ],
-                email: [
-                    v => !!v || this.rules.require,
-                    v => /.+@.+/.test(v) || 'El email debe ser válido',
-                ],
-                typeDocumentFieldDni: [
-                    v => !!v || this.rules.require,
-                    v => v.length <= 8 || 'Máximo 8 caracteres'
-                ],
-                typeDocumentFieldPasaport: [
-                    v => !!v || this.rules.require,
-                    v => v.length <= 10 || 'Máximo 10 caracteres'
-                ],
-                typeDocumentFieldCe: [
-                    v => !!v || this.rules.require,
-                    v => v.length <= 8 || 'Máximo 8 caracteres'
-                ],
-                phone: [
-                    v => !!v || this.rules.require
-                ],
-                WorkPhone: [
-                    v => !!v || this.rules.require
-                ],
-                mobile: [
-                    v => !!v || this.rules.require
-                ],
-            },
+            rules,
             step1: {
                 value: true,
                 current: true,
@@ -1014,6 +987,7 @@ export default {
     },
     computed: {
       setSubtitle: function() {
+        // Muestra un subtítulo distinto según el paso en el que se encuentre el usuario 
         let subtitle = ''
 
         if(this.e1 === 1) {
@@ -1034,6 +1008,7 @@ export default {
         return subtitle
       },
       setButtonText: function() {
+        // Muestra el texto 'Registrarme' solo si el usuario se encuentra en el paso 7
         let text = 'Siguiente'
 
         if(this.e1 === 7) {
@@ -1043,6 +1018,7 @@ export default {
         return text
       },
       classColumns: function() {
+        // Clase para aumentar las columnas en el último paso
         let cols = 8
 
         if(this.e1 === 7) {
@@ -1076,6 +1052,7 @@ export default {
 
         countries.forEach(country => {
 
+          // Agregamos nuevos valores para que sean reconocidos por el v-select
           country.value = country.nombre
           country.text = country.nombre
 
@@ -1089,6 +1066,7 @@ export default {
 
         coursesPresenciales.forEach(course => {
 
+            // Agregamos nuevos valores para que sean reconocidos por el v-select
             course.value = course.descripcion
             course.text = course.descripcion
 
@@ -1101,6 +1079,7 @@ export default {
 
         coursesOnline.forEach(course => {
 
+            // Agregamos nuevos valores para que sean reconocidos por el v-select
             course.value = course.descripcion
             course.text = course.descripcion
 
@@ -1111,6 +1090,7 @@ export default {
       submit(n) {
           if(this.e1 === 1 && this.$refs.form1[0].validate()) {
                 this.nextStep(n)
+                // Vacía array de errores
                 this.$refs.form2[0].resetValidation()
           } else if(this.e1 === 2 && this.$refs.form2[0].validate()) {
                 this.nextStep(n)
@@ -1123,6 +1103,7 @@ export default {
           } else if(this.e1 === 6 && this.$refs.form6[0].validate()) {
               this.nextStep(n)
           } else if(this.e1 === 7) {
+              // Registramos al usuario
               this.registerUser()
           }
       },
@@ -1174,8 +1155,10 @@ export default {
             user.voucher = this.step6.voucher
             user.bank = this.step6.bank
 
+            // Vuex
             this.$store.commit('createUser', user)
 
+            // Redirigimos al usuario
             this.$router.push({name: 'Registered'})
       }
     },
@@ -1194,6 +1177,18 @@ input[type="date"]:before {
   font-size: .9em;
 }
 
+.v-application {
+    font-family: inherit !important;
+
+    .form-title {
+        font-weight: 700;
+    }
+
+    .subtitle {
+        font-size: 1.3rem;
+    }
+}
+
 .v-application .v-stepper__step__step.primary {
     background-color: #D32F2F !important;
 }
@@ -1205,7 +1200,9 @@ input[type="date"]:before {
     right: 0;
 }
 
-.v-stepper__items {
-    padding-bottom: 3rem;
+@media screen and (max-width: 320px) {
+    .v-stepper__step {
+        padding: 0 !important;
+    }
 }
 </style>

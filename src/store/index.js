@@ -8,7 +8,7 @@ export default new Vuex.Store({
     users: [
     {
         id: 1,
-        status: 'Validado',
+        status: 'Revisando',
         typeDocument: 'DNI',
         typeDocumentField: '71397374',
         name: 'Erick',
