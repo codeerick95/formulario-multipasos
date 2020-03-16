@@ -1,6 +1,6 @@
 <template>
     <div class="container mt-3">
-        <div class="row">
+        <div class="row" v-if="currentUser.data.type === 1">
             <div class="col-md-12">
 
                 <div class="card py-1">
@@ -73,6 +73,11 @@
 
             </div>
         </div>
+        <div class="row justify-content-center" v-else>
+            <div class="col-md-8">
+                <h2>Ingresaste como usuario</h2>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -121,7 +126,7 @@ export default {
       }
     },
     computed: {
-        ...mapState(['users'])
+        ...mapState(['users', 'currentUser'])
     }
 }
 </script>

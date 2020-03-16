@@ -43,6 +43,7 @@
 
 <script>
 
+
 export default {
     data() {
         return {
@@ -64,7 +65,12 @@ export default {
     methods: {
         submit() {
             if(this.$refs.formLogin.validate()) {
-                this.$router.push({name: 'Dashboard'})
+                let credentials = {
+                    email: this.email,
+                    password: this.password
+                }
+
+                this.$store.dispatch('login', credentials)
             }
         }
     },

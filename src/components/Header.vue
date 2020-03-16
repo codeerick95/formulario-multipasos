@@ -5,7 +5,8 @@
                 <logo></logo>
             </router-link>
             <v-spacer></v-spacer>
-            <v-btn to="/login" color="red darken-2 white--text" class="text-decoration-none">Ingresar</v-btn> 
+            <v-btn to="/login" color="red darken-2 white--text" class="text-decoration-none" v-if="!currentUser.status">Ingresar</v-btn>
+            <v-btn @click="logout()" color="red darken-2 white--text" class="text-decoration-none" v-else>Cerrar sesión</v-btn>
         </v-toolbar>
         <!-- <div class="container-fluid bg-light">
             <div class="row justify-content-center">
@@ -22,12 +23,23 @@
 
 <script>
 import Logo from '@/components/Logo.vue'
+import { mapState } from 'vuex'
 
 export default {
     name: 'HeaderApp',
     components: {
         Logo
     },
+    computed: {
+        ...mapState(['currentUser', 'token'])
+    },
+    methods: {
+        logout() {
+            this.$store.dispatch('logout').then(() => {
+                this.$router.push('/login')
+            })
+        }
+    }
 }
 </script>
 

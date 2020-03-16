@@ -6,6 +6,8 @@ import Login from '../views/Login.vue'
 import Dashboard from '../views/Dashboard.vue'
 import User from '../views/User.vue'
 
+import store from '@/store/index.js'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -27,7 +29,10 @@ const routes = [
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: Dashboard
+    component: Dashboard,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/dashboard/users/:id',
@@ -40,6 +45,24 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some(x => x.meta.requiresAuth)
+  const currentUser = store.state.currentUser.status
+
+  if (requiresAuth && !currentUser) {
+      next('/login')
+  } else if (requiresAuth && currentUser) {
+      next()
+  } else if(to.path === '/' && currentUser) {
+    next('/dashboard')
+  } else if(to.path === '/login' && currentUser) {
+    next('/dashboard')
+  }
+  else {
+      next()
+  }
 })
 
 export default router

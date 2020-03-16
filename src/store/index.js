@@ -1,12 +1,19 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from 'axios'
+import router from '@/router/index.js'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    currentUser: {
+      status: localStorage.getItem('access_token') ? true : false,
+      data: {}
+    },
+    token: localStorage.getItem('access_token') || null,
     users: [
-    {
+      {
         id: 1,
         status: 'Revisando',
         typeDocument: 'DNI',
@@ -37,8 +44,8 @@ export default new Vuex.Store({
         datePayment: '1995-09-12',
         voucher: 'https://solucionestpv.mx/wp-content/uploads/2018/11/ticket-santander.jpg',
         bank: 'BCP'
-    },
-    {
+      },
+      {
         id: 2,
         status: 'Pendiente',
         typeDocument: 'DNI',
@@ -69,8 +76,8 @@ export default new Vuex.Store({
         datePayment: '1995-09-12',
         voucher: 'https://solucionestpv.mx/wp-content/uploads/2018/11/ticket-santander.jpg',
         bank: 'BCP'
-    },
-    {
+      },
+      {
         id: 3,
         status: 'Pendiente',
         typeDocument: 'DNI',
@@ -101,8 +108,8 @@ export default new Vuex.Store({
         datePayment: '1995-09-12',
         voucher: 'https://solucionestpv.mx/wp-content/uploads/2018/11/ticket-santander.jpg',
         bank: 'BCP'
-    },
-    {
+      },
+      {
         id: 4,
         status: 'Pendiente',
         typeDocument: 'DNI',
@@ -133,8 +140,8 @@ export default new Vuex.Store({
         datePayment: '1995-09-12',
         voucher: 'https://solucionestpv.mx/wp-content/uploads/2018/11/ticket-santander.jpg',
         bank: 'BCP'
-    },
-    {
+      },
+      {
         id: 5,
         status: 'Pendiente',
         typeDocument: 'DNI',
@@ -165,15 +172,68 @@ export default new Vuex.Store({
         datePayment: '1995-09-12',
         voucher: 'https://solucionestpv.mx/wp-content/uploads/2018/11/ticket-santander.jpg',
         bank: 'BCP'
-    }
+      }
     ]
   },
   mutations: {
-    createUser (state, user) {
-        state.users.push(user)
+    createUser(state, user) {
+      state.users.push(user)
+    },
+    setToken(state, token) {
+      state.token = token
+    },
+    setUser(state, data) {
+      state.currentUser.status = data.status
+      state.currentUser.data = data.dataUser
     }
   },
   actions: {
+    login(state, credentials) {
+      axios.post('http://174.138.39.59/form-api/api/v1/users/signin', {
+        email: credentials.email,
+        password: credentials.password
+      })
+        .then(function (response) {
+          // let user = {}
+          let token = '',
+          data = {
+            status: true,
+            dataUser: response.data.user
+          }
+
+          if (response.statusText === 'OK') {
+            // user = response.data.user
+            token = response.data.token
+
+            localStorage.setItem('access_token', token)
+
+            // Add the following line:
+            axios.defaults.headers.common['Authorization'] = token
+
+            state.commit('setToken', token)
+            state.commit('setUser', data)
+
+            router.push('/dashboard')
+          }
+
+          // this.$router.push({name: 'Dashboard'})
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    logout({state}) {
+      return new Promise((resolve) => {
+          localStorage.removeItem('access_token')
+
+          // remove the axios default header
+          delete axios.defaults.headers.common['Authorization']
+
+          state.currentUser.status = false
+
+          resolve()
+      })
+    }
   },
   modules: {
   }
