@@ -489,6 +489,7 @@
                                     ref="form6"
                                       v-model="valid"
                                       lazy-validation
+                                      enctype="multipart/form-data"
                                       @submit.prevent="submit(n)"
                                   >
 
@@ -578,7 +579,7 @@
 
                                   <v-row class="mb-5 pb-5">
                                     <div class="col-md-6">
-                                      <v-file-input v-model="step6.voucher" :rules="rules.requireRule" required outlined label="Subir voucher"></v-file-input>
+                                      <v-file-input v-model="step6.voucher" :rules="rules.requireRule" @change="setUrlVoucher()" required outlined label="Subir voucher"></v-file-input>
                                     </div>
                                     <!-- Solo se mostrará si selecciona transferencia -->
                                     <div class="col-md-6" v-if="step6.typePayment === 'transferencia'">
@@ -841,7 +842,7 @@
                                         <v-row>
                                             <div class="col-md-6">
                                                 <p class="text-muted mr-3">Voucher:</p>
-                                                <img :src="step6.voucher" alt="" class="img-fluid">
+                                                <img :src="step7.urlVoucher" alt="" class="img-fluid">
                                             </div>
                                         </v-row>
                                     </div>
@@ -890,7 +891,7 @@ import coursesOnline from '@/assets/courses-online.json'
 export default {
     data() {
         return {
-            e1: 1,
+            e1: 6,
             steps: 7,
             valid: true,
             rules,
@@ -901,8 +902,8 @@ export default {
                 completed: false,
                 id: 6,
                 itemsTypeDocument: [{value: null, text: 'Tipo de documento'}, {value: 'DNI', text: 'DNI'}, {value: 'PASAPORTE', text: 'PASAPORTE'}, {value: 'CE', text: 'C.E.'}],
-                typeDocument: '',
-                typeDocumentField: '',
+                typeDocument: 'DNI',
+                typeDocumentField: '71397374',
                 selectTypeDocument: 'DNI',
                 status: ''
             },
@@ -911,57 +912,57 @@ export default {
                 current: false,
                 disabled: true,
                 completed: false,
-                name: '',
-                lastname1: '',
-                lastname2: '',
+                name: 'E',
+                lastname1: 'H',
+                lastname2: 'H',
                 datePicker: false,
-                date: '',
+                date: '2020-03-16',
             },
             step3: {
                 value: false,
                 current: false,
                 disabled: true,
                 completed: false,
-                email: '',
-                secondaryEmail: '',
-                phone: '',
-                WorkPhone: '',
-                mobile: ''
+                email: 'e@test.com',
+                secondaryEmail: 'e2@test.com',
+                phone: '1',
+                WorkPhone: '1',
+                mobile: '1'
             },
             step4: {
                 value: false,
                 current: false,
                 disabled: true,
                 completed: false,
-                business: '',
-                position: '',
-                address: '',
+                business: 'E',
+                position: 'E',
+                address: 'e',
                 itemsCountry: this.getCountries(),
-                city: '',
-                province: '',
-                country: '',
+                city: 'E',
+                province: 'E',
+                country: 'E',
                 observations: ''
             },
             step5: {
                 value: false,
                 current: false,
                 disabled: true,
-                itemsTypeCourse: [{value: null, text: 'Tipo de curso'}, {value: 'Virtual', text: 'Virtual'}, {value: 'Presencial', text: 'Presencial'}],
+                itemsTypeCourse: [{value: null, text: 'Tipo de curso'}, {value: 1, text: 'Virtual'}, {value: 2, text: 'Presencial'}],
                 itemsCoursesPresenciales: this.getCoursesPresenciales(),
                 itemsCoursesOnline: this.getCoursesOnline(),
-                typeCourse: 'Presencial',
-                course: ''
+                typeCourse: 1,
+                course: 'E'
             },
             step6: {
-              itemsPayment: [{value: null, text: 'Pago'}, {value: 'total', text: 'TOTAL'}, {value: 'cuotas', text: 'CUOTAS'}],
+              itemsPayment: [{value: null, text: 'Pago'}, {value: 1, text: 'TOTAL'}, {value: 2, text: 'CUOTAS'}],
               payment: '',
-              itemsCurrency: [{value: null, text: 'Moneda'}, {value: 'soles', text: 'Soles'}, {value: 'dolares', text: 'Dólares'}],
+              itemsCurrency: [{value: null, text: 'Moneda'}, {value: 'Soles', text: 'Soles'}, {value: 'Dólares', text: 'Dólares'}],
               currency: '',
-              amount: '',
+              amount: '2',
               itemsTypePayment,
-              typePayment: '',
-              nroOperation: '',
-              datePayment: '',
+              typePayment: 'total',
+              nroOperation: '2',
+              datePayment: '2020-03-16',
               datePicker: false,
               voucher: {},
               bank: ''
@@ -969,7 +970,8 @@ export default {
             step7: {
               value: false,
               current: false,
-              disabled: true
+              disabled: true,
+              urlVoucher: ''
             },
             errorList: {
               name: false,
@@ -1087,6 +1089,9 @@ export default {
         })
         return newCourses
       },
+      setUrlVoucher: function() {
+        this.step7.urlVoucher = URL.createObjectURL(this.step6.voucher)
+      },
       submit(n) {
           if(this.e1 === 1 && this.$refs.form1[0].validate()) {
                 this.nextStep(n)
@@ -1110,36 +1115,32 @@ export default {
         registerUser() {
             let user = {}
 
-            // Id ficticio
-            this.step1.id = this.step1.id + 1
-
             // Paso 1
-            user.id = this.step1.id
-            user.typeDocument = this.step1.typeDocument
-            user.typeDocumentField = this.step1.typeDocumentField
-            user.status = 'Pendiente'
+            user.documentType = this.step1.typeDocument
+            user.documentNumber = parseInt(this.step1.typeDocumentField)
+            // user.status = 'Pendiente'
 
             // Paso 2
             user.name = this.step2.name
-            user.lastname1 = this.step2.lastname1
-            user.lastname2 = this.step2.lastname2
-            user.date = this.step2.date
+            user.lastName = this.step2.lastname1
+            user.surname = this.step2.lastname2
+            user.birthday = this.step2.date
 
             // Paso 3
             user.email = this.step3.email
-            user.secondaryEmail = this.step3.secondaryEmail
-            user.phone = this.step3.phone
-            user.WorkPhone = this.step3.WorkPhone
-            user.mobile = this.step3.mobile
+            user.emailSecundary = this.step3.secondaryEmail
+            user.phone = parseInt(this.step3.phone)
+            user.phoneSecundary = parseInt(this.step3.WorkPhone)
+            user.cellphone = parseInt(this.step3.mobile)
 
             // Paso 4
-            user.business = this.step4.business
+            user.company = this.step4.business
             user.position = this.step4.position
             user.address = this.step4.address
             user.city = this.step4.city
             user.province = this.step4.province
             user.country = this.step4.country
-            user.observations = this.step4.observations
+            // user.observations = this.step4.observations
 
             // Paso 5
             user.typeCourse = this.step5.typeCourse
@@ -1147,19 +1148,29 @@ export default {
 
             // Paso 6
             user.payment = this.step6.payment
-            user.currency = this.step6.currency
+            user.coin = this.step6.currency
             user.amount = this.step6.amount
-            user.typePayment = this.step6.typePayment
-            user.nroOperation = this.step6.nroOperation
-            user.datePayment = this.step6.datePayment
+            user.paymentType = this.step6.typePayment
+            user.operationNumber = parseInt(this.step6.nroOperation)
+            user.operationDate = this.step6.datePayment
             user.voucher = this.step6.voucher
             user.bank = this.step6.bank
 
+            let formData = new FormData()
+
+            // Convierte el objeto user en un formData
+            Object.keys(user).forEach(key => formData.append(key, user[key]));
+
+            if(this.step6.voucher) {
+                // files
+                formData.append("voucher", this.step6.voucher, this.step6.voucher.name);
+            }
+
             // Vuex
-            this.$store.commit('createUser', user)
+            this.$store.dispatch('register', formData)
 
             // Redirigimos al usuario
-            this.$router.push({name: 'Registered'})
+            // this.$router.push({name: 'Registered'})
       }
     },
 }

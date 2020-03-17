@@ -188,6 +188,22 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    register(state, formData) {
+      const options = {
+        method: 'POST',
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        data: formData,
+        url: 'http://174.138.39.59/form-api/api/v1/users/signup',
+      };
+      axios(options).then(res => {
+        console.log(res)
+        if(res.statusText === 'Created'){
+          router.push('/registered')
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+    },
     login(state, credentials) {
       axios.post('http://174.138.39.59/form-api/api/v1/users/signin', {
         email: credentials.email,
