@@ -911,13 +911,11 @@ export default {
 
             axios(options).then(res => {
                     this.$store.state.users = res.data.message
-                    console.log(this.$store.state.users)
                     this.setUserFullName()
                     // Asignamos número de filas
                     this.setRows()
                     this.$store.commit('setLoading', false)
-                }).catch(error => {
-                    console.log(error)
+                }).catch(() => {
                     this.$store.commit('setLoading', false)
                 })
         },

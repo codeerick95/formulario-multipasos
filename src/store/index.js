@@ -57,7 +57,6 @@ export const store = new Vuex.Store({
   },
   actions: {
     register(state, formData) {
-      console.log(formData)
       // Limpiamos el error anterior
       state.commit('setErrorFormMessage', '')
 
@@ -74,15 +73,13 @@ export const store = new Vuex.Store({
       // Petición de registro
       axios(options).then(res => {
         if(res.statusText === 'Created'){
-          console.log(res)
           // Muestra el loading
           state.commit('setLoading', false)
 
           // Redirección final
           router.push('/registered')
         }
-      }).catch(error => {
-        console.log(error)
+      }).catch(() => {
         // Cambiamos el valor del loading a false
         state.commit('setLoading', false)
       })
@@ -102,7 +99,6 @@ export const store = new Vuex.Store({
         password: credentials.password
       })
         .then(function (response) {
-          console.log(response)
           // let user = {}
           let token = ''
           let data = {}

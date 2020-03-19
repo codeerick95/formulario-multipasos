@@ -5,6 +5,7 @@ import Registered from '../views/Registered.vue'
 import Login from '../views/Login.vue'
 import Dashboard from '../views/Dashboard.vue'
 import User from '../views/User.vue'
+import NotFoundComponent from '../components/NotFoundComponent.vue'
 
 import { store } from '@/store/index.js'
 
@@ -42,7 +43,8 @@ const routes = [
       requiresAuth: true,
       requireAdmin: true
     }
-  }
+  },
+  { path: '*', component: NotFoundComponent }
 ]
 
 const router = new VueRouter({

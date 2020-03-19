@@ -754,8 +754,7 @@ export default {
                     this.setUser(res.data.message)
                     this.$store.commit('setLoading', false)
                 }
-            }).catch(error => {
-                console.log(error)
+            }).catch(() => {
                 this.$store.commit('setLoading', false)
             })
         },
@@ -866,8 +865,7 @@ export default {
                         this.$store.state.loading = false
                     }
 
-                }).catch(error => {
-                    console.log(error)
+                }).catch(() => {
                     
                     // Oculta el botón cargando
                     this.$store.state.loading = false
