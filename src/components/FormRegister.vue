@@ -3,34 +3,44 @@
         <v-card class="mt-5">
 
             <h2 class="form-title text-center pt-3">Registro de usuarios</h2>
-            <h2 class="subtitle text-center font-weight-regular mt-5">{{ setSubtitle }}</h2>
+
+            <!-- Este subtítulo cambia según el paso en el que se encuentre el usuario -->
+            <h2 class="subtitle text-center font-weight-regular mt-5 mb-5">{{ setSubtitle }}</h2>
 
                 <v-stepper
-                v-model="e1"
+                v-model="stepCurrent"
                 class="pb-0"
                 >
                     <v-stepper-header>
+                        <!-- Steps es la cantidad de pasos -->
                         <template v-for="n in steps">
+
                             <v-stepper-step
                                 :key="`${n}-step`"
-                                :complete="e1 > n"
+                                :complete="stepCurrent > n"
                                 :step="n"
                             >
-                        </v-stepper-step>
 
-                        <v-divider
-                            v-if="n !== steps"
-                            :key="n"
-                        ></v-divider>
+                            </v-stepper-step>
+
+                            <v-divider
+                                v-if="n !== steps"
+                                :key="n"
+                            ></v-divider>
+
                         </template>
                     </v-stepper-header>
 
                     <v-stepper-items>
+
                         <v-stepper-content
                         v-for="n in steps"
                         :key="`${n}-content`"
                         :step="n"
                         >
+
+                            <!-- Pasos: Cada paso tiene un formulario para poder validar los campos, pero solo
+                            el último es el que hace el submit -->
    
                             <!-- Contenido paso 1 -->
                             <template v-if="n === 1">
@@ -47,47 +57,49 @@
                                                 :items="step1.itemsTypeDocument"
                                                 label="Tipo de documento"
                                                 outlined
-                                                v-model="step1.typeDocument"
+                                                v-model="step1.documentType"
                                                 :rules="rules.requireRule"
-                                                @change="changeInputDocument()"
+                                                @change="step1.documentNumber = ''"
                                                 ref="selectTypeDocument"
                                                 >
                                             </v-select>
                                         </div>
 
-                                        <!-- Campo tipo de documento -->
+                                        <!-- Campos según tipo de documento -->
+
                                         <div class="col-md-6 py-0">
+                                            
                                             <!-- Campo  DNI -->
                                             <v-text-field
                                             type="number"
-                                            v-model="step1.typeDocumentField"
+                                            v-model="step1.documentNumber"
                                             :rules="rules.typeDocumentFieldDni"
                                             label="DNI"
                                             required
                                             outlined
-                                            v-if="step1.selectTypeDocument === 'DNI' "
+                                            v-if="step1.documentType === 1"
                                             ></v-text-field>
 
                                             <!-- Campo Pasaporte -->
                                             <v-text-field
                                             type="number"
-                                            v-model="step1.typeDocumentField"
+                                            v-model="step1.documentNumber"
                                             :rules="rules.typeDocumentFieldPasaport"
                                             label="Pasaporte"
                                             required
                                             outlined
-                                            v-if="step1.selectTypeDocument === 'PT' "
+                                            v-if="step1.documentType === 2"
                                             ></v-text-field>
 
                                             <!-- Campo  CE -->
                                             <v-text-field
                                             type="number"
-                                            v-model="step1.typeDocumentField"
+                                            v-model="step1.documentNumber"
                                             :rules="rules.typeDocumentFieldCe"
                                             label="Carnet de extranjería"
                                             required
                                             outlined
-                                            v-if="step1.selectTypeDocument === 'CE' "
+                                            v-if="step1.documentType === 3"
                                             ></v-text-field>
                                         </div>
                                     </v-row>
@@ -126,7 +138,7 @@
 
                                         <div class="col-md-6 py-0">
                                             <v-text-field
-                                                v-model="step2.lastname1"
+                                                v-model="step2.lastName"
                                                 :rules="rules.requireRule"
                                                 label="Apellido paterno"
                                                 required
@@ -140,7 +152,7 @@
 
                                         <div class="col-md-6 py-0">
                                             <v-text-field
-                                                v-model="step2.lastname2"
+                                                v-model="step2.surname"
                                                 :rules="rules.requireRule"
                                                 label="Apellido materno"
                                                 required
@@ -160,7 +172,7 @@
                                             >
                                                 <template v-slot:activator="{ on }">
                                                     <v-text-field
-                                                        v-model="step2.date"
+                                                        v-model="step2.birthday"
                                                         :rules="rules.requireRule"
                                                         label="Fecha de nacimiento"
                                                         required
@@ -168,7 +180,7 @@
                                                         v-on="on"
                                                     ></v-text-field>
                                                 </template>
-                                                <v-date-picker v-model="step2.date" @input="step2.datePicker = false"></v-date-picker>
+                                                <v-date-picker v-model="step2.birthday" @input="step2.datePicker = false"></v-date-picker>
                                             </v-menu>
                                         </div>
 
@@ -181,7 +193,7 @@
                                         <v-btn
                                             type="button"
                                             color="red darken-2 white--text"
-                                            @click="e1 = e1 - 1"
+                                            @click="stepCurrent = stepCurrent - 1"
                                         >
                                             Anterior
                                         </v-btn>
@@ -221,7 +233,7 @@
 
                                         <div class="col-md-6 py-0">
                                             <v-text-field
-                                                v-model="step3.secondaryEmail"
+                                                v-model="step3.emailSecundary"
                                                 :rules="rules.email"
                                                 label="Email secundario"
                                                 outlined
@@ -245,7 +257,7 @@
                                         <v-col cols="12" md="6" class="py-0">
                                             <v-text-field
                                                 type="number"
-                                                v-model="step3.WorkPhone"
+                                                v-model="step3.phoneSecundary"
                                                 :rules="rules.requireRule"
                                                 label="Teléfono de trabajo"
                                                 required
@@ -260,7 +272,7 @@
                                         <div class="col-md-6 py-0">
                                             <v-text-field
                                                 type="number"
-                                                v-model="step3.mobile"
+                                                v-model="step3.cellphone"
                                                 :rules="rules.requireRule"
                                                 label="Celular"
                                                 required
@@ -277,7 +289,7 @@
                                         <v-btn
                                             type="button"
                                             color="red darken-2 white--text"
-                                            @click="e1 = e1 - 1"
+                                            @click="stepCurrent = stepCurrent - 1"
                                         >
                                             Anterior
                                         </v-btn>
@@ -307,7 +319,7 @@
 
                                     <div class="col-md-6 py-0">
                                         <v-text-field
-                                            v-model="step4.business"
+                                            v-model="step4.company"
                                             label="Empresa"
                                             required
                                             outlined
@@ -382,7 +394,6 @@
                                             outlined
                                             name="input-7-4"
                                             label="Observaciones"
-                                            :rules="rules.requireRule"
                                         ></v-textarea>
                                     </div>
 
@@ -396,7 +407,7 @@
                                         <v-btn
                                             type="button"
                                             color="red darken-2 white--text"
-                                            @click="e1 = e1 - 1"
+                                            @click="stepCurrent = stepCurrent - 1"
                                         >
                                             Anterior
                                         </v-btn>
@@ -438,21 +449,21 @@
 
                                         <div class="col-md-6 py-0">
                                             <v-select
-                                                :items="step5.itemsCoursesPresenciales"
-                                                label="Curso"
-                                                outlined
-                                                :rules="rules.requireRule"
-                                                v-model="step5.course"
-                                                v-if="step5.typeCourse === 'Presencial'"
-                                                >
-                                            </v-select>
-                                            <v-select
                                                 :items="step5.itemsCoursesOnline"
                                                 label="Curso"
                                                 outlined
                                                 :rules="rules.requireRule"
                                                 v-model="step5.course"
-                                                v-if="step5.typeCourse === 'Virtual'"
+                                                v-if="step5.typeCourse === 1"
+                                                >
+                                            </v-select>
+                                            <v-select
+                                                :items="step5.itemsCoursesPresenciales"
+                                                label="Curso"
+                                                outlined
+                                                :rules="rules.requireRule"
+                                                v-model="step5.course"
+                                                v-if="step5.typeCourse === 2"
                                                 >
                                             </v-select>
                                         </div>
@@ -466,7 +477,7 @@
                                         <v-btn
                                             type="button"
                                             color="red darken-2 white--text"
-                                            @click="e1 = e1 - 1"
+                                            @click="stepCurrent = stepCurrent - 1"
                                         >
                                             Anterior
                                         </v-btn>
@@ -506,10 +517,10 @@
                                       </div>
                                       <div class="col-md-6 py-0 mt-5 mt-md-0">
                                         <v-select
-                                          :items="step6.itemsCurrency"
+                                          :items="step6.itemsCoin"
                                           label="Moneda"
                                           outlined
-                                          v-model="step6.currency"
+                                          v-model="step6.coin"
                                           :rules="rules.requireRule"
                                           >
                                         </v-select>
@@ -533,7 +544,7 @@
                                           :items="step6.itemsTypePayment"
                                           label="Tipo de pago"
                                           outlined
-                                          v-model="step6.typePayment"
+                                          v-model="step6.paymentType"
                                           :rules="rules.requireRule"
                                           >
                                       </v-select>
@@ -545,7 +556,7 @@
                                     <div class="col-md-6 py-0">
                                       <v-text-field
                                             type="number"
-                                            v-model="step6.nroOperation"
+                                            v-model="step6.operationNumber"
                                             :rules="rules.requireRule"
                                             label="Número de operación"
                                             required
@@ -564,7 +575,7 @@
                                       >
                                             <template v-slot:activator="{ on }">
                                                 <v-text-field
-                                                    v-model="step6.datePayment"
+                                                    v-model="step6.operationDate"
                                                     :rules="rules.requireRule"
                                                     label="Fecha de operación"
                                                     required
@@ -572,7 +583,7 @@
                                                     v-on="on"
                                                 ></v-text-field>
                                             </template>
-                                            <v-date-picker v-model="step6.datePayment" @input="step6.datePicker = false"></v-date-picker>
+                                            <v-date-picker v-model="step6.operationDate" @input="step6.datePicker = false"></v-date-picker>
                                         </v-menu>
                                     </div>
                                   </v-row>
@@ -582,7 +593,7 @@
                                       <v-file-input v-model="step6.voucher" :rules="rules.requireRule" @change="setUrlVoucher()" required outlined label="Subir voucher"></v-file-input>
                                     </div>
                                     <!-- Solo se mostrará si selecciona transferencia -->
-                                    <div class="col-md-6" v-if="step6.typePayment === 'transferencia'">
+                                    <div class="col-md-6" v-if="step6.paymentType === 2">
                                       <v-text-field
                                             v-model="step6.bank"
                                             label="Banco"
@@ -600,7 +611,7 @@
                                         <v-btn
                                             type="button"
                                             color="red darken-2 white--text"
-                                            @click="e1 = e1 - 1"
+                                            @click="stepCurrent = stepCurrent - 1"
                                         >
                                             Anterior
                                         </v-btn>
@@ -629,14 +640,14 @@
                                             <div class="col-md-6">
                                                 <p>
                                                     <span class="text-muted mr-3">Tipo de documento:</span>
-                                                    <span>{{ step1.typeDocument }}</span>
+                                                    <span>{{ setNameTypeDocument }}</span>
                                                 </p>
                                             </div>
 
                                             <div class="col-md-6">
                                                 <p>
                                                     <span class="text-muted mr-3">Número de documento:</span>
-                                                    <span>{{ step1.typeDocumentField }}</span>
+                                                    <span>{{ step1.documentNumber }}</span>
                                                 </p>
                                             </div>
                                         </div>
@@ -659,14 +670,14 @@
                                             <div class="col-md-4">
                                                 <p>
                                                     <span class="text-muted mr-3">Apellidos:</span>
-                                                    <span>{{ step2.lastname1 }} {{ step2.lastname2 }}</span>
+                                                    <span>{{ step2.lastName }} {{ step2.surname }}</span>
                                                 </p>
                                             </div>
 
                                             <div class="col-md-4">
                                                 <p>
                                                     <span class="text-muted mr-1 mr-md-3">Fecha de nacimiento:</span>
-                                                    <span>{{ step2.date }}</span>
+                                                    <span>{{ step2.birthday }}</span>
                                                 </p>
                                             </div>
                                             
@@ -688,7 +699,7 @@
                                             <div class="col-md-4">
                                                 <p>
                                                     <span class="text-muted mr-3">Email secundario:</span>
-                                                    <span>{{ step3.secondaryEmail }}</span>
+                                                    <span>{{ step3.emailSecundary }}</span>
                                                 </p>
                                             </div>
 
@@ -702,14 +713,14 @@
                                             <div class="col-md-4">
                                                 <p>
                                                     <span class="text-muted mr-3">Teléfono de trabajo:</span>
-                                                    <span>{{ step3.WorkPhone }}</span>
+                                                    <span>{{ step3.phoneSecundary }}</span>
                                                 </p>
                                             </div>
 
                                             <div class="col-md-4">
                                                 <p>
                                                     <span class="text-muted mr-3">Celular:</span>
-                                                    <span>{{ step3.mobile }}</span>
+                                                    <span>{{ step3.cellphone }}</span>
                                                 </p>
                                             </div>
                                         </div>
@@ -724,7 +735,7 @@
                                             <div class="col-md-4">
                                                 <p>
                                                     <span class="text-muted mr-3">Empresa:</span>
-                                                    <span>{{ step4.business }}</span>
+                                                    <span>{{ step4.company }}</span>
                                                 </p>
                                             </div>
                                             <div class="col-md-4">
@@ -762,7 +773,7 @@
                                                 </p>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-12">
                                                     <div class="pl-1">
                                                     <span class="text-muted mr-3">Observaciones:</span>
                                                     <span>{{ step4.observations }}</span>
@@ -780,10 +791,10 @@
                                             <div class="col-md-4">
                                                 <p>
                                                     <span class="text-muted mr-3">Tipo de curso:</span>
-                                                    <span>{{ step5.typeCourse }}</span>
+                                                    <span>{{ setNameTypeCourse }}</span>
                                                 </p>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-8">
                                                     <p>
                                                     <span class="text-muted mr-3">Curso:</span>
                                                     <span>{{ step5.course }}</span>
@@ -794,20 +805,20 @@
                                 </div>
 
                                 <!-- Datos de curso -->
-                                <div class="row justify-content-center mt-5">
+                                <div class="row justify-content-center my-5">
                                     <div class="col-md-10 mb-5">
                                         <h3 class="font-weight-bold lead mb-3">Datos de pago:</h3>
                                         <v-row>
                                             <div class="col-md-4">
                                                 <p>
                                                     <span class="text-muted mr-3">Pago:</span>
-                                                    <span>{{ step6.payment }}</span>
+                                                    <span>{{ setNamePayment }}</span>
                                                 </p>
                                             </div>
                                             <div class="col-md-4">
                                                     <p>
                                                     <span class="text-muted mr-3">Moneda:</span>
-                                                    <span>{{ step6.currency }}</span>
+                                                    <span>{{ step6.coin }}</span>
                                                 </p>
                                             </div>
                                         </v-row>
@@ -821,7 +832,7 @@
                                             <div class="col-md-4">
                                                     <p>
                                                     <span class="text-muted mr-3">Tipo de pago:</span>
-                                                    <span>{{ step6.typePayment }}</span>
+                                                    <span>{{ step6.paymentType }}</span>
                                                 </p>
                                             </div>
                                         </v-row>
@@ -829,13 +840,13 @@
                                             <div class="col-md-4">
                                                 <p>
                                                     <span class="text-muted mr-3">Número de operación:</span>
-                                                    <span>{{ step6.nroOperation }}</span>
+                                                    <span>{{ step6.operationNumber }}</span>
                                                 </p>
                                             </div>
                                             <div class="col-md-4">
                                                     <p>
                                                     <span class="text-muted mr-3">Fecha de operación:</span>
-                                                    <span>{{ step6.datePayment }}</span>
+                                                    <span>{{ step6.operationDate }}</span>
                                                 </p>
                                             </div>
                                         </v-row>
@@ -854,7 +865,7 @@
                                     <v-btn
                                         type="button"
                                         color="red darken-2 white--text"
-                                        @click="e1 = e1 - 1"
+                                        @click="stepCurrent = stepCurrent - 1"
                                     >
                                         Anterior
                                     </v-btn>
@@ -865,7 +876,8 @@
                                         color="red darken-2 white--text"
                                         @click="submit()"
                                     >
-                                        {{ setButtonText }}
+                                        <b-spinner small v-if="loading"></b-spinner>
+                                        <span v-if="!loading">{{ setButtonText }}</span>
                                     </v-btn>
 
                                 </div>
@@ -881,139 +893,127 @@
 </template>
 
 <script>
-import { itemsTypePayment } from '@/utilities/data-selects.js'
+
+// Importa objetos estáticos para el formulario
+import {
+    itemsPayment,
+    itemsTypePayment,
+    itemsTypeDocument,
+    itemsTypeCourse,
+    itemsCoin,
+    getCountries,
+    getCoursesPresenciales,
+    getCoursesOnline} from '@/utilities/data-selects.js'
+
+// Importa las reglas para cada item del form
 import { rules } from '@/utilities/rules.js'
 
-import countries from '@/assets/countries.json'
-import coursesPresenciales from '@/assets/courses.json'
-import coursesOnline from '@/assets/courses-online.json'
+import { mapState } from 'vuex'
 
 export default {
     data() {
         return {
-            e1: 6,
+            stepCurrent: 1,
             steps: 7,
-            valid: true,
+            valid: true, // Indica si el form debe validarse
             rules,
+            // Datos para cada paso
             step1: {
-                value: true,
-                current: true,
-                disabled: false,
-                completed: false,
-                id: 6,
-                itemsTypeDocument: [{value: null, text: 'Tipo de documento'}, {value: 'DNI', text: 'DNI'}, {value: 'PASAPORTE', text: 'PASAPORTE'}, {value: 'CE', text: 'C.E.'}],
-                typeDocument: 'DNI',
-                typeDocumentField: '71397374',
-                selectTypeDocument: 'DNI',
-                status: ''
+                itemsTypeDocument,
+                documentType: 1,
+                documentNumber: ''
             },
             step2: {
-                value: false,
-                current: false,
-                disabled: true,
-                completed: false,
-                name: 'E',
-                lastname1: 'H',
-                lastname2: 'H',
-                datePicker: false,
-                date: '2020-03-16',
+                name: '',
+                lastName: '',
+                surname: '',
+                datePicker: false, // Muestro u oculta el datepicker
+                birthday: '',
             },
             step3: {
-                value: false,
-                current: false,
-                disabled: true,
-                completed: false,
-                email: 'e@test.com',
-                secondaryEmail: 'e2@test.com',
-                phone: '1',
-                WorkPhone: '1',
-                mobile: '1'
+                email: '',
+                emailSecundary: '',
+                phone: '',
+                phoneSecundary: '',
+                cellphone: ''
             },
             step4: {
-                value: false,
-                current: false,
-                disabled: true,
-                completed: false,
-                business: 'E',
-                position: 'E',
-                address: 'e',
-                itemsCountry: this.getCountries(),
-                city: 'E',
-                province: 'E',
-                country: 'E',
+                company: '',
+                position: '',
+                address: '',
+                itemsCountry: getCountries(),
+                city: '',
+                province: '',
+                country: '',
                 observations: ''
             },
             step5: {
-                value: false,
-                current: false,
-                disabled: true,
-                itemsTypeCourse: [{value: null, text: 'Tipo de curso'}, {value: 1, text: 'Virtual'}, {value: 2, text: 'Presencial'}],
-                itemsCoursesPresenciales: this.getCoursesPresenciales(),
-                itemsCoursesOnline: this.getCoursesOnline(),
+                itemsTypeCourse,
+                itemsCoursesPresenciales: getCoursesPresenciales(),
+                itemsCoursesOnline: getCoursesOnline(),
                 typeCourse: 1,
-                course: 'E'
+                course: ''
             },
             step6: {
-              itemsPayment: [{value: null, text: 'Pago'}, {value: 1, text: 'TOTAL'}, {value: 2, text: 'CUOTAS'}],
-              payment: '',
-              itemsCurrency: [{value: null, text: 'Moneda'}, {value: 'Soles', text: 'Soles'}, {value: 'Dólares', text: 'Dólares'}],
-              currency: '',
-              amount: '2',
+              itemsPayment,
+              payment: 1,
+              itemsCoin,
+              coin: '',
+              amount: '',
               itemsTypePayment,
-              typePayment: 'total',
-              nroOperation: '2',
-              datePayment: '2020-03-16',
+              paymentType: 1,
+              operationNumber: '',
+              operationDate: '',
               datePicker: false,
-              voucher: {},
+              voucher: '',
               bank: ''
             },
             step7: {
-              value: false,
-              current: false,
-              disabled: true,
               urlVoucher: ''
             },
-            errorList: {
-              name: false,
-              lastname1: false,
-              email: false,
-              secondaryEmail: false,
-              phone: false,
-              address: false,
-              city: false,
-              province: false,
-              typeCourse: false,
-              course: false,
-            }
         }
     },
     computed: {
+        ...mapState(['loading']),
       setSubtitle: function() {
         // Muestra un subtítulo distinto según el paso en el que se encuentre el usuario 
         let subtitle = ''
 
-        if(this.e1 === 1) {
-          subtitle = 'Identificación'
-        } else if(this.e1 === 2) {
-          subtitle = 'Datos personales'
-        } else if(this.e1 === 3) {
-          subtitle = 'Datos de contacto'
-        } else if(this.e1 === 4) {
-          subtitle = 'Datos de ubicación'
-        } else if(this.e1 === 5) {
-          subtitle = 'Datos de curso'
-        } else if(this.e1 === 6) {
-          subtitle = 'Datos de pago'
-        } else if(this.e1 === 7) {
-          subtitle = 'Verificación de datos'
+        switch (this.stepCurrent) {
+            case 1:
+                subtitle = 'Identificación'
+                break;
+            case 2:
+                subtitle = 'Datos personales'
+                break;
+            case 3:
+                subtitle = 'Datos de contacto'
+                break
+            case 4:
+                subtitle = 'Datos de ubicación'
+                break;
+            case 5:
+                subtitle = 'Datos de curso'
+                break;
+            case 6:
+                subtitle = 'Datos de pago'
+                break;
+            case 7:
+                subtitle = 'Verificación de datos'
+                break;
+            default:
+                subtitle = 'Formulario de registro'
+                break;
         }
+
         return subtitle
+        
       },
       setButtonText: function() {
         // Muestra el texto 'Registrarme' solo si el usuario se encuentra en el paso 7
         let text = 'Siguiente'
 
-        if(this.e1 === 7) {
+        if(this.stepCurrent === 7) {
           text = 'Registrarme'
         }
 
@@ -1023,124 +1023,118 @@ export default {
         // Clase para aumentar las columnas en el último paso
         let cols = 8
 
-        if(this.e1 === 7) {
+        if(this.stepCurrent === 7) {
           cols = 12
         }
 
         return `col-lg-${cols}`
+      },
+      setNameTypeDocument: function() {
+        // Esta función devuelve un nombre para no mostrar 1, 2 ó 3 en el paso 7
+        let name = ''
+
+        if(this.step1.documentType === 1) {
+            name = 'DNI'
+        } else if(this.step1.documentType === 2) {
+            name = 'Pasaporte'
+        } else if(this.step1.documentType === 3) {
+            name = 'Carnet de extranjería'
+        }
+
+        return name
+      },
+      setNameTypeCourse: function() {
+        let name = ''
+        
+        if(this.step5.typeCourse === 1) {
+            name = 'Virtual'
+        } else if(this.step1.documentType === 2) {
+            name = 'Presencial'
+        }
+
+        return name
+      },
+      setNamePayment: function() {
+          let name = ''
+
+          if(this.step6.payment === 1) {
+                name = 'TOTAL'
+          } else if(this.step6.payment === 2) {
+            name = 'CUOTAS'
+          }
+
+          return name
       }
     },
     methods: {
-        nextStep (n) {
+      nextStep (n) {
         if (n === this.steps) {
-          this.e1 = 1
+          this.stepCurrent = 1
         } else {
-          this.e1 = n + 1
+          this.stepCurrent = n + 1
         }
-      },
-      changeInputDocument() {
-        this.step1.typeDocumentField = ''
-      
-        if(this.step1.typeDocument === 'DNI') {
-          this.step1.selectTypeDocument = 'DNI'
-        } else if(this.step1.typeDocument === 'PASAPORTE') {
-          this.step1.selectTypeDocument = 'PT'
-        } else if(this.step1.typeDocument === 'CE') {
-          this.step1.selectTypeDocument = 'CE'
-        }
-      },
-      getCountries() {
-        let newCountries = []
-
-        countries.forEach(country => {
-
-          // Agregamos nuevos valores para que sean reconocidos por el v-select
-          country.value = country.nombre
-          country.text = country.nombre
-
-          newCountries.push(country)
-        })
-
-        return newCountries
-      },
-      getCoursesPresenciales() {
-        let newCourses = []
-
-        coursesPresenciales.forEach(course => {
-
-            // Agregamos nuevos valores para que sean reconocidos por el v-select
-            course.value = course.descripcion
-            course.text = course.descripcion
-
-            newCourses.push(course)
-        })
-        return newCourses
-      },
-      getCoursesOnline() {
-        let newCourses = []
-
-        coursesOnline.forEach(course => {
-
-            // Agregamos nuevos valores para que sean reconocidos por el v-select
-            course.value = course.descripcion
-            course.text = course.descripcion
-
-            newCourses.push(course)
-        })
-        return newCourses
       },
       setUrlVoucher: function() {
+        // Esta función crea una URL para poder mostrar el voucher
         this.step7.urlVoucher = URL.createObjectURL(this.step6.voucher)
       },
       submit(n) {
-          if(this.e1 === 1 && this.$refs.form1[0].validate()) {
+
+          // Aquí verificamos los datos antes de crear el objero usuario y enviarlo a la Api
+          if(this.stepCurrent === 1 && this.$refs.form1[0].validate()) {
+            this.nextStep(n)
+            // Vacía array de errores (Importante o dará error)
+            this.$refs.form2[0].resetValidation()
+          } else if(this.stepCurrent === 2 && this.$refs.form2[0].validate()) {
+            // Si el usuario se encuentra en el paso 2 y el paso 2 está validado
+            this.nextStep(n)
+          } else if(this.stepCurrent === 3 && this.$refs.form3[0].validate()) {
                 this.nextStep(n)
-                // Vacía array de errores
-                this.$refs.form2[0].resetValidation()
-          } else if(this.e1 === 2 && this.$refs.form2[0].validate()) {
+          } else if(this.stepCurrent === 4 && this.$refs.form4[0].validate()) {
                 this.nextStep(n)
-          } else if(this.e1 === 3 && this.$refs.form3[0].validate()) {
+          } else if(this.stepCurrent === 5 && this.$refs.form5[0].validate()) {
                 this.nextStep(n)
-          } else if(this.e1 === 4 && this.$refs.form4[0].validate()) {
-                this.nextStep(n)
-          } else if(this.e1 === 5 && this.$refs.form5[0].validate()) {
-                this.nextStep(n)
-          } else if(this.e1 === 6 && this.$refs.form6[0].validate()) {
+          } else if(this.stepCurrent === 6 && this.$refs.form6[0].validate()) {
               this.nextStep(n)
-          } else if(this.e1 === 7) {
+          } else if(this.stepCurrent === 7) {
               // Registramos al usuario
               this.registerUser()
           }
+
       },
         registerUser() {
+            // Creamos un nuevo usuario con los campos que necesita el backend y le asignamos el valor de cada step en la instancia
             let user = {}
 
             // Paso 1
-            user.documentType = this.step1.typeDocument
-            user.documentNumber = parseInt(this.step1.typeDocumentField)
-            // user.status = 'Pendiente'
+            user.documentType = this.step1.documentType
+
+            // Pasamos los valores a Integer porque en la instancia es String
+            user.documentNumber = parseInt(this.step1.documentNumber)
 
             // Paso 2
             user.name = this.step2.name
-            user.lastName = this.step2.lastname1
-            user.surname = this.step2.lastname2
-            user.birthday = this.step2.date
+            user.lastName = this.step2.lastName
+            user.surname = this.step2.surname
+            user.birthday = this.step2.birthday
 
             // Paso 3
             user.email = this.step3.email
-            user.emailSecundary = this.step3.secondaryEmail
+            user.emailSecundary = this.step3.emailSecundary
+
+            // Pasamos los valores a Integer porque en la instancia es String
             user.phone = parseInt(this.step3.phone)
-            user.phoneSecundary = parseInt(this.step3.WorkPhone)
-            user.cellphone = parseInt(this.step3.mobile)
+            user.phoneSecundary = parseInt(this.step3.phoneSecundary)
+            user.cellphone = parseInt(this.step3.cellphone)
 
             // Paso 4
-            user.company = this.step4.business
+            user.company = this.step4.company
             user.position = this.step4.position
             user.address = this.step4.address
             user.city = this.step4.city
             user.province = this.step4.province
             user.country = this.step4.country
-            // user.observations = this.step4.observations
+            user.observations = this.step4.observations
 
             // Paso 5
             user.typeCourse = this.step5.typeCourse
@@ -1148,17 +1142,18 @@ export default {
 
             // Paso 6
             user.payment = this.step6.payment
-            user.coin = this.step6.currency
+            user.coin = this.step6.coin
             user.amount = this.step6.amount
-            user.paymentType = this.step6.typePayment
-            user.operationNumber = parseInt(this.step6.nroOperation)
-            user.operationDate = this.step6.datePayment
+            user.paymentType = this.step6.paymentType
+            user.operationNumber = parseInt(this.step6.operationNumber)
+            user.operationDate = this.step6.operationDate
             user.voucher = this.step6.voucher
             user.bank = this.step6.bank
 
+            // Creamos FormData para que la Api pueda recibir los datos
             let formData = new FormData()
 
-            // Convierte el objeto user en un formData
+            // Convierte el objeto user en un formData y se le agrega al que se creó anteriormente
             Object.keys(user).forEach(key => formData.append(key, user[key]));
 
             if(this.step6.voucher) {
@@ -1166,11 +1161,8 @@ export default {
                 formData.append("voucher", this.step6.voucher, this.step6.voucher.name);
             }
 
-            // Vuex
+            // Vuex - Aquí es donde hará el registro a la Api
             this.$store.dispatch('register', formData)
-
-            // Redirigimos al usuario
-            // this.$router.push({name: 'Registered'})
       }
     },
 }

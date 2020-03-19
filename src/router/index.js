@@ -6,7 +6,7 @@ import Login from '../views/Login.vue'
 import Dashboard from '../views/Dashboard.vue'
 import User from '../views/User.vue'
 
-import store from '@/store/index.js'
+import { store } from '@/store/index.js'
 
 Vue.use(VueRouter)
 
@@ -37,7 +37,11 @@ const routes = [
   {
     path: '/dashboard/users/:id',
     name: 'User',
-    component: User
+    component: User,
+    meta: {
+      requiresAuth: true,
+      requireAdmin: true
+    }
   }
 ]
 
@@ -48,10 +52,30 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const requiresAuth = to.matched.some(x => x.meta.requiresAuth)
-  const currentUser = store.state.currentUser.status
+  const requiresAuth = to.matched.some(x => x.meta.requiresAuth),
+  requireAdmin = to.matched.some(x => x.meta.requireAdmin),
+  currentUser = store.state.currentUser.status,
+  admin = store.state.userType ? true : false
 
   if (requiresAuth && !currentUser) {
+    next('/login')
+  } else if(requiresAuth && currentUser && requireAdmin && !admin) {
+    next('/dashboard')
+  } else if(requiresAuth && currentUser.userType == 1 && requireAdmin && admin) {
+    next()
+  } else if(to.path === '/' && currentUser || to.path === '/login' && currentUser) {
+    next('/dashboard')
+  } else {
+    next()
+  }
+
+  
+
+  
+
+  
+
+  /* if (requiresAuth && !currentUser) {
       next('/login')
   } else if (requiresAuth && currentUser) {
       next()
@@ -62,7 +86,7 @@ router.beforeEach((to, from, next) => {
   }
   else {
       next()
-  }
+  } */
 })
 
 export default router

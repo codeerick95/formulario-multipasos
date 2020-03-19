@@ -1,179 +1,27 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import axios from 'axios'
 import router from '@/router/index.js'
+
+import axios from 'axios'
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+
+
+export const store = new Vuex.Store({
   state: {
     currentUser: {
       status: localStorage.getItem('access_token') ? true : false,
       data: {}
     },
     token: localStorage.getItem('access_token') || null,
-    users: [
-      {
-        id: 1,
-        status: 'Revisando',
-        typeDocument: 'DNI',
-        typeDocumentField: '71397374',
-        name: 'Erick',
-        lastname1: 'H',
-        lastname2: 'L',
-        date: '1995-09-12',
-        email: 'erick@test.com',
-        secondaryEmail: 'erick2@test.com',
-        phone: '1234567',
-        WorkPhone: '1234567',
-        mobile: '981647313',
-        business: 'Estudio Z',
-        position: 'Programador',
-        address: 'Sagrada Familia',
-        city: 'Lima',
-        province: 'Lima',
-        country: 'Perú',
-        observations: 'Observación',
-        typeCourse: 'Presencial',
-        course: 'CP010 - Preparación y Certificación SCRUM PRODUCT OWNER',
-        payment: 'Total',
-        currency: 'Dólares',
-        amount: 1000,
-        typePayment: 'transferencia',
-        nroOperation: 1,
-        datePayment: '1995-09-12',
-        voucher: 'https://solucionestpv.mx/wp-content/uploads/2018/11/ticket-santander.jpg',
-        bank: 'BCP'
-      },
-      {
-        id: 2,
-        status: 'Pendiente',
-        typeDocument: 'DNI',
-        typeDocumentField: '47874578',
-        name: 'User 1',
-        lastname1: 'last1',
-        lastname2: 'last2',
-        date: '1995-09-12',
-        email: 'user1@test.com',
-        secondaryEmail: 'user1@test.com',
-        phone: '44551144',
-        WorkPhone: '7555544',
-        mobile: '981647315',
-        business: 'Google',
-        position: 'Programador',
-        address: 'Address',
-        city: 'Lima',
-        province: 'Lima',
-        country: 'Perú',
-        observations: 'Observación',
-        typeCourse: 'Virtual',
-        course: 'CV010 - Digital Marketing Professional Certificate (DMPC)',
-        payment: 'Total',
-        currency: 'Dólares',
-        amount: 1000,
-        typePayment: 'transferencia',
-        nroOperation: 1,
-        datePayment: '1995-09-12',
-        voucher: 'https://solucionestpv.mx/wp-content/uploads/2018/11/ticket-santander.jpg',
-        bank: 'BCP'
-      },
-      {
-        id: 3,
-        status: 'Pendiente',
-        typeDocument: 'DNI',
-        typeDocumentField: '47874578',
-        name: 'User 2',
-        lastname1: 'last1',
-        lastname2: 'last2',
-        date: '1995-09-12',
-        email: 'user2@test.com',
-        secondaryEmail: 'user2@test.com',
-        phone: '7456547',
-        WorkPhone: '7444578',
-        mobile: '981647317',
-        business: 'Facebook',
-        position: 'Ingeniero',
-        address: 'Address',
-        city: 'Lima',
-        province: 'Lima',
-        country: 'Perú',
-        observations: 'Observación',
-        typeCourse: 'Presencial',
-        course: 'CP010 - Preparación y Certificación SCRUM PRODUCT OWNER',
-        payment: 'Total',
-        currency: 'Dólares',
-        amount: 1000,
-        typePayment: 'transferencia',
-        nroOperation: 1,
-        datePayment: '1995-09-12',
-        voucher: 'https://solucionestpv.mx/wp-content/uploads/2018/11/ticket-santander.jpg',
-        bank: 'BCP'
-      },
-      {
-        id: 4,
-        status: 'Pendiente',
-        typeDocument: 'DNI',
-        typeDocumentField: '47874578',
-        name: 'User 3',
-        lastname1: 'last1',
-        lastname2: 'last2',
-        date: '1995-09-12',
-        email: 'user3@test.com',
-        secondaryEmail: 'user3@test.com',
-        phone: '1144778',
-        WorkPhone: '1148784',
-        mobile: '981647319',
-        business: 'La agencia',
-        position: 'Administrador',
-        address: 'Address',
-        city: 'Lima',
-        province: 'Lima',
-        country: 'Perú',
-        observations: 'Observación',
-        typeCourse: 'Presencial',
-        course: 'CP010 - Preparación y Certificación SCRUM PRODUCT OWNER',
-        payment: 'Total',
-        currency: 'Dólares',
-        amount: 1000,
-        typePayment: 'transferencia',
-        nroOperation: 1,
-        datePayment: '1995-09-12',
-        voucher: 'https://solucionestpv.mx/wp-content/uploads/2018/11/ticket-santander.jpg',
-        bank: 'BCP'
-      },
-      {
-        id: 5,
-        status: 'Pendiente',
-        typeDocument: 'DNI',
-        typeDocumentField: '47874578',
-        name: 'User 4',
-        lastname1: 'last1',
-        lastname2: 'last2',
-        date: '1995-09-12',
-        email: 'user4@test.com',
-        secondaryEmail: 'user4@test.com',
-        phone: '7498747',
-        WorkPhone: '1457877',
-        mobile: '987478747',
-        business: 'Gobierno del Perú',
-        position: 'Diseñador',
-        address: 'Address',
-        city: 'Lima',
-        province: 'Lima',
-        country: 'Perú',
-        observations: 'Observación',
-        typeCourse: 'Presencial',
-        course: 'CP010 - Preparación y Certificación SCRUM PRODUCT OWNER',
-        payment: 'Total',
-        currency: 'Dólares',
-        amount: 1000,
-        typePayment: 'transferencia',
-        nroOperation: 1,
-        datePayment: '1995-09-12',
-        voucher: 'https://solucionestpv.mx/wp-content/uploads/2018/11/ticket-santander.jpg',
-        bank: 'BCP'
-      }
-    ]
+    userId: localStorage.getItem('userId') || null,
+    userType: localStorage.getItem('userType') || null,
+    nameAdmin: localStorage.getItem('nameAdmin') || null,
+    users: [],
+    loading: false,
+    formError: ''
   },
   mutations: {
     createUser(state, user) {
@@ -185,49 +33,128 @@ export default new Vuex.Store({
     setUser(state, data) {
       state.currentUser.status = data.status
       state.currentUser.data = data.dataUser
+      state.userType = data.userType
+      
+      // Verificamos si la respuesta viene con una clave users para guardarlos en el state
+      if(data.users) {
+        state.users = data.users
+      }
+
+      if(data.nameAdmin) {
+        state.nameAdmin = data.nameAdmin
+      }
+    },
+    setLoading(state, status) {
+      state.loading = status
+    },
+    setErrorFormMessage(state, message) {
+      state.formError = message
+    },
+    clearData(state) {
+      state.currentUser.status = false
+      state.currentUser.data = {}
     }
   },
   actions: {
     register(state, formData) {
+      console.log(formData)
+      // Limpiamos el error anterior
+      state.commit('setErrorFormMessage', '')
+
+      // Mostramos el botón cargando
+      state.commit('setLoading', true)
+
       const options = {
         method: 'POST',
         headers: { 'content-type': 'application/x-www-form-urlencoded' },
         data: formData,
         url: 'http://174.138.39.59/form-api/api/v1/users/signup',
       };
+
+      // Petición de registro
       axios(options).then(res => {
-        console.log(res)
         if(res.statusText === 'Created'){
+          console.log(res)
+          // Muestra el loading
+          state.commit('setLoading', false)
+
+          // Redirección final
           router.push('/registered')
         }
       }).catch(error => {
         console.log(error)
+        // Cambiamos el valor del loading a false
+        state.commit('setLoading', false)
       })
+
     },
     login(state, credentials) {
+
+      // Limpiamos el error anterior
+      state.commit('setErrorFormMessage', '')
+
+      // Mostramos el botón cargando
+      state.commit('setLoading', true)
+
+      // Petición login
       axios.post('http://174.138.39.59/form-api/api/v1/users/signin', {
         email: credentials.email,
         password: credentials.password
       })
         .then(function (response) {
+          console.log(response)
           // let user = {}
-          let token = '',
-          data = {
-            status: true,
-            dataUser: response.data.user
-          }
+          let token = ''
+          let data = {}
 
           if (response.statusText === 'OK') {
+
+            if(response.data.admin) {
+              
+              let dataAdmin = {
+                status: true,
+                dataUser: response.data.admin,
+                users: response.data.users,
+              }
+
+              data = dataAdmin
+
+            } else {
+              data = {
+                status: true,
+                dataUser: response.data
+              }
+            }
+
             // user = response.data.user
             token = response.data.token
 
+            // Guarda el access_token en localStorage
             localStorage.setItem('access_token', token)
 
+            if(response.data.admin) {
+              localStorage.setItem('userId', data.dataUser.iduser)
+              // Aquí asignamos el valor que viene en la api como tipo de usuario como referencia para posteriores condiciones
+              localStorage.setItem('userType', data.dataUser.type)
+              data.userType = data.dataUser.type
+
+              // Guardamos el nombre del admin
+              localStorage.setItem('nameAdmin', data.dataUser.name)
+              data.nameAdmin = data.dataUser.name
+            } else {
+              localStorage.setItem('userId', data.dataUser.user.iduser)
+
+              // Aquí asignamos 2 como tipo de usuario como referencia para posteriores condiciones
+              localStorage.setItem('userType', 2)
+              data.userType = 2
+            }
+            
             // Add the following line:
             axios.defaults.headers.common['Authorization'] = token
 
             state.commit('setToken', token)
             state.commit('setUser', data)
+            state.commit('setLoading', false)
 
             router.push('/dashboard')
           }
@@ -235,17 +162,35 @@ export default new Vuex.Store({
           // this.$router.push({name: 'Dashboard'})
         })
         .catch(function (error) {
-          console.log(error);
+
+          // Cambiamos el valor del loading a false
+          state.commit('setLoading', false)
+
+          // Agregamos el error de login
+          let errorMessage = ''
+
+          if(error.message === 'Request failed with status code 409') {
+            errorMessage = 'Correo electrónico o contraseña incorrecto'
+            state.commit('setErrorFormMessage', errorMessage)
+          }
+          
         });
     },
-    logout({state}) {
+    logout(state) {
       return new Promise((resolve) => {
           localStorage.removeItem('access_token')
+          localStorage.removeItem('userId')
+          localStorage.removeItem('userType')
+          localStorage.removeItem('nameAdmin')
 
           // remove the axios default header
-          delete axios.defaults.headers.common['Authorization']
+          // delete axios.defaults.headers.common['Authorization']
 
-          state.currentUser.status = false
+          state.commit('clearData')
+          
+          state.commit('setLoading', false)
+
+          router.push('/login')
 
           resolve()
       })
@@ -254,3 +199,25 @@ export default new Vuex.Store({
   modules: {
   }
 })
+
+// Recuperamos datos cuando el usuario recargue la página
+/* if(store.state.userId) {
+  console.log('Existe usuario')
+
+  let userId = store.state.userId,
+  url = `http://174.138.39.59/form-api/api/v1/users/${userId}`
+
+  const config = {
+      headers: { Authorization: `Bearer ${store.state.token}` }
+  };
+
+  axios.get(url, config)
+  .then(res => {
+    console.log(res)
+  }).catch(error => {
+    console.log(error)
+  })
+
+} else {
+  console.log('No existe usuario')
+} */

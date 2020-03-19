@@ -28,12 +28,26 @@
                             @click:append="showPassword = !showPassword"
                         ></v-text-field>
                     </div>
-                    <v-card-actions class="bg-dark d-flex justify-content-between mt-5">
+
+                    <!-- Mensaje de error -->
+                    <div class="text-center text-danger" v-if="formError">
+                        <p>{{ formError }}</p>
+                    </div>
+
+                    <!-- Botón enviar -->
+                    <v-card-actions class="bg-dark d-flex justify-content-between mt-5 px-3">
+                        
                         <router-link :to="{name: 'Home'}" class="text-white">Quiero registrarme</router-link>
+
                         <v-btn type="submit" color="red darken-2 white--text">
-                            Ingresar
+                            <!-- Spinner -->
+                            <b-spinner small v-if="loading"></b-spinner>
+
+                            <span v-if="!loading">Ingresar</span>
                         </v-btn>
+
                     </v-card-actions>
+
                 </v-form>
             </v-card>
         </div>  
@@ -42,7 +56,7 @@
 </template>
 
 <script>
-
+import { mapState } from 'vuex'
 
 export default {
     data() {
@@ -74,6 +88,9 @@ export default {
             }
         }
     },
+    computed: {
+        ...mapState(['loading', 'formError'])
+    }
 }
 </script>
 

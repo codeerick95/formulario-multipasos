@@ -1,11 +1,22 @@
 <template>
     <div class="container mt-3">
-        <div class="row justify-content-center">
+        <div class="row justify-content-center text-center" v-if="alert">
+            <div class="col-md-6">
+                <v-alert color="blue" type="info" outlined dismissible icon>
+                    Los datos del usuario se actualizaron con éxito
+                </v-alert>
+            </div>
+        </div>
+        <loader v-if="loading"></loader>
+        <div class="row justify-content-center" v-else>
             <div class="col-md-6">
 
                 <div class="card">
                     <div class="card-body">
-                        <h2 class="title m-0 text-center">Datos de usuario: #{{ user.id }}</h2>
+                        <h2 class="title m-0 text-center">Datos de usuario: #{{ this.$route.params.id }}</h2>
+                        <!-- <pre v-else>
+                            {{ $data }}
+                        </pre> -->
                     </div>
                 </div>
                 
@@ -31,9 +42,9 @@
                                                 :items="step1.itemsTypeDocument"
                                                 label="Tipo de documento"
                                                 outlined
-                                                v-model="step1.typeDocument"
+                                                v-model="step1.document_type"
                                                 ref="selectTypeDocument"
-                                                disabled
+                                                :disabled="identificationState"
                                                 >
                                                 </v-select>
                                             </div>
@@ -44,33 +55,33 @@
                                             <!-- Campo  DNI -->
                                             <v-text-field
                                             type="number"
-                                            v-model="step1.typeDocumentField"
+                                            v-model="step1.document_number"
                                             label="DNI"
                                             required
                                             outlined
-                                            disabled
+                                            :disabled="identificationState"
                                             v-if="step1.selectTypeDocument === 'DNI' "
                                             ></v-text-field>
 
                                             <!-- Campo Pasaporte -->
                                             <v-text-field
                                             type="number"
-                                            v-model="step1.typeDocumentField"
+                                            v-model="step1.document_number"
                                             label="Pasaporte"
                                             required
                                             outlined
-                                            disabled
+                                            :disabled="identificationState"
                                             v-if="step1.selectTypeDocument === 'PASAPORTE' "
                                             ></v-text-field>
 
                                             <!-- Campo  CE -->
                                             <v-text-field
                                             type="number"
-                                            v-model="step1.typeDocumentField"
+                                            v-model="step1.document_number"
                                             label="Carnet de extranjería"
                                             required
                                             outlined
-                                            disabled
+                                            :disabled="identificationState"
                                             v-if="step1.selectTypeDocument === 'CE' "
                                             ></v-text-field>
                                         </div>
@@ -82,7 +93,7 @@
                                                 :items="itemsStatus"
                                                 label="Estado"
                                                 outlined
-                                                v-model="step1.status"
+                                                v-model="step1.identification_state"
                                                 ref="selectTypeDocument"
                                                 :rules="rules.requireRule"
                                                 required
@@ -109,17 +120,17 @@
                                                 label="Nombre"
                                                 required
                                                 outlined
-                                                disabled
+                                                :disabled="personalDataState"
                                             ></v-text-field>
                                         </div>
 
                                         <div class="col-md-6 py-0">
                                             <v-text-field
-                                                    v-model="step2.lastname1"
+                                                    v-model="step2.last_name"
                                                     label="Apellido paterno"
                                                     required
                                                     outlined
-                                                    disabled
+                                                    :disabled="personalDataState"
                                             ></v-text-field>
                                         </div>
 
@@ -129,11 +140,11 @@
 
                                         <div class="col-md-6 py-0">
                                             <v-text-field
-                                                v-model="step2.lastname2"
+                                                v-model="step2.surname"
                                                 label="Apellido materno"
                                                 required
                                                 outlined
-                                                disabled
+                                                :disabled="personalDataState"
                                             ></v-text-field>
                                         </div>
 
@@ -148,15 +159,15 @@
                                             >
                                                 <template v-slot:activator="{ on }">
                                                     <v-text-field
-                                                        v-model="step2.date"
+                                                        v-model="step2.birthday"
                                                         label="Fecha de nacimiento"
                                                         required
                                                         outlined
-                                                        disabled
+                                                        :disabled="personalDataState"
                                                         v-on="on"
                                                     ></v-text-field>
                                                 </template>
-                                                <v-date-picker v-model="step2.date" @input="step2.datePicker = false"></v-date-picker>
+                                                <v-date-picker v-model="step2.birthday" @input="step2.datePicker = false"></v-date-picker>
                                             </v-menu>
                                         </div>
 
@@ -168,7 +179,7 @@
                                                 :items="itemsStatus"
                                                 label="Estado"
                                                 outlined
-                                                v-model="step1.status"
+                                                v-model="step2.personal_data_state"
                                                 ref="selectTypeDocument"
                                                 :rules="rules.requireRule"
                                                 required
@@ -180,6 +191,7 @@
                             </b-collapse>
                         </b-card>
 
+                        <!-- Datos de contacto -->
                         <b-card no-body class="mb-1">
                             <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
                                 <a href="#" v-b-toggle.accordion-3 class="btn-link text-dark lead font-weight-bold">Datos de contacto</a>
@@ -190,21 +202,21 @@
 
                                         <div class="col-md-6">
                                             <v-text-field
-                                                v-model="step3.email"
+                                                v-model="step3.email_principal"
                                                 label="Email principal"
                                                 outlined
                                                 required
-                                                disabled
+                                                :disabled="contactDataState"
                                             ></v-text-field>
                                         </div>
 
                                         <div class="col-md-6">
                                             <v-text-field
-                                                v-model="step3.secondaryEmail"
+                                                v-model="step3.email_secundary"
                                                 label="Email secundario"
                                                 outlined
                                                 required
-                                                disabled
+                                                :disabled="contactDataState"
                                             ></v-text-field>
                                         </div>
    
@@ -215,22 +227,22 @@
                                         <div class="col-md-6">
                                             <v-text-field
                                                 type="number"
-                                                v-model="step3.phone"
+                                                v-model="step3.phone_principal"
                                                 label="Teléfono principal"
                                                 required
                                                 outlined
-                                                disabled
+                                                :disabled="contactDataState"
                                             ></v-text-field>
                                         </div>
 
                                         <div class="col-md-6">
                                             <v-text-field
                                                 type="number"
-                                                v-model="step3.WorkPhone"
+                                                v-model="step3.phone_secundary"
                                                 label="Teléfono de trabajo"
                                                 required
                                                 outlined
-                                                disabled
+                                                :disabled="contactDataState"
                                             ></v-text-field>
                                         </div>
 
@@ -241,11 +253,11 @@
                                         <div class="col-md-6">
                                             <v-text-field
                                                 type="number"
-                                                v-model="step3.mobile"
+                                                v-model="step3.cellphone"
                                                 label="Celular"
                                                 required
                                                 outlined
-                                                disabled
+                                                :disabled="contactDataState"
                                             ></v-text-field>
                                         </div>
 
@@ -256,7 +268,7 @@
                                                 :items="itemsStatus"
                                                 label="Estado"
                                                 outlined
-                                                v-model="step1.status"
+                                                v-model="step3.contact_data_state"
                                                 ref="selectTypeDocument"
                                                 :rules="rules.requireRule"
                                                 required
@@ -267,7 +279,8 @@
                                 </b-card-body>
                             </b-collapse>
                         </b-card>
-
+                        
+                        <!-- Datos de ubicación -->
                         <b-card no-body class="mb-1">
                             <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
                                 <a href="#" v-b-toggle.accordion-4 class="btn-link text-dark lead font-weight-bold">Datos de ubicación</a>
@@ -278,11 +291,11 @@
 
                                     <div class="col-md-6">
                                         <v-text-field
-                                            v-model="step4.business"
+                                            v-model="step4.company"
                                             label="Empresa"
                                             required
                                             outlined
-                                            disabled
+                                            :disabled="locationDataState"
                                         ></v-text-field>
                                     </div>
 
@@ -292,7 +305,7 @@
                                                 label="Cargo"
                                                 required
                                                 outlined
-                                                disabled
+                                                :disabled="locationDataState"
                                         ></v-text-field>
                                     </div>
 
@@ -306,7 +319,7 @@
                                             label="Dirección"
                                             required
                                             outlined
-                                            disabled
+                                            :disabled="locationDataState"
                                         ></v-text-field>
                                     </div>
 
@@ -316,7 +329,7 @@
                                             label="Ciudad"
                                             required
                                             outlined
-                                            disabled
+                                            :disabled="locationDataState"
                                         ></v-text-field>
                                     </div>
 
@@ -330,7 +343,7 @@
                                             label="Provincia"
                                             required
                                             outlined
-                                            disabled
+                                            :disabled="locationDataState"
                                         ></v-text-field>
                                     </div>
 
@@ -340,7 +353,7 @@
                                             label="País"
                                             outlined
                                             v-model="step4.country"
-                                            disabled
+                                            :disabled="locationDataState"
                                             >
                                         </v-select>
                                     </div>
@@ -351,11 +364,11 @@
 
                                     <div class="col">
                                         <v-textarea
-                                            v-model="step4.observations"
+                                            v-model="step4.observation"
                                             outlined
                                             name="input-7-4"
                                             label="Observaciones"
-                                            disabled
+                                            :disabled="locationDataState"
                                         ></v-textarea>
                                     </div>
 
@@ -367,7 +380,7 @@
                                             :items="itemsStatus"
                                             label="Estado"
                                             outlined
-                                            v-model="step1.status"
+                                            v-model="step4.location_data_state"
                                             ref="selectTypeDocument"
                                             :rules="rules.requireRule"
                                             required
@@ -380,6 +393,7 @@
                             </b-collapse>
                         </b-card>
 
+                        <!-- Datos de curso -->
                         <b-card no-body class="mb-1">
                             <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
                                 <a href="#" v-b-toggle.accordion-5 class="btn-link text-dark lead font-weight-bold">Datos de curso</a>
@@ -393,8 +407,8 @@
                                             :items="step5.itemsTypeCourse"
                                             label="Tipo de curso"
                                             outlined
-                                            v-model="step5.typeCourse"
-                                            disabled
+                                            v-model="step5.course_type"
+                                            :disabled="courseDataState"
                                         >
                                         </v-select>
                                     </div>
@@ -404,18 +418,18 @@
                                                 :items="step5.itemsCoursesPresenciales"
                                                 label="Curso"
                                                 outlined
-                                                v-model="step5.course"
-                                                v-if="step5.typeCourse === 'Presencial'"
-                                                disabled
+                                                v-model="step5.course_name"
+                                                v-if="step5.course_type === 1"
+                                                :disabled="courseDataState"
                                                 >
                                             </v-select>
                                             <v-select
                                                 :items="step5.itemsCoursesOnline"
                                                 label="Curso"
                                                 outlined
-                                                v-model="step5.course"
-                                                v-if="step5.typeCourse === 'Virtual'"
-                                                disabled
+                                                v-model="step5.course_name"
+                                                v-if="step5.course_type === 2"
+                                                :disabled="courseDataState"
                                                 >
                                             </v-select>
                                     </div>
@@ -428,7 +442,7 @@
                                             :items="itemsStatus"
                                             label="Estado"
                                             outlined
-                                            v-model="step1.status"
+                                            v-model="step5.course_data_state"
                                             ref="selectTypeDocument"
                                             required
                                             >
@@ -440,6 +454,7 @@
                             </b-collapse>
                         </b-card>
 
+                        <!-- Datos de pago -->
                         <b-card no-body class="mb-1">
                             <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
                                 <a href="#" v-b-toggle.accordion-6 class="btn-link text-dark lead font-weight-bold">Datos de pago</a>
@@ -454,18 +469,18 @@
                                             label="PAGO"
                                             outlined
                                             v-model="step6.payment"
-                                            disabled
+                                            :disabled="paymentDataState"
                                             >
                                             </v-select>
                                         </div>
 
                                         <div class="col-md-6">
                                         <v-select
-                                            :items="step6.itemsCurrency"
+                                            :items="step6.itemsCoin"
                                             label="Moneda"
                                             outlined
-                                            v-model="step6.currency"
-                                            disabled
+                                            v-model="step6.coin"
+                                            :disabled="paymentDataState"
                                             >
                                             </v-select>
                                         </div>
@@ -481,7 +496,7 @@
                                                     label="Monto"
                                                     required
                                                     outlined
-                                                    disabled
+                                                    :disabled="paymentDataState"
                                                     >
                                             </v-text-field>
                                         </div>
@@ -491,8 +506,8 @@
                                             :items="step6.itemsTypePayment"
                                             label="Tipo de pago"
                                             outlined
-                                            v-model="step6.typePayment"
-                                            disabled
+                                            v-model="step6.payment_type"
+                                            :disabled="paymentDataState"
                                             >
                                         </v-select>
                                         </div>
@@ -504,11 +519,11 @@
                                         <div class="col-md-6">
                                             <v-text-field
                                                     type="number"
-                                                    v-model="step6.nroOperation"
+                                                    v-model="step6.operation_number"
                                                     label="Número de operación"
                                                     required
                                                     outlined
-                                                    disabled
+                                                    :disabled="paymentDataState"
                                                     >
                                             </v-text-field>
                                         </div>
@@ -524,15 +539,15 @@
                                             >
                                                     <template v-slot:activator="{ on }">
                                                         <v-text-field
-                                                            v-model="step6.datePayment"
+                                                            v-model="step6.operation_date"
                                                             label="Fecha de operación"
                                                             required
                                                             outlined
                                                             v-on="on"
-                                                            disabled
+                                                            :disabled="paymentDataState"
                                                         ></v-text-field>
                                                     </template>
-                                                    <v-date-picker v-model="step6.datePayment" @input="step6.datePicker = false"></v-date-picker>
+                                                    <v-date-picker v-model="step6.operation_date" @input="step6.datePicker = false"></v-date-picker>
                                                 </v-menu>
                                         </div>
 
@@ -540,37 +555,14 @@
 
                                     <div class="form-row">
 
-                                        <div class="col-md-6" v-if="step6.typePayment === 'transferencia'">
+                                        <div class="col-md-6" v-if="step6.payment_type === 2">
                                             <v-text-field
                                                     v-model="step6.bank"
                                                     label="Banco"
                                                     required
                                                     outlined
-                                                    disabled=""
+                                                    :disabled="paymentDataState"
                                             ></v-text-field>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <v-menu
-                                                v-model="step6.datePicker"
-                                                :close-on-content-click="false"
-                                                :nudge-right="40"
-                                                transition="scale-transition"
-                                                offset-y
-                                                min-width="290px"
-                                            >
-                                                    <template v-slot:activator="{ on }">
-                                                        <v-text-field
-                                                            v-model="step6.datePayment"
-                                                            label="Fecha de operación"
-                                                            required
-                                                            outlined
-                                                            v-on="on"
-                                                            disabled
-                                                        ></v-text-field>
-                                                    </template>
-                                                    <v-date-picker v-model="step6.datePayment" @input="step6.datePicker = false"></v-date-picker>
-                                                </v-menu>
                                         </div>
 
                                     </div>
@@ -582,13 +574,23 @@
                                         </div>
                                     </v-row>
 
+                                    <!-- Solo se mostrará si el usuario eligió pagar en cuotas -->
+                                    <v-row v-if="step6.payment === 2">
+                                        <div class="col-md-12">
+                                            <v-btn color="red darken-2 white--text">Agregar cuota</v-btn>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <p>Campos para cuota</p>
+                                        </div>
+                                    </v-row>
+
                                 <v-row class="justify-content-center mt-5">
                                     <div class="col-md-8 col-lg-6 text-center py-0">
                                         <v-select
                                             :items="itemsStatus"
                                             label="Estado"
                                             outlined
-                                            v-model="step1.status"
+                                            v-model="step6.payment_data_state"
                                             ref="selectTypeDocument"
                                             :rules="rules.requireRule"
                                             required
@@ -618,10 +620,19 @@
 
 <script>
 import { mapState } from 'vuex'
-import { itemsTypePayment, itemsStatus, itemsTypeDocument } from '@/utilities/data-selects.js'
-import countries from '@/assets/countries.json'
-import coursesPresenciales from '@/assets/courses.json'
-import coursesOnline from '@/assets/courses-online.json'
+import axios from 'axios'
+import Loader from '@/components/Loader'
+
+// Importa objetos estáticos para el formulario
+import {
+    itemsStatus,
+    itemsPayment,
+    itemsTypePayment,
+    itemsTypeCourse,
+    itemsCoin,
+    getCountries,
+    getCoursesPresenciales,
+    getCoursesOnline} from '@/utilities/data-selects.js'
 
 export default {
     data() {
@@ -640,11 +651,16 @@ export default {
                 current: true,
                 disabled: false,
                 completed: false,
-                itemsTypeDocument,
-                typeDocument: '',
-                typeDocumentField: '',
+                itemsTypeDocument: [
+                    { value: null, text: 'Tipo de documento' },
+                    { value: 0, text: 'DNI' },
+                    { value: 1, text: 'PASAPORTE' },
+                    { value: 2, text: 'C.E.' }
+                ],
+                document_type: '',
+                document_number: '',
                 selectTypeDocument: 'DNI',
-                status: ''
+                identification_state: ''
             },
             step2: {
                 value: false,
@@ -652,156 +668,242 @@ export default {
                 disabled: true,
                 completed: false,
                 name: '',
-                lastname1: '',
-                lastname2: '',
-                date: '',
+                last_name: '',
+                surname: '',
+                birthday: '',
+                personal_data_state: ''
             },
             step3: {
                 value: false,
                 current: false,
                 disabled: true,
                 completed: false,
-                email: '',
-                secondaryEmail: '',
-                phone: '',
-                WorkPhone: '',
-                mobile: ''
+                email_principal: '',
+                email_secundary: '',
+                phone_principal: '',
+                phone_secundary: '',
+                cellphone: '',
+                contact_data_state: ''
             },
             step4: {
                 value: false,
                 current: false,
                 disabled: true,
                 completed: false,
-                business: '',
+                company: '',
                 position: '',
                 address: '',
                 city: '',
                 province: '',
-                itemsCountry: this.getCountries(),
+                itemsCountry: getCountries(),
                 country: '',
-                observations: ''
+                observation: '',
+                location_data_state: ''
             },
             step5: {
                 value: false,
                 current: false,
                 disabled: true,
-                itemsTypeCourse: [{value: null, text: 'Tipo de curso'}, {value: 'Virtual', text: 'Virtual'}, {value: 'Presencial', text: 'Presencial'}],
-                itemsCoursesPresenciales: this.getCoursesPresenciales(),
-                itemsCoursesOnline: this.getCoursesOnline(),
-                typeCourse: '',
-                course: ''
+                itemsTypeCourse,
+                itemsCoursesPresenciales: getCoursesPresenciales(),
+                itemsCoursesOnline: getCoursesOnline(),
+                course_type: '',
+                course_name: '',
+                course_data_state: ''
             },
             step6: {
-              itemsPayment: [{value: null, text: 'Pago'}, {value: 'total', text: 'TOTAL'}, {value: 'cuotas', text: 'CUOTAS'}],
+              itemsPayment,
               payment: '',
-              itemsCurrency: [{value: null, text: 'Moneda'}, {value: 'soles', text: 'Soles'}, {value: 'dolares', text: 'Dólares'}],
-              currency: '',
+              itemsCoin,
+              coin: '',
               amount: '',
               itemsTypePayment,
-              typePayment: '',
-              nroOperation: '',
-              datePayment: '',
+              payment_type: '',
+              operation_number: '',
+              operation_date: '',
               datePicker: false,
               voucher: {},
-              bank: ''
+              bank: '',
+              payment_data_state: ''
             },
+            alert: false
         }
     },
+    components: {
+        Loader
+    },
     methods: {
-        setUser() {
-            let id = this.$route.params.id
-            this.users.forEach(user => {
-                if(user.id === id) {
-                    this.user = user
+        getUser() {
 
-                    // Asignar campos
-                    this.step1.typeDocument = this.user.typeDocument
-                    this.step1.typeDocumentField = this.user.typeDocumentField
-                    this.step1.status = this.user.status
-                    this.step1.selectTypeDocument = this.user.typeDocument
+            this.$store.commit('setLoading', true)
 
-                    this.step2.name = this.user.name
-                    this.step2.lastname1 = this.user.lastname1
-                    this.step2.lastname2 = this.user.lastname2
-                    this.step2.date = this.user.date
+            let id = this.$route.params.id,
+            url = `http://174.138.39.59/form-api/api/v1/users/${id}`
+            
+            //user = {}
 
-                    this.step3.email = this.user.email
-                    this.step3.secondaryEmail = this.user.secondaryEmail
-                    this.step3.phone = this.user.phone
-                    this.step3.WorkPhone = this.user.WorkPhone
-                    this.step3.mobile = this.user.mobile
+            // Envíamos el token
+            const config = {
+                headers: { Authorization: `Bearer ${this.$store.state.token}` }
+            };
 
-                    this.step4.business = this.user.business
-                    this.step4.position = this.user.position
-                    this.step4.address = this.user.address
-                    this.step4.city = this.user.city
-                    this.step4.province = this.user.province
-                    this.step4.country = this.user.country
-                    this.step4.observations = this.user.observations
-
-                    this.step5.typeCourse = this.user.typeCourse
-                    this.step5.course = this.user.course
-
-                    this.step6.payment = this.user.payment
-                    this.step6.currency = this.user.currency
-                    this.step6.amount = this.user.amount
-                    this.step6.typePayment = this.user.typePayment
-                    this.step6.nroOperation = this.user.nroOperation
-                    this.step6.datePayment = this.user.datePayment
-                    this.step6.voucher = this.user.voucher
-                    this.step6.bank = this.user.bank
+            // Petición para obtener datos de usuario
+            axios.get(url, config)
+            .then(res => {
+                if(res.statusText === 'OK') {
+                    this.setUser(res.data.message)
+                    this.$store.commit('setLoading', false)
                 }
+            }).catch(error => {
+                console.log(error)
+                this.$store.commit('setLoading', false)
             })
         },
-        submit() {
-            // Si el formulario está validado, enviamos los datos.
-            if(this.$refs.mainForm.validate()) {
-                alert('Datos guardados')
+        setUser(user) {
+
+            // Test
+            this.user = user
+
+            if(user) {
+
+                // Datos de identificación
+                this.step1.document_type = user.document_type
+                this.step1.document_number = user.document_number
+
+                // Estado del paso 1
+                // Se convierte a string para poder compararlo, de lo contrario tomaría el valor 0 como false
+                this.step1.identification_state = user.identification_state.toString()
+
+                // Datos personales
+                this.step2.name = user.name
+                this.step2.last_name = user.last_name
+                this.step2.surname = user.surname
+                this.step2.birthday = user.birthday
+
+                // Estado paso 2
+                this.step2.personal_data_state = user.personal_data_state.toString()
+
+                // Datos de contacto
+                this.step3.email_principal = user.email_principal
+                this.step3.email_secundary = user.email_secundary
+                this.step3.phone_principal = user.phone_principal
+                this.step3.phone_secundary = user.phone_secundary
+                this.step3.cellphone = user.cellphone
+
+                // Estado paso 3
+                this.step3.contact_data_state = user.contact_data_state.toString()
+
+                // Datos de ubicación
+                this.step4.company = user.company
+                this.step4.position = user.position
+                this.step4.address = user.address
+                this.step4.country = user.country
+                this.step4.city = user.city
+                this.step4.province = user.province
+                this.step4.observation = user.observation
+
+                // Estado paso 4
+                this.step4.location_data_state = user.location_data_state.toString()
+
+                
+                // Datos de curso
+                this.step5.course_type = user.course_type
+                this.step5.course_name = user.course_name
+
+                // Estado paso 5
+                this.step5.course_data_state = user.course_data_state.toString()
+
+                // Datos de pago
+                this.step6.coin = user.coin
+                this.step6.payment = user.payment
+                this.step6.amount = user.amount
+                this.step6.payment_type = user.payment_type
+                this.step6.operation_number = user.operation_number
+                this.step6.operation_date = user.operation_date
+                this.step6.voucher = user.voucher
+                this.step6.bank = user.bank
+
+                // Estado paso 6
+                this.step6.payment_data_state = user.payment_data_state.toString()
             }
         },
-        getCountries() {
-            let newCountries = []
+        submit() {
+            // Ocultamos el alert
+            this.alert = false
 
-            countries.forEach(country => {
+            // Mostramos el botón cargando
+            this.$store.state.loading = true
 
-            country.value = country.nombre
-            country.text = country.nombre
+            // Si el formulario está validado, enviamos los datos.
+            if(this.$refs.mainForm.validate()) {
 
-            newCountries.push(country)
-            })
+                let iduser = this.$route.params.id
 
-            return newCountries
-        },
-        getCoursesPresenciales() {
-            let newCourses = []
+                let statusData = {
+                    identification_state: parseInt(this.step1.identification_state),
+                    personal_state: parseInt(this.step2.personal_data_state),
+                    contact_state: parseInt(this.step3.contact_data_state),
+                    location_state: parseInt(this.step4.location_data_state),
+                    course_state: parseInt(this.step5.course_data_state),
+                    payment_state: parseInt(this.step6.payment_data_state),
+                    iduser
+                }
 
-            coursesPresenciales.forEach(course => {
+                // Petición para actualizar estado del usuario
+                const options = {
+                    method: 'PUT',
+                    headers: {
+                        Authorization: `Bearer ${this.$store.state.token}`
+                        },
+                    data: statusData,
+                    url: 'http://174.138.39.59/form-api/api/v1/users/admin',
+                };
 
-                course.value = course.descripcion
-                course.text = course.descripcion
+                axios(options).then(res => {
+                    if(res.statusText == 'OK') {
+                        this.alert = true
+                         // Oculta el botón cargando
+                        this.$store.state.loading = false
+                    }
 
-                newCourses.push(course)
-            })
-            return newCourses
-        },
-        getCoursesOnline() {
-            let newCourses = []
+                }).catch(error => {
+                    console.log(error)
+                    
+                    // Oculta el botón cargando
+                    this.$store.state.loading = false
+                })
 
-            coursesOnline.forEach(course => {
-
-                course.value = course.descripcion
-                course.text = course.descripcion
-
-                newCourses.push(course)
-            })
-            return newCourses
+            } else {
+                alert('Revisa que los campos estén completos')
+                
+                // Oculta el botón cargando
+                this.$store.state.loading = false
+            }
         },
     },
     mounted() {
-        this.setUser()
+        this.getUser()
     },
     computed: {
-        ...mapState(['users'])
+        ...mapState(['currentUser', 'users', 'loading']),
+        identificationState: function() {
+            return this.step1.identification_state === '1' ? true : false
+        },
+        personalDataState: function() {
+            return this.step2.personal_data_state === '1' ? true : false
+        },
+        contactDataState: function() {
+            return this.step3.contact_data_state === '1' ? true : false
+        },
+        locationDataState: function() {
+            return this.step4.location_data_state === '1' ? true : false
+        },
+        courseDataState: function() {
+            return this.step5.course_data_state === '1' ? true : false
+        },
+        paymentDataState: function() {
+            return this.step6.payment_data_state === '1' ? true : false
+        }
     }
 }
 </script>
