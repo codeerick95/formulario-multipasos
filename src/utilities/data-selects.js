@@ -31,14 +31,14 @@ const itemsTypePayment = [
     {
         value: 5,
         text: 'Efectivo'
-    },
+    }
 ]
 
 const itemsStatus = [
     { value: null, text: 'Estado' },
     { value: '0', text: 'Registrado' },
     { value: '1', text: 'Aprobado' },
-    { value: '2', text: 'Corregir' },
+    { value: '2', text: 'Corregir' }
 ]
 
 // Esta función solo funciona con el usuario ya que la Api no envía datos correctamente

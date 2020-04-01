@@ -10,12 +10,14 @@
 
             <template v-else>
                 <!-- Nombre de usuario -->
-                <v-chip class="mx-3 mt-1 p-3" color="primary" label>
+                <v-chip class="mx-1 p-3" color="primary" label>
                     <v-icon left>mdi-account-circle-outline</v-icon>
-                    {{ setName }}
+                    {{ headerName }}
                 </v-chip>
-                
-                <v-btn @click="logout()" color="red darken-2 white--text" class="text-decoration-none">Cerrar sesión</v-btn>
+
+                <v-chip class="p-3" color="red darken-2 white--text" label @click="logout()">
+                    <v-icon center>mdi-location-exit</v-icon>
+                </v-chip>
             </template>
         </v-toolbar>
         <!-- <div class="container-fluid bg-light">
@@ -41,14 +43,15 @@ export default {
         Logo
     },
     computed: {
-        ...mapState(['currentUser', 'token', 'nameAdmin', 'userType']),
+        ...mapState(['currentUser', 'token', 'headerName']),
         setName: function() {
-            let name = ''
+            let name = '',
+                userType = parseInt(this.currentUser.type)
 
-            if(this.userType === '1' || this.userType === 1) {
-                name = this.nameAdmin
-            } else if(this.userType === '2' || this.userType === 2) {
-                name = this.currentUser.data.user.name
+            if(userType === 1) {
+                name = this.headerName
+            } else if(userType === 2) {
+                name = this.currentUser.data.name
             }
 
             return name

@@ -6,17 +6,11 @@
               <h1 class="mt-3">Gracias por registrarte</h1>
               <p class="lead">Validaremos tus datos y te enviaremos tus credenciales de acceso al email que registraste.</p>
               <v-btn
-                  to="/"
+                  :to="{name: 'Home'}"
                   color="red darken-2 white--text"
                   class="mr-3"
               >
                   Regresar
-              </v-btn>
-              <v-btn
-                  to="/dashboard"
-                  color="primary white--text"
-              >
-                  Ver usuarios
               </v-btn>
             </v-card>
         </div>

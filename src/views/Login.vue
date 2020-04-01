@@ -76,6 +76,9 @@ export default {
             showPassword: false
         }
     },
+    mounted() {
+        this.$store.commit('setErrorFormMessage', '')
+    },
     methods: {
         submit() {
             if(this.$refs.formLogin.validate()) {

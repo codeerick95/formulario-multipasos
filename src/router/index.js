@@ -57,38 +57,20 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(x => x.meta.requiresAuth),
   requireAdmin = to.matched.some(x => x.meta.requireAdmin),
   currentUser = store.state.currentUser.status,
-  admin = store.state.userType ? true : false
+  admin = parseInt(store.state.currentUser.type) ===  1 ? true : false,
+  typeUser = parseInt(store.state.currentUser.type) // Evalúa y devuelve el valor como entero, ya que local storage lo guarda como String
 
   if (requiresAuth && !currentUser) {
     next('/login')
   } else if(requiresAuth && currentUser && requireAdmin && !admin) {
     next('/dashboard')
-  } else if(requiresAuth && currentUser.userType == 1 && requireAdmin && admin) {
+  } else if(requiresAuth && typeUser === 1 && requireAdmin && admin) {
     next()
-  } else if(to.path === '/' && currentUser || to.path === '/login' && currentUser) {
+  } else if(to.name === 'Home' && currentUser || to.name === 'Login' && currentUser) {
     next('/dashboard')
   } else {
     next()
   }
-
-  
-
-  
-
-  
-
-  /* if (requiresAuth && !currentUser) {
-      next('/login')
-  } else if (requiresAuth && currentUser) {
-      next()
-  } else if(to.path === '/' && currentUser) {
-    next('/dashboard')
-  } else if(to.path === '/login' && currentUser) {
-    next('/dashboard')
-  }
-  else {
-      next()
-  } */
 })
 
 export default router

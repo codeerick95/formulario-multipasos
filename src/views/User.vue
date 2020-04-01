@@ -2,21 +2,29 @@
     <div class="container mt-3">
         <div class="row justify-content-center text-center" v-if="alert">
             <div class="col-md-6">
-                <v-alert color="blue" type="info" outlined dismissible icon>
+                <v-alert color="blue" type="info" outlined dismissible>
                     Los datos del usuario se actualizaron con éxito
                 </v-alert>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <!-- <pre>
+                    {{ user }}
+                </pre> -->
             </div>
         </div>
         <loader v-if="loading"></loader>
         <div class="row justify-content-center" v-else>
             <div class="col-md-6">
-
+                <div>
+                    <v-btn class="mb-3 text-decoration-none" color="primary" :to="{name: 'Dashboard'}">
+                        Regresar
+                    </v-btn>
+                </div>
                 <div class="card">
                     <div class="card-body">
                         <h2 class="title m-0 text-center">Datos de usuario: #{{ this.$route.params.id }}</h2>
-                        <!-- <pre v-else>
-                            {{ $data }}
-                        </pre> -->
                     </div>
                 </div>
                 
@@ -43,7 +51,6 @@
                                                 label="Tipo de documento"
                                                 outlined
                                                 v-model="step1.document_type"
-                                                ref="selectTypeDocument"
                                                 :disabled="identificationState"
                                                 >
                                                 </v-select>
@@ -60,7 +67,7 @@
                                             required
                                             outlined
                                             :disabled="identificationState"
-                                            v-if="step1.selectTypeDocument === 'DNI' "
+                                            v-if="step1.document_type === 1"
                                             ></v-text-field>
 
                                             <!-- Campo Pasaporte -->
@@ -71,7 +78,7 @@
                                             required
                                             outlined
                                             :disabled="identificationState"
-                                            v-if="step1.selectTypeDocument === 'PASAPORTE' "
+                                            v-if="step1.document_type === 2"
                                             ></v-text-field>
 
                                             <!-- Campo  CE -->
@@ -82,7 +89,7 @@
                                             required
                                             outlined
                                             :disabled="identificationState"
-                                            v-if="step1.selectTypeDocument === 'CE' "
+                                            v-if="step1.document_type === 3"
                                             ></v-text-field>
                                         </div>
 
@@ -94,9 +101,9 @@
                                                 label="Estado"
                                                 outlined
                                                 v-model="step1.identification_state"
-                                                ref="selectTypeDocument"
                                                 :rules="rules.requireRule"
                                                 required
+                                                :disabled="identificationState"
                                                 >
                                             </v-select>
                                         </div>
@@ -180,9 +187,9 @@
                                                 label="Estado"
                                                 outlined
                                                 v-model="step2.personal_data_state"
-                                                ref="selectTypeDocument"
                                                 :rules="rules.requireRule"
                                                 required
+                                                :disabled="personalDataState"
                                                 >
                                             </v-select>
                                         </div>
@@ -269,9 +276,9 @@
                                                 label="Estado"
                                                 outlined
                                                 v-model="step3.contact_data_state"
-                                                ref="selectTypeDocument"
                                                 :rules="rules.requireRule"
                                                 required
+                                                :disabled="contactDataState"
                                                 >
                                             </v-select>
                                         </div>
@@ -381,9 +388,9 @@
                                             label="Estado"
                                             outlined
                                             v-model="step4.location_data_state"
-                                            ref="selectTypeDocument"
                                             :rules="rules.requireRule"
                                             required
+                                            :disabled="locationDataState"
                                             >
                                         </v-select>
                                     </div>
@@ -415,7 +422,7 @@
 
                                     <div class="col-md-6">
                                         <v-select
-                                                :items="step5.itemsCoursesPresenciales"
+                                                :items="step5.itemsCoursesOnline"
                                                 label="Curso"
                                                 outlined
                                                 v-model="step5.course_name"
@@ -424,7 +431,7 @@
                                                 >
                                             </v-select>
                                             <v-select
-                                                :items="step5.itemsCoursesOnline"
+                                                :items="step5.itemsCoursesPresenciales"
                                                 label="Curso"
                                                 outlined
                                                 v-model="step5.course_name"
@@ -443,8 +450,8 @@
                                             label="Estado"
                                             outlined
                                             v-model="step5.course_data_state"
-                                            ref="selectTypeDocument"
                                             required
+                                            :disabled="courseDataState"
                                             >
                                         </v-select>
                                     </div>
@@ -574,16 +581,6 @@
                                         </div>
                                     </v-row>
 
-                                    <!-- Solo se mostrará si el usuario eligió pagar en cuotas -->
-                                    <v-row v-if="step6.payment === 2">
-                                        <div class="col-md-12">
-                                            <v-btn color="red darken-2 white--text">Agregar cuota</v-btn>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <p>Campos para cuota</p>
-                                        </div>
-                                    </v-row>
-
                                 <v-row class="justify-content-center mt-5">
                                     <div class="col-md-8 col-lg-6 text-center py-0">
                                         <v-select
@@ -591,9 +588,9 @@
                                             label="Estado"
                                             outlined
                                             v-model="step6.payment_data_state"
-                                            ref="selectTypeDocument"
                                             :rules="rules.requireRule"
                                             required
+                                            :disabled="paymentDataState"
                                             >
                                         </v-select>
                                     </div>
@@ -603,7 +600,20 @@
                             </b-collapse>
                         </b-card>
                     </div>
-                    <div class="text-center mt-3">
+
+                    <!-- Botón de nuevo pago -->
+                    
+                    <!-- Solo se mostrará si el cliente eligió cuotas y además el admin haya aprobado la sección de pago -->
+                    <div class="text-right mt-3" v-if="showButtonNewPayment">
+                        <!-- Solo se mostrará si el usuario eligió pagar en cuotas -->
+                        <v-btn color="primary white--text" @click="step6.payment_data_state = '3'">Nuevo pago</v-btn>
+                    </div>
+
+                    <!-- Nuevo pago generado -->
+                    <new-payment-generate v-if="step6.payment_data_state === '3'" @deleteCuote="step6.payment_data_state = '1'"></new-payment-generate>
+
+                    <!-- Botón para enviar formulario -->
+                    <div class="d-flex justify-content-center mt-5">
                         <v-btn
                             type="submit"
                             color="red darken-2 white--text"
@@ -621,10 +631,10 @@
 <script>
 import { mapState } from 'vuex'
 import axios from 'axios'
-import Loader from '@/components/Loader'
 
 // Importa objetos estáticos para el formulario
 import {
+    itemsTypeDocument,
     itemsStatus,
     itemsPayment,
     itemsTypePayment,
@@ -632,7 +642,11 @@ import {
     itemsCoin,
     getCountries,
     getCoursesPresenciales,
-    getCoursesOnline} from '@/utilities/data-selects.js'
+    getCoursesOnline } from '@/utilities/data-selects.js'
+
+// Components
+import Loader from '@/components/Loader'
+import NewPaymentGenerate from '@/components/NewPaymentGenerate'
 
 export default {
     data() {
@@ -651,15 +665,9 @@ export default {
                 current: true,
                 disabled: false,
                 completed: false,
-                itemsTypeDocument: [
-                    { value: null, text: 'Tipo de documento' },
-                    { value: 0, text: 'DNI' },
-                    { value: 1, text: 'PASAPORTE' },
-                    { value: 2, text: 'C.E.' }
-                ],
+                itemsTypeDocument,
                 document_type: '',
                 document_number: '',
-                selectTypeDocument: 'DNI',
                 identification_state: ''
             },
             step2: {
@@ -712,8 +720,8 @@ export default {
                 course_data_state: ''
             },
             step6: {
-              itemsPayment,
-              payment: '',
+              itemsPayment, // Total o cuotas
+              payment: '', // Aquí se asigna lo que el usuario eligió en itemsPayment
               itemsCoin,
               coin: '',
               amount: '',
@@ -722,15 +730,17 @@ export default {
               operation_number: '',
               operation_date: '',
               datePicker: false,
-              voucher: {},
+              voucher: '',
               bank: '',
-              payment_data_state: ''
+              payment_data_state: '',
+              newPayment: false
             },
             alert: false
         }
     },
     components: {
-        Loader
+        Loader,
+        NewPaymentGenerate
     },
     methods: {
         getUser() {
@@ -739,8 +749,6 @@ export default {
 
             let id = this.$route.params.id,
             url = `http://174.138.39.59/form-api/api/v1/users/${id}`
-            
-            //user = {}
 
             // Envíamos el token
             const config = {
@@ -748,18 +756,29 @@ export default {
             };
 
             // Petición para obtener datos de usuario
-            axios.get(url, config)
-            .then(res => {
-                if(res.statusText === 'OK') {
-                    this.setUser(res.data.message)
+
+            // Verificamos que el tipo de usuario sea admin para hacer la petición
+            if(this.currentUser.type == 1) {
+                axios.get(url, config)
+                .then(res => {
+                    if(res.statusText === 'OK') {
+
+                        // Envía el usuario
+                        this.setUser(res.data.message)
+
+                        this.$store.commit('setLoading', false)
+                    }
+                }).catch((error) => {
+                    // Si el usuario no existe, redirige al dashboard
+                    if(error.message === 'Request failed with status code 500') {
+                        this.$store.commit('setLoading', false)
+                        this.$router.push({name: 'Dashboard'})
+                    }
                     this.$store.commit('setLoading', false)
-                }
-            }).catch(() => {
-                this.$store.commit('setLoading', false)
-            })
+                })
+            }
         },
         setUser(user) {
-
             // Test
             this.user = user
 
@@ -815,12 +834,12 @@ export default {
                 // Datos de pago
                 this.step6.coin = user.coin
                 this.step6.payment = user.payment
-                this.step6.amount = user.amount
-                this.step6.payment_type = user.payment_type
-                this.step6.operation_number = user.operation_number
-                this.step6.operation_date = user.operation_date
-                this.step6.voucher = user.voucher
-                this.step6.bank = user.bank
+                this.step6.amount = user.payments[0].amount
+                this.step6.payment_type = user.payments[0].payment_type
+                this.step6.operation_number = user.payments[0].operation_number
+                this.step6.operation_date = user.payments[0].operation_date
+                this.step6.voucher = user.payments[0].voucher
+                this.step6.bank = user.payments[0].bank
 
                 // Estado paso 6
                 this.step6.payment_data_state = user.payment_data_state.toString()
@@ -844,8 +863,14 @@ export default {
                     contact_state: parseInt(this.step3.contact_data_state),
                     location_state: parseInt(this.step4.location_data_state),
                     course_state: parseInt(this.step5.course_data_state),
-                    payment_state: parseInt(this.step6.payment_data_state),
-                    iduser
+                    iduser: parseInt(iduser)
+                }
+
+                // Verifica si el usuario eligió cuotas y además hay un nuevo pago generado
+                if(this.step6.payment === 2 && this.step6.newPayment) {
+                    statusData.payment_state = 3
+                } else {
+                    statusData.payment_state = parseInt(this.step6.payment_data_state)
                 }
 
                 // Petición para actualizar estado del usuario
@@ -853,7 +878,7 @@ export default {
                     method: 'PUT',
                     headers: {
                         Authorization: `Bearer ${this.$store.state.token}`
-                        },
+                    },
                     data: statusData,
                     url: 'http://174.138.39.59/form-api/api/v1/users/admin',
                 };
@@ -861,7 +886,7 @@ export default {
                 axios(options).then(res => {
                     if(res.statusText == 'OK') {
                         this.alert = true
-                         // Oculta el botón cargando
+                        // Oculta el botón cargando
                         this.$store.state.loading = false
                     }
 
@@ -872,14 +897,19 @@ export default {
                 })
 
             } else {
+                // Si los datos del formulario están incompletos
                 alert('Revisa que los campos estén completos')
                 
                 // Oculta el botón cargando
                 this.$store.state.loading = false
             }
         },
+        addnewCuote() {
+            this.step6.payment_data_state = '3'
+        }
     },
     mounted() {
+        getCoursesPresenciales()
         this.getUser()
     },
     computed: {
@@ -901,6 +931,15 @@ export default {
         },
         paymentDataState: function() {
             return this.step6.payment_data_state === '1' ? true : false
+        },
+        showButtonNewPayment: function() {
+            let status = false
+
+            if(this.step6.payment === 2 && this.step6.payment_data_state === '1' || this.step6.payment === 2 && this.step6.payment_data_state === '3') {
+                status = true
+            }
+
+            return status
         }
     }
 }

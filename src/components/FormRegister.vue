@@ -322,6 +322,7 @@
                                             v-model="step4.company"
                                             label="Empresa"
                                             required
+                                            :rules="rules.requireRule"
                                             outlined
                                         ></v-text-field>
                                     </div>
@@ -331,6 +332,7 @@
                                                 v-model="step4.position"
                                                 label="Cargo"
                                                 required
+                                                :rules="rules.requireRule"
                                                 outlined
                                         ></v-text-field>
                                     </div>
@@ -855,6 +857,18 @@
                                                 <p class="text-muted mr-3">Voucher:</p>
                                                 <img :src="step7.urlVoucher" alt="" class="img-fluid">
                                             </div>
+                                            <div class="col-md-6" v-if="step6.paymentType === 2">
+                                                <span class="text-muted mr-3">Banco:</span>
+                                                <span>{{ step6.bank }}</span>
+                                            </div>
+                                        </v-row>
+                                        <v-row>
+                                            <div class="col-md-12">
+                                                <!-- Mensaje de error -->
+                                                <div class="text-center" v-if="formError">
+                                                    <a @click.prevent="stepCurrent = 3" class="text-danger error-link">{{ formError }}</a>
+                                                </div>
+                                            </div>
                                         </v-row>
                                     </div>
                                 </div>
@@ -974,7 +988,7 @@ export default {
         }
     },
     computed: {
-        ...mapState(['loading']),
+        ...mapState(['loading', 'formError']),
       setSubtitle: function() {
         // Muestra un subtítulo distinto según el paso en el que se encuentre el usuario 
         let subtitle = ''
@@ -1048,7 +1062,7 @@ export default {
         
         if(this.step5.typeCourse === 1) {
             name = 'Virtual'
-        } else if(this.step1.documentType === 2) {
+        } else if(this.step5.typeCourse === 2) {
             name = 'Presencial'
         }
 
@@ -1079,7 +1093,6 @@ export default {
         this.step7.urlVoucher = URL.createObjectURL(this.step6.voucher)
       },
       submit(n) {
-
           // Aquí verificamos los datos antes de crear el objero usuario y enviarlo a la Api
           if(this.stepCurrent === 1 && this.$refs.form1[0].validate()) {
             this.nextStep(n)
@@ -1134,7 +1147,7 @@ export default {
             user.city = this.step4.city
             user.province = this.step4.province
             user.country = this.step4.country
-            user.observations = this.step4.observations
+            user.observation = this.step4.observations
 
             // Paso 5
             user.typeCourse = this.step5.typeCourse
@@ -1206,6 +1219,12 @@ input[type="date"]:before {
 @media screen and (max-width: 320px) {
     .v-stepper__step {
         padding: 0 !important;
+    }
+}
+
+.error-link {
+    &:hover {
+        text-decoration: underline !important;
     }
 }
 </style>

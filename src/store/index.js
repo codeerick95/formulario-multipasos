@@ -7,41 +7,42 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 
 Vue.use(Vuex)
 
-
-
 export const store = new Vuex.Store({
   state: {
     currentUser: {
+      userId: localStorage.getItem('userId') || null,
+      type: localStorage.getItem('userType') || null, // Este campo se crea porque la Api no devuelve que tipo de usuario
       status: localStorage.getItem('access_token') ? true : false,
       data: {}
     },
     token: localStorage.getItem('access_token') || null,
-    userId: localStorage.getItem('userId') || null,
-    userType: localStorage.getItem('userType') || null,
-    nameAdmin: localStorage.getItem('nameAdmin') || null,
+    headerName: localStorage.getItem('headerName') || null, // Este campo se crea para guardar el nombre del administrador
     users: [],
     loading: false,
-    formError: ''
+    formError: '' // Para el manejo de errores en login y register
   },
   mutations: {
-    createUser(state, user) {
-      state.users.push(user)
-    },
     setToken(state, token) {
       state.token = token
     },
     setUser(state, data) {
+      // Asignamos datos al state
       state.currentUser.status = data.status
       state.currentUser.data = data.dataUser
-      state.userType = data.userType
+      state.currentUser.type = data.userType
+
+      if(data.userId) {
+        state.currentUser.userId = data.userId
+      }
       
       // Verificamos si la respuesta viene con una clave users para guardarlos en el state
       if(data.users) {
         state.users = data.users
       }
 
-      if(data.nameAdmin) {
-        state.nameAdmin = data.nameAdmin
+      // Verificamos si la respuesta viene con una clave nameAdmin para guardarlos en el state
+      if(data.headerName) {
+        state.headerName = data.headerName
       }
     },
     setLoading(state, status) {
@@ -52,6 +53,7 @@ export const store = new Vuex.Store({
     },
     clearData(state) {
       state.currentUser.status = false
+      // Limpia los datos del state
       state.currentUser.data = {}
     }
   },
@@ -79,7 +81,15 @@ export const store = new Vuex.Store({
           // Redirección final
           router.push('/registered')
         }
-      }).catch(() => {
+      }).catch(error => {
+        // Agregamos el error de error
+        if(error.message === 'Request failed with status code 422') {
+
+          let errorMessage = 'El correo electrónico ya está registrado'
+
+          // Envía el mensaje de error
+          state.commit('setErrorFormMessage', errorMessage)
+        }
         // Cambiamos el valor del loading a false
         state.commit('setLoading', false)
       })
@@ -100,73 +110,86 @@ export const store = new Vuex.Store({
       })
         .then(function (response) {
           // let user = {}
-          let token = ''
-          let data = {}
+          let token = '',
+          data = {}
 
+          // Si la respuesta fue exitosa
           if (response.statusText === 'OK') {
 
+             // Asignamos el token
+             token = response.data.token
+
+             // Guarda el access_token en localStorage
+            localStorage.setItem('access_token', token)
+
+            // Verifiacmos si la respuesta trae un user o admin
             if(response.data.admin) {
               
-              let dataAdmin = {
+              data = {
                 status: true,
                 dataUser: response.data.admin,
                 users: response.data.users,
+                userType: response.data.admin.type,
+                headerName: response.data.admin.name,
               }
 
-              data = dataAdmin
-
-            } else {
-              data = {
-                status: true,
-                dataUser: response.data
-              }
-            }
-
-            // user = response.data.user
-            token = response.data.token
-
-            // Guarda el access_token en localStorage
-            localStorage.setItem('access_token', token)
-
-            if(response.data.admin) {
+              // Guarda el id del usuario autenticado para realizar peticiones posteriores
               localStorage.setItem('userId', data.dataUser.iduser)
+
               // Aquí asignamos el valor que viene en la api como tipo de usuario como referencia para posteriores condiciones
               localStorage.setItem('userType', data.dataUser.type)
-              data.userType = data.dataUser.type
 
               // Guardamos el nombre del admin
-              localStorage.setItem('nameAdmin', data.dataUser.name)
-              data.nameAdmin = data.dataUser.name
+              localStorage.setItem('headerName', data.headerName)
+
             } else {
-              localStorage.setItem('userId', data.dataUser.user.iduser)
+
+              data = {
+                userId: response.data.user.iduser,
+                status: true,
+                dataUser: response.data.user,
+                userType: 2,
+                headerName: response.data.user.name,
+              }
+
+              // Guarda el id del usuario autenticado para realizar peticiones posteriores
+              localStorage.setItem('userId', data.dataUser.iduser)
 
               // Aquí asignamos 2 como tipo de usuario como referencia para posteriores condiciones
               localStorage.setItem('userType', 2)
-              data.userType = 2
+
+              // Guardamos el nombre del admin
+              localStorage.setItem('headerName', data.headerName)
             }
-            
-            // Add the following line:
+
+            // Autorización por token
             axios.defaults.headers.common['Authorization'] = token
 
             state.commit('setToken', token)
+
             state.commit('setUser', data)
+
+            // Cambia el valor de loading
             state.commit('setLoading', false)
 
             router.push('/dashboard')
           }
-
-          // this.$router.push({name: 'Dashboard'})
         })
         .catch(function (error) {
-
           // Cambiamos el valor del loading a false
           state.commit('setLoading', false)
 
           // Agregamos el error de login
-          let errorMessage = ''
-
           if(error.message === 'Request failed with status code 409') {
-            errorMessage = 'Correo electrónico o contraseña incorrecto'
+
+            let errorMessage = 'Correo electrónico o contraseña incorrecto'
+
+            // Envía el mensaje de error
+            state.commit('setErrorFormMessage', errorMessage)
+          } else if(error.message === 'Request failed with status code 404') {
+            let errorMessage = 'La cuenta no existe'
+
+            // Envía el mensaje de error
             state.commit('setErrorFormMessage', errorMessage)
           }
           
@@ -174,46 +197,26 @@ export const store = new Vuex.Store({
     },
     logout(state) {
       return new Promise((resolve) => {
+
+          // Limpiamos local storage
           localStorage.removeItem('access_token')
           localStorage.removeItem('userId')
           localStorage.removeItem('userType')
-          localStorage.removeItem('nameAdmin')
+          localStorage.removeItem('headerName')
 
           // remove the axios default header
-          // delete axios.defaults.headers.common['Authorization']
+          delete axios.defaults.headers.common['Authorization']
 
+          // Envía confirmación para limpiar datos del state
           state.commit('clearData')
           
+          // Cancela el loading
           state.commit('setLoading', false)
 
           router.push('/login')
-
+          
           resolve()
       })
     }
-  },
-  modules: {
   }
 })
-
-// Recuperamos datos cuando el usuario recargue la página
-/* if(store.state.userId) {
-  console.log('Existe usuario')
-
-  let userId = store.state.userId,
-  url = `http://174.138.39.59/form-api/api/v1/users/${userId}`
-
-  const config = {
-      headers: { Authorization: `Bearer ${store.state.token}` }
-  };
-
-  axios.get(url, config)
-  .then(res => {
-    console.log(res)
-  }).catch(error => {
-    console.log(error)
-  })
-
-} else {
-  console.log('No existe usuario')
-} */
