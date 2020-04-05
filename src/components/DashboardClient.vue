@@ -2,31 +2,42 @@
   <div>
     <loader v-if="loading"></loader>
     <div class="row justify-content-center" v-else>
-      <div class="row justify-content-center text-center" v-if="alert">
+
+      <!-- Alertas -->
+      <div class="row justify-content-center text-center">
           <div class="col-md-6">
-              <v-alert color="blue" type="info" outlined dismissible>
-                  Los datos se actualizaron con éxito
+              <v-alert color="blue" type="info" outlined dismissible v-if="alert">
+                  Los datos se actualizaron con éxito.
+              </v-alert>
+              <v-alert color="red" type="info" outlined dismissible v-if="formError">
+                  Error con tu red de internet, <a @click.prevent="getUser()" class="link-retry">inténtalo nuevamente.</a>
               </v-alert>
           </div>
       </div>
+
       <div class="col-md-12">
         <!-- <pre>
           {{ user }}
         </pre> -->
       </div>
-      <div class="col-md-8">
-        <v-form ref="mainForm" v-model="valid" lazy-validation @submit.prevent="update()">
+
+      <!-- Form -->
+      <div class="col-md-8" v-if="formError.length === 0">
+        <v-form ref="formUpdate" v-model="valid" lazy-validation @submit.prevent="update()">
           <div role="tablist">
             <!-- Collapse 1 -->
             <b-card no-body class="mb-1">
-              <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
-                <a
-                  href="#"
-                  v-b-toggle.accordion-1
-                  class="btn-link text-dark lead font-weight-bold"
-                >Identificación</a>
+
+              <b-card-header header-tag="header" class="py-3 bg-light d-flex justify-content-between" role="tab">
+                <a href="#" v-b-toggle.accordion-1 class="btn-link text-dark lead font-weight-bold">Identificación</a>
+
+                <!-- Círculos que muestran el estado -->
+                <circles-info :dataToValidate="step1.identification_state"></circles-info>
+
+                <!-- <span class="text-danger" v-if="step1.identification_state === '2'">Corregir datos</span> -->
               </b-card-header>
-              <b-collapse id="accordion-1" visible accordion="my-accordion" role="tabpanel">
+
+              <b-collapse id="accordion-1" accordion="my-accordion" role="tabpanel">
                 <b-card-body>
                   <div class="form-row mt-5">
                     <!-- Select tipo de documento -->
@@ -39,6 +50,8 @@
                           v-model="step1.document_type"
                           ref="selectTypeDocument"
                           :disabled="identificationState"
+                          required
+                          :rules="rules.requireRule"
                         ></v-select>
                       </div>
                     </div>
@@ -51,6 +64,7 @@
                         v-model="step1.document_number"
                         label="DNI"
                         required
+                        :rules="rules.typeDocumentFieldDni"
                         outlined
                         :disabled="identificationState"
                         v-if="step1.selectTypeDocument === 'DNI' "
@@ -62,6 +76,7 @@
                         v-model="step1.document_number"
                         label="Pasaporte"
                         required
+                        :rules="rules.typeDocumentFieldPasaport"
                         outlined
                         :disabled="identificationState"
                         v-if="step1.selectTypeDocument === 'PASAPORTE' "
@@ -73,16 +88,12 @@
                         v-model="step1.document_number"
                         label="Carnet de extranjería"
                         required
+                        :rules="rules.typeDocumentFieldCe"
                         outlined
                         :disabled="identificationState"
                         v-if="step1.selectTypeDocument === 'CE' "
                       ></v-text-field>
                     </div>
-                  </div>
-
-                  <!-- Mensaje de datos validados -->
-                  <div class="text-center" v-if="identificationState">
-                    <p class="text-success font-weight-bold">Datos validados</p>
                   </div>
 
                 </b-card-body>
@@ -91,12 +102,16 @@
 
             <!-- Collapse 2 -->
             <b-card no-body class="mb-1">
-              <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
+              <b-card-header header-tag="header" class="py-3 bg-light d-flex justify-content-between" role="tab">
                 <a
                   href="#"
                   v-b-toggle.accordion-2
                   class="btn-link text-dark lead font-weight-bold"
                 >Datos personales</a>
+
+                <!-- Círculos que muestran el estado -->
+                <circles-info :dataToValidate="step2.personal_data_state"></circles-info>
+                
               </b-card-header>
               <b-collapse id="accordion-2" accordion="my-accordion" role="tabpanel">
                 <b-card-body>
@@ -106,6 +121,7 @@
                         v-model="step2.name"
                         label="Nombre"
                         required
+                        :rules="rules.requireRule"
                         outlined
                         :disabled="personalDataState"
                       ></v-text-field>
@@ -116,6 +132,7 @@
                         v-model="step2.last_name"
                         label="Apellido paterno"
                         required
+                        :rules="rules.requireRule"
                         outlined
                         :disabled="personalDataState"
                       ></v-text-field>
@@ -128,6 +145,7 @@
                         v-model="step2.surname"
                         label="Apellido materno"
                         required
+                        :rules="rules.requireRule"
                         outlined
                         :disabled="personalDataState"
                       ></v-text-field>
@@ -147,6 +165,7 @@
                             v-model="step2.birthday"
                             label="Fecha de nacimiento"
                             required
+                            :rules="rules.requireRule"
                             outlined
                             :disabled="personalDataState"
                             v-on="on"
@@ -157,24 +176,25 @@
                     </div>
                   </div>
 
-                  <!-- Mensaje de datos validados -->
-                  <div class="text-center" v-if="personalDataState">
-                    <p class="text-success font-weight-bold">Datos validados</p>
-                  </div>
-
                 </b-card-body>
               </b-collapse>
             </b-card>
 
             <!-- Datos de contacto -->
             <b-card no-body class="mb-1">
-              <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
+
+              <b-card-header header-tag="header" class="py-3 bg-light d-flex justify-content-between" role="tab">
                 <a
                   href="#"
                   v-b-toggle.accordion-3
                   class="btn-link text-dark lead font-weight-bold"
                 >Datos de contacto</a>
+
+                <!-- Círculos que muestran el estado -->
+                <circles-info :dataToValidate="step3.contact_data_state"></circles-info>
+
               </b-card-header>
+
               <b-collapse id="accordion-3" accordion="my-accordion" role="tabpanel">
                 <b-card-body>
                   <div class="form-row">
@@ -184,6 +204,7 @@
                         label="Email principal"
                         outlined
                         required
+                        :rules="rules.requireRule"
                         :disabled="contactDataState"
                       ></v-text-field>
                     </div>
@@ -194,6 +215,7 @@
                         label="Email secundario"
                         outlined
                         required
+                        :rules="rules.requireRule"
                         :disabled="contactDataState"
                       ></v-text-field>
                     </div>
@@ -206,6 +228,7 @@
                         v-model="step3.phone_principal"
                         label="Teléfono principal"
                         required
+                        :rules="rules.requireRule"
                         outlined
                         :disabled="contactDataState"
                       ></v-text-field>
@@ -217,6 +240,7 @@
                         v-model="step3.phone_secundary"
                         label="Teléfono de trabajo"
                         required
+                        :rules="rules.requireRule"
                         outlined
                         :disabled="contactDataState"
                       ></v-text-field>
@@ -230,15 +254,11 @@
                         v-model="step3.cellphone"
                         label="Celular"
                         required
+                        :rules="rules.requireRule"
                         outlined
                         :disabled="contactDataState"
                       ></v-text-field>
                     </div>
-                  </div>
-
-                  <!-- Mensaje de datos validados -->
-                  <div class="text-center" v-if="contactDataState">
-                    <p class="text-success font-weight-bold">Datos validados</p>
                   </div>
 
                 </b-card-body>
@@ -247,12 +267,16 @@
 
             <!-- Datos de ubicación -->
             <b-card no-body class="mb-1">
-              <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
+              <b-card-header header-tag="header" class="py-3 bg-light d-flex justify-content-between" role="tab">
                 <a
                   href="#"
                   v-b-toggle.accordion-4
                   class="btn-link text-dark lead font-weight-bold"
                 >Datos de ubicación</a>
+
+                <!-- Círculos que muestran el estado -->
+                <circles-info :dataToValidate="step4.location_data_state"></circles-info>
+
               </b-card-header>
               <b-collapse id="accordion-4" accordion="my-accordion" role="tabpanel">
                 <b-card-body>
@@ -262,6 +286,7 @@
                         v-model="step4.company"
                         label="Empresa"
                         required
+                        :rules="rules.requireRule"
                         outlined
                         :disabled="locationDataState"
                       ></v-text-field>
@@ -272,6 +297,7 @@
                         v-model="step4.position"
                         label="Cargo"
                         required
+                        :rules="rules.requireRule"
                         outlined
                         :disabled="locationDataState"
                       ></v-text-field>
@@ -284,13 +310,14 @@
                         v-model="step4.address"
                         label="Dirección"
                         required
+                        :rules="rules.requireRule"
                         outlined
                         :disabled="locationDataState"
                       ></v-text-field>
                     </div>
 
                     <div class="col-md-6">
-                      <v-text-field v-model="step4.city" label="Ciudad" required outlined :disabled="locationDataState"></v-text-field>
+                      <v-text-field v-model="step4.city" label="Ciudad" required :rules="rules.requireRule" outlined :disabled="locationDataState"></v-text-field>
                     </div>
                   </div>
 
@@ -300,6 +327,7 @@
                         v-model="step4.province"
                         label="Provincia"
                         required
+                        :rules="rules.requireRule"
                         outlined
                         :disabled="locationDataState"
                       ></v-text-field>
@@ -312,6 +340,8 @@
                         outlined
                         v-model="step4.country"
                         :disabled="locationDataState"
+                        required
+                        :rules="rules.requireRule"
                       ></v-select>
                     </div>
                   </div>
@@ -324,13 +354,10 @@
                         name="input-7-4"
                         label="Observaciones"
                         :disabled="locationDataState"
+                        required
+                        :rules="rules.requireRule"
                       ></v-textarea>
                     </div>
-                  </div>
-
-                  <!-- Mensaje de datos validados -->
-                  <div class="text-center" v-if="locationDataState">
-                    <p class="text-success font-weight-bold">Datos validados</p>
                   </div>
 
                 </b-card-body>
@@ -339,12 +366,16 @@
 
             <!-- Datos de curso -->
             <b-card no-body class="mb-1">
-              <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
+              <b-card-header header-tag="header" class="py-3 bg-light d-flex justify-content-between" role="tab">
                 <a
                   href="#"
                   v-b-toggle.accordion-5
                   class="btn-link text-dark lead font-weight-bold"
                 >Datos de curso</a>
+
+                <!-- Círculos que muestran el estado -->
+                <circles-info :dataToValidate="step5.course_data_state"></circles-info>
+
               </b-card-header>
               <b-collapse id="accordion-5" accordion="my-accordion" role="tabpanel">
                 <b-card-body>
@@ -356,6 +387,8 @@
                         outlined
                         v-model="step5.course_type"
                         :disabled="courseDataState"
+                        required
+                        :rules="rules.requireRule"
                       ></v-select>
                     </div>
 
@@ -368,6 +401,8 @@
                         v-model="step5.course_name"
                         v-if="step5.course_type === 1"
                         :disabled="courseDataState"
+                        required
+                        :rules="rules.requireRule"
                       ></v-select>
 
                       <!-- Selecto con cursos online -->
@@ -378,27 +413,48 @@
                         v-model="step5.course_name"
                         v-if="step5.course_type === 2"
                         :disabled="courseDataState"
+                        required
+                        :rules="rules.requireRule"
                       ></v-select>
                     </div>
-                  </div>
-
-                  <!-- Mensaje de datos validados -->
-                  <div class="text-center" v-if="courseDataState">
-                    <p class="text-success">Datos validados</p>
                   </div>
 
                 </b-card-body>
               </b-collapse>
             </b-card>
 
-            <!-- Datos de pago -->
-            <b-card no-body class="mb-1">
-              <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
+            <!-- Datos de pago solo se mostrará cuando el cliente se encuentre como registrado -->
+            <b-card no-body class="mb-1" v-if="isTotal && step6.payment_data_state === '0' || isTotal && step6.payment_data_state === '1' || isTotal && step6.payment_data_state === '2'">
+              <b-card-header header-tag="header" class="py-3 bg-light d-flex justify-content-between" role="tab">
                 <a
                   href="#"
                   v-b-toggle.accordion-6
                   class="btn-link text-dark lead font-weight-bold"
                 >Datos de pago</a>
+
+                <!-- Círculos que muestran el estado -->
+                <!-- Puntos de referencia según el estado del payment_state -->
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <span v-on="on" v-if="step6.payment_data_state === '1'" class="circle-info bg-success"></span>
+                  </template>
+                  <span>Validado</span>
+                </v-tooltip>
+
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <span v-on="on" v-if="step6.payment_data_state === '2'" class="circle-info bg-danger"></span>
+                  </template>
+                  <span>Corregir</span>
+                </v-tooltip>
+
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <span v-on="on" v-if="step6.payment_data_state === '0' || step6.payment_data_state === '4'" class="circle-info bg-warning"></span>
+                  </template>
+                  <span>Verificando datos</span>
+                </v-tooltip>
+
               </b-card-header>
               <b-collapse id="accordion-6" accordion="my-accordion" role="tabpanel">
                 <b-card-body>
@@ -409,7 +465,7 @@
                         label="PAGO"
                         outlined
                         v-model="step6.payment"
-                        :disabled="paymentDataState"
+                        disabled
                       ></v-select>
                     </div>
 
@@ -419,7 +475,7 @@
                         label="Moneda"
                         outlined
                         v-model="step6.coin"
-                        :disabled="paymentDataState"
+                        disabled
                       ></v-select>
                     </div>
                   </div>
@@ -431,6 +487,7 @@
                         v-model="step6.amount"
                         label="Monto"
                         required
+                        :rules="rules.requireRule"
                         outlined
                         :disabled="paymentDataState"
                       ></v-text-field>
@@ -443,6 +500,8 @@
                         outlined
                         v-model="step6.payment_type"
                         :disabled="paymentDataState"
+                        required
+                        :rules="rules.requireRule"
                       ></v-select>
                     </div>
                   </div>
@@ -454,6 +513,7 @@
                         v-model="step6.operation_number"
                         label="Número de operación"
                         required
+                        :rules="rules.requireRule"
                         outlined
                         :disabled="paymentDataState"
                       ></v-text-field>
@@ -473,6 +533,7 @@
                             v-model="step6.operation_date"
                             label="Fecha de operación"
                             required
+                            :rules="rules.requireRule"
                             outlined
                             v-on="on"
                             :disabled="paymentDataState"
@@ -487,11 +548,24 @@
                   </div>
 
                   <div class="form-row">
+                    <div class="col-md-6" v-if="step6.payment_data_state === '2' && uploadNewVoucher">
+                      <v-file-input
+                        v-model="step6.voucher"
+                        @change="setUrlVoucher()"
+                        required
+                        :rules="rules.requireRule"
+                        outlined
+                        label="Subir voucher"
+                      ></v-file-input>
+                      <img :src="step6.urlVoucher" alt class="img-fluid"/>
+                    </div>
+
                     <div class="col-md-6" v-if="step6.payment_type === 2">
                       <v-text-field
                         v-model="step6.bank"
                         label="Banco"
                         required
+                        :rules="rules.requireRule"
                         outlined
                         :disabled="paymentDataState"
                       ></v-text-field>
@@ -499,45 +573,43 @@
                   </div>
 
                   <v-row>
-                    <div class="col-md-8">
-                      <span>Voucher</span>
-                      <img :src="step6.voucher" alt class="img-fluid" />
+                    <div class="col-md-6">
+
+                      <template v-if="step6.payment_data_state != '1' && uploadNewVoucher === false">
+                        <p>
+                          <span class="font-weight-bold">Voucher anterior</span>
+                          <a href="" class="ml-3" @click.prevent="uploadNewVoucher = true">Subir nuevo voucher</a>
+                        </p>
+                        <img :src="step6.voucher" alt class="img-fluid"/>
+                        
+                      </template>
+
+                    
+                      <!-- <img :src="step6.voucher" alt class="img-fluid" v-if="!step6.urlVoucher"/>
+
+                      <img :src="step6.urlVoucher" alt class="img-fluid" v-if="step6.urlVoucher != ''" /> -->
                     </div>
                   </v-row>
-
-                  <!-- Mensaje de datos validados -->
-                  <div class="text-center" v-if="paymentDataState">
-                    <p class="text-success font-weight-bold">Datos validados</p>
-                  </div>
                   
                 </b-card-body>
               </b-collapse>
             </b-card>
 
-            <!-- Nueva cuota -->
+            <!-- Lista de pagos se mostrará la lista cuando el admin haya aprobado al cliente -->
+            <payment-list :payments="step6.payments" :paymentDataState="step6.payment_data_state" v-else></payment-list>
+
+            <!-- Nueva cuota, solo se muestra si el payment_state = 3 -->
             <b-card no-body class="mb-1" v-if="step6.payment_data_state === '3'">
               <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
                 <a
                   href="#"
                   v-b-toggle.accordion-7
                   class="btn-link text-danger lead"
-                >Tienes una nueva cuota pendiente o en revisión</a>
+                >Pendiente la cuota nro {{ step6.payments.length + 1 }}</a>
               </b-card-header>
-              <b-collapse id="accordion-7" accordion="my-accordion" role="tabpanel">
+              <b-collapse id="accordion-7" visible accordion="my-accordion" role="tabpanel">
                 <b-card-body>
                   <div class="form-row">
-                    <div class="col-md-6">
-                      <!-- Nueva cuota moneda -->
-                      <v-select
-                        :items="step6.itemsCoin"
-                        label="Moneda"
-                        outlined
-                        v-model="step6.coin"
-                        required
-                        :rules="rules.requireRule"
-                      ></v-select>
-                    </div>
-
                     <!-- Nueva cuota monto -->
                     <div class="col-md-6">
                       <v-text-field
@@ -549,9 +621,7 @@
                         outlined
                       ></v-text-field>
                     </div>
-                  </div>
 
-                  <div class="form-row">
                     <!-- Nueva cuota tipo de pago -->
                     <div class="col-md-6">
                       <v-select
@@ -563,7 +633,10 @@
                         :rules="rules.requireRule"
                       ></v-select>
                     </div>
+                  </div>
 
+                  <div class="form-row">
+                    
                     <!-- Nueva cuota número de operación -->
                     <div class="col-md-6">
                       <v-text-field
@@ -575,9 +648,7 @@
                         :rules="rules.requireRule"
                       ></v-text-field>
                     </div>
-                  </div>
 
-                  <div class="form-row">
                     <!-- Nueva cuota fecha de pago -->
                     <div class="col-md-6">
                       <v-menu
@@ -605,9 +676,12 @@
                       </v-menu>
                     </div>
 
+                  </div>
+
+                  <div class="form-row">
                     <!-- Nueva cuota banco -->
                     <div class="col-md-6" v-if="newCuote.payment_type === 2">
-                      <v-text-field v-model="newCuote.bank" label="Banco" required outlined></v-text-field>
+                      <v-text-field v-model="newCuote.bank" label="Banco" required :rules="rules.requireRule" outlined></v-text-field>
                     </div>
                   </div>
 
@@ -615,9 +689,9 @@
                     <div class="col-md-6">
                       <v-file-input
                         v-model="newCuote.voucher"
-                        :rules="rules.requireRule"
                         @change="setUrlVoucher()"
                         required
+                        :rules="rules.requireRule"
                         outlined
                         label="Subir voucher"
                       ></v-file-input>
@@ -630,6 +704,8 @@
                 </b-card-body>
               </b-collapse>
             </b-card>
+            <!-- End new cuota -->
+
           </div>
           <div class="text-center mt-3">
             <v-btn
@@ -650,6 +726,8 @@ import axios from "axios";
 
 // Components
 import Loader from "@/components/Loader";
+import PaymentList from '@/components/PaymentList'
+import CirclesInfo from '@/components/CirclesInfo'
 
 // Importa objetos estáticos para el formulario
 import {
@@ -664,22 +742,24 @@ import {
   getCoursesOnline
 } from "@/utilities/data-selects.js";
 
+// Importa las reglas para cada item del form
+import { rules } from '@/utilities/rules.js'
+
 export default {
   mounted() {
     this.getUser();
   },
   components: {
-    Loader
+    Loader,
+    PaymentList,
+    CirclesInfo
   },
   data() {
     return {
       user: {},
       valid: true,
       itemsStatus,
-      rules: {
-        require: "Este campo es requerido",
-        requireRule: [v => !!v || this.rules.require]
-      },
+      rules,
       step1: {
         iduser: 0,
         itemsTypeDocument,
@@ -735,11 +815,11 @@ export default {
         datePicker: false,
         voucher: {},
         bank: "",
-        payment_data_state: ""
+        payment_data_state: "",
+        payments: []
       },
       newCuote: {
         status: false,
-        coin: "",
         amount: "",
         payment_type: "",
         operation_number: "",
@@ -749,31 +829,32 @@ export default {
         bank: "",
         urlVoucher: ""
       },
-      alert: false
+      alert: false,
+      uploadNewVoucher: false
     };
   },
   computed: {
-    ...mapState(["currentUser", "loading"]),
+    ...mapState(["currentUser", "loading", 'formError']),
     parseIntUserType: function() {
       return parseInt(this.currentUser.type);
     },
     identificationState: function() {
-      return this.step1.identification_state === "2" ? false : true;
+      return this.step1.identification_state === "2" || this.step1.identification_state === "0" ? false : true;
     },
     personalDataState: function() {
-      return this.step2.personal_data_state === "2" ? false : true;
+      return this.step2.personal_data_state === "2" || this.step2.personal_data_state === "0" ? false : true;
     },
     contactDataState: function() {
-      return this.step3.contact_data_state === "2" ? false : true;
+      return this.step3.contact_data_state === "2" || this.step3.contact_data_state === "0" ? false : true;
     },
     locationDataState: function() {
-      return this.step4.location_data_state === "2" ? false : true;
+      return this.step4.location_data_state === "2" || this.step4.location_data_state === "0" ? false : true;
     },
     courseDataState: function() {
-      return this.step5.course_data_state === "2" ? false : true;
+      return this.step5.course_data_state === "2" || this.step5.course_data_state === "0" ? false : true;
     },
     paymentDataState: function() {
-      return this.step6.payment_data_state === "2" ? false : true;
+      return this.step6.payment_data_state === "2" || this.step6.payment_data_state === "0" ? false : true;
     },
     disabledButtonSubmit: function() {
       let status = true;
@@ -802,11 +883,17 @@ export default {
       }
 
       return status;
+    },
+    isTotal: function() {
+      return this.step6.payment === 1 ? true : false
     }
   },
   methods: {
     // Hace la petición cuando carga el componente
     getUser() {
+      // Limpiamos el error anterior
+      this.$store.commit('setErrorFormMessage', '')
+
       this.$store.commit("setLoading", true);
 
       let id = this.currentUser.userId;
@@ -832,8 +919,14 @@ export default {
           .catch((error) => {
             if(error.message === 'Request failed with status code 500') {
               this.$store.dispatch('logout')
-              this.$store.commit("setLoading", false);
+            } else if(error.message === 'Network Error') {
+              let errorMessage = 'Error con tu red de internet, inténtalo nuevamente.'
+
+              // Envía el mensaje de error
+              this.$store.commit('setErrorFormMessage', errorMessage)
             }
+
+            this.$store.commit("setLoading", false);
           });
       }
     },
@@ -900,88 +993,150 @@ export default {
         this.step6.voucher = user.payments[0].voucher;
         this.step6.bank = user.payments[0].bank;
 
+        this.step6.payments = user.payments.reverse()
+
         // Estado paso 6
         this.step6.payment_data_state = user.payment_data_state.toString();
       }
     },
     update() {
-      this.$store.commit("setLoading", true);
+      // Valida si el formulario ha sido completado
+      if(this.$refs.formUpdate.validate()) {
+        // Limpiamos el error anterior
+        this.$store.commit('setErrorFormMessage', '')
 
-      // Ocultamos el alert
-      this.alert = false
+        this.$store.commit("setLoading", true);
 
-      // Creamos FormData para que la Api pueda recibir los datos
-      let formData = new FormData();
+        // Ocultamos el alert
+        this.alert = false
 
-      formData.append('iduser', this.step1.iduser)
+        // Creamos FormData para que la Api pueda recibir los datos
+        let formData = new FormData();
 
-      // Step 1
-      formData.append('documentType', this.step1.document_type)
-      formData.append('documentNumber', this.step1.document_number)
+        formData.append('iduser', this.step1.iduser)
 
-      // Step 2
-      formData.append('name', this.step2.name)
-      formData.append('lastName', this.step2.last_name)
-      formData.append('surname', this.step2.surname)
-      formData.append('birthday', this.step2.birthday)
+        // Step 1
+        formData.append('documentType', this.step1.document_type)
+        formData.append('documentNumber', this.step1.document_number)
 
-      // Step 3
-      formData.append('email', this.step3.email_principal)
-      formData.append('emailSecundary', this.step3.email_secundary)
-      formData.append('phone', this.step3.phone_principal)
-      formData.append('phoneSecundary', this.step3.phone_secundary)
-      formData.append('cellphone', this.step3.cellphone)
+        // Step 2
+        formData.append('name', this.step2.name)
+        formData.append('lastName', this.step2.last_name)
+        formData.append('surname', this.step2.surname)
+        formData.append('birthday', this.step2.birthday)
 
-      // Step 4
-      formData.append('company', this.step4.company)
-      formData.append('position', this.step4.position)
-      formData.append('address', this.step4.address)
-      formData.append('country', this.step4.country)
-      formData.append('city', this.step4.city)
-      formData.append('province', this.step4.province)
+        // Step 3
+        formData.append('email', this.step3.email_principal)
+        formData.append('emailSecundary', this.step3.email_secundary)
+        formData.append('phone', this.step3.phone_principal)
+        formData.append('phoneSecundary', this.step3.phone_secundary)
+        formData.append('cellphone', this.step3.cellphone)
 
-      // Step 5
-      formData.append('typeCourse', this.step5.course_type)
-      formData.append('course', this.step5.course_name)
+        // Step 4
+        formData.append('company', this.step4.company)
+        formData.append('position', this.step4.position)
+        formData.append('address', this.step4.address)
+        formData.append('country', this.step4.country)
+        formData.append('city', this.step4.city)
+        formData.append('province', this.step4.province)
+        formData.append('observation', this.step4.observation)
 
-      // Nueva cuota
-      formData.append('paymentType', this.newCuote.payment_type)
-      formData.append('payment', this.newCuote.payment)
-      formData.append('amount', parseInt(this.newCuote.amount))
-      formData.append('coin', this.newCuote.coin)
-      formData.append('operationNumber', parseInt(this.newCuote.operation_number))
-      formData.append('operationDate', this.newCuote.operation_date)
-      formData.append('bank', this.newCuote.bank)
-      formData.append('voucher', this.newCuote.voucher)
+        // Step 5
+        formData.append('typeCourse', this.step5.course_type)
+        formData.append('course', this.step5.course_name)
 
-      // Petición POST
-      const options = {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${this.$store.state.token}`
-        },
-        data: formData,
-        url: "http://174.138.39.59/form-api/api/v1/users"
-      };
+        // Nueva cuota
 
-      axios(options)
-        .then(() => {
-          // Obetenemos nuevamente los datos del usuario
-          this.getUser()
+        // Si el cliente eligió pago total
+        if(this.step6.payment === 1) {
+          formData.append('paymentType', this.step6.payment_type)
+          formData.append('payment', this.step6.payment)
+          formData.append('amount', parseInt(this.step6.amount))
+          formData.append('coin', this.step6.coin)
+          formData.append('operationNumber', parseInt(this.step6.operation_number))
+          formData.append('operationDate', this.step6.operation_date)
+          
+          if(this.step6.payment_type === 2) {
+            formData.append('bank', this.step6.bank)
+          }
+          
+          formData.append('voucher', this.step6.voucher)
+        }
 
-          // Limpiar nueva cuota
-          this.clearNewCuote()
+        // Si el cliente eligió cuotas y el payment state = corregir
+        if(this.step6.payment === 2 && this.step6.payment_data_state === '2') {
+          formData.append('paymentType', this.step6.payments[this.step6.payments.length - 1].payment_type)
+          formData.append('amount', parseInt(this.step6.payments[this.step6.payments.length - 1].amount))
+          formData.append('operationNumber', parseInt(this.step6.payments[this.step6.payments.length - 1].operation_number))
+          formData.append('operationDate', this.step6.payments[this.step6.payments.length - 1].operation_date)
 
-          this.$store.commit("setLoading", false);
-          this.alert = true
-        })
-        .catch(() => {
-          this.$store.commit("setLoading", false);
-        });
+          if(this.step6.payments[0].payment_type === 2) {
+            formData.append('bank', this.step6.payments[this.step6.payments.length - 1].bank)
+          }
+
+          formData.append('voucher', this.step6.payments[this.step6.payments.length - 1].voucher)
+        }
+
+        // Si el cliente eligió cuotas y el payment state es nueva cuota
+        if(this.step6.payment === 2 && this.step6.payment_data_state === '3') {
+          formData.append('paymentType', this.newCuote.payment_type)
+          formData.append('amount', parseInt(this.newCuote.amount))
+          formData.append('operationNumber', parseInt(this.newCuote.operation_number))
+          formData.append('operationDate', this.newCuote.operation_date)
+          
+          if(this.step6.payment_type === 2) {
+            formData.append('bank', this.newCuote.bank)
+          }
+          formData.append('voucher', this.newCuote.voucher)
+        }
+
+        // Petición POST
+        const options = {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${this.$store.state.token}`
+          },
+          data: formData,
+          url: "http://174.138.39.59/form-api/api/v1/users"
+        };
+        axios(options)
+          .then(() => {
+            // Obtenemos nuevamente los datos del usuario
+            this.getUser()
+
+            // Limpiar nueva cuota
+            // this.clearNewCuote()
+
+            this.$store.commit("setLoading", false);
+            this.alert = true
+
+            // Cambiamos a false el subir nuevo voucher
+            this.uploadNewVoucher = false
+
+            // Limpiamos la imagen generada para visualizar cuando el cliente hace un cambio
+            this.step6.urlVoucher = ''
+          })
+          .catch((error) => {
+            if(error.message === 'Network Error') {
+              let errorMessage = 'Error con tu red de internet, inténtalo nuevamente.'
+
+              // Envía el mensaje de error
+              this.$store.commit('setErrorFormMessage', errorMessage)
+            }
+
+            this.$store.commit("setLoading", false);
+          });
+      } else {
+        alert('Completa todos los campos')
+      }
     },
     setUrlVoucher: function() {
       // Esta función crea una URL para poder mostrar el voucher
-      this.newCuote.urlVoucher = URL.createObjectURL(this.newCuote.voucher);
+      if(this.step6.payment === 1) {
+        this.step6.urlVoucher = URL.createObjectURL(this.step6.voucher);
+      } else {
+        this.newCuote.urlVoucher = URL.createObjectURL(this.newCuote.voucher);
+      }
     },
     clearNewCuote() {
       this.newCuote.payment_type = ''
@@ -997,5 +1152,12 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.link-retry {
+  color: rgba(#F44336, .9) !important;
+
+  &:hover {
+    text-decoration: underline !important;
+  }
+}
 </style>

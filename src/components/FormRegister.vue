@@ -1132,8 +1132,8 @@ export default {
             user.birthday = this.step2.birthday
 
             // Paso 3
-            user.email = this.step3.email
-            user.emailSecundary = this.step3.emailSecundary
+            user.email = this.step3.email.toLowerCase()
+            user.emailSecundary = this.step3.emailSecundary.toLowerCase()
 
             // Pasamos los valores a Integer porque en la instancia es String
             user.phone = parseInt(this.step3.phone)
@@ -1166,7 +1166,7 @@ export default {
             // Creamos FormData para que la Api pueda recibir los datos
             let formData = new FormData()
 
-            // Convierte el objeto user en un formData y se le agrega al que se creó anteriormente
+            // Convierte el objeto user en un formData
             Object.keys(user).forEach(key => formData.append(key, user[key]));
 
             if(this.step6.voucher) {

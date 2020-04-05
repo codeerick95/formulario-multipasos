@@ -83,7 +83,7 @@ export default {
         submit() {
             if(this.$refs.formLogin.validate()) {
                 let credentials = {
-                    email: this.email,
+                    email: this.email.toLowerCase(), // Enviamos el correo en minúscula
                     password: this.password
                 }
 

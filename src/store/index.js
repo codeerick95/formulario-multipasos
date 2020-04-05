@@ -191,6 +191,11 @@ export const store = new Vuex.Store({
 
             // Envía el mensaje de error
             state.commit('setErrorFormMessage', errorMessage)
+          } else if(error.message === 'Network Error') {
+            let errorMessage = 'Error con tu red de internet, inténtalo nuevamente.'
+
+            // Envía el mensaje de error
+            state.commit('setErrorFormMessage', errorMessage)
           }
           
         });

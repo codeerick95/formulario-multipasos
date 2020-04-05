@@ -1,5 +1,13 @@
 <template>
 <div>
+  <!-- Alertas -->
+  <div class="row justify-content-center text-center">
+      <div class="col-md-6">
+          <v-alert color="red" type="info" outlined dismissible v-if="formError">
+              Error con tu red de internet, <a @click.prevent="getUsers()" class="link-retry">inténtalo nuevamente.</a>
+          </v-alert>
+      </div>
+  </div>
   <loader v-if="loading"></loader>
   <div class="row" v-else>
     <div class="col-md-12">
@@ -126,8 +134,8 @@ export default {
       filterOn: [],
       perPage: 5,
       currentPage: 1,
-      sortBy: "",
-      sortDesc: false,
+      sortBy: "state",
+      sortDesc: true,
       sortDirection: "asc",
       totalRows: 1
     };
@@ -182,6 +190,9 @@ export default {
       });
     },
     getUsers() {
+       // Limpiamos el error anterior
+      this.$store.commit('setErrorFormMessage', '')
+
       if (this.parseIntUserType === 1) {
         // Mostrar cargando
         this.$store.commit("setLoading", true);
@@ -221,6 +232,13 @@ export default {
             if(error.message === 'Request failed with status code 401') {
               this.$store.dispatch('logout')
             }
+
+            if(error.message === 'Network Error') {
+              let errorMessage = 'Error con tu red de internet, inténtalo nuevamente.'
+
+              // Envía el mensaje de error
+              this.$store.commit('setErrorFormMessage', errorMessage)
+            }
           });
       }
     },
@@ -229,13 +247,28 @@ export default {
     }
   },
   computed: {
-    ...mapState(["users", "currentUser", "loading", "headerName"]),
+    ...mapState(["users", "currentUser", "loading", "headerName", 'formError']),
     parseIntUserType: function() {
       return parseInt(this.currentUser.type);
+    },
+    sortOptions() {
+      // Create an options list from our fields
+      return this.fields
+        .filter(f => f.sortable)
+        .map(f => {
+          return { text: f.label, value: f.key }
+        })
     }
   }
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.link-retry {
+  color: rgba(#F44336, .9) !important;
+
+  &:hover {
+    text-decoration: underline !important;
+  }
+}
 </style>

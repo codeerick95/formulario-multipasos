@@ -1,3 +1,4 @@
+<!-- Route /dashboard/users/:id -->
 <template>
     <div class="container mt-3">
         <div class="row justify-content-center text-center" v-if="alert">
@@ -10,7 +11,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <!-- <pre>
-                    {{ user }}
+                    {{ newPayment }}
                 </pre> -->
             </div>
         </div>
@@ -18,8 +19,9 @@
         <div class="row justify-content-center" v-else>
             <div class="col-md-6">
                 <div>
-                    <v-btn class="mb-3 text-decoration-none" color="primary" :to="{name: 'Dashboard'}">
-                        Regresar
+                    <v-btn class="mb-3 text-decoration-none" color="red darken-2 white--text" :to="{name: 'Dashboard'}">
+                        <v-icon dark left>mdi-arrow-left</v-icon>
+                        Dashboard
                     </v-btn>
                 </div>
                 <div class="card">
@@ -36,9 +38,13 @@
                     <div role="tablist">
                         <!-- Collapse 1 -->
                         <b-card no-body class="mb-1">
-                            <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
+                            <b-card-header header-tag="header" class="py-3 bg-light d-flex justify-content-between" role="tab">
                                 <a href="#" v-b-toggle.accordion-1 class="btn-link text-dark lead font-weight-bold">Identificación</a>
+
+                                <!-- Círculos que muestran el estado -->
+                                <circles-info :dataToValidate="step1.identification_state"></circles-info>
                             </b-card-header>
+
                             <b-collapse id="accordion-1" visible accordion="my-accordion" role="tabpanel">
                                 <b-card-body>
                                     <div class="form-row mt-5">
@@ -114,9 +120,14 @@
 
                         <!-- Collapse 2 -->
                         <b-card no-body class="mb-1">
-                            <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
+
+                            <b-card-header header-tag="header" class="py-3 bg-light d-flex justify-content-between" role="tab">
                                 <a href="#" v-b-toggle.accordion-2 class="btn-link text-dark lead font-weight-bold">Datos personales</a>
+
+                                <!-- Círculos que muestran el estado -->
+                                <circles-info :dataToValidate="step2.personal_data_state"></circles-info>
                             </b-card-header>
+
                             <b-collapse id="accordion-2" accordion="my-accordion" role="tabpanel">
                                 <b-card-body>
                                     <div class="form-row mt-5">
@@ -200,9 +211,13 @@
 
                         <!-- Datos de contacto -->
                         <b-card no-body class="mb-1">
-                            <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
+                            <b-card-header header-tag="header" class="py-3 bg-light d-flex justify-content-between" role="tab">
                                 <a href="#" v-b-toggle.accordion-3 class="btn-link text-dark lead font-weight-bold">Datos de contacto</a>
+
+                                <!-- Círculos que muestran el estado -->
+                                <circles-info :dataToValidate="step3.contact_data_state"></circles-info>
                             </b-card-header>
+
                             <b-collapse id="accordion-3" accordion="my-accordion" role="tabpanel">
                                 <b-card-body>
                                     <div class="form-row">
@@ -289,8 +304,11 @@
                         
                         <!-- Datos de ubicación -->
                         <b-card no-body class="mb-1">
-                            <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
+                            <b-card-header header-tag="header" class="py-3 bg-light d-flex justify-content-between" role="tab">
                                 <a href="#" v-b-toggle.accordion-4 class="btn-link text-dark lead font-weight-bold">Datos de ubicación</a>
+
+                                <!-- Círculos que muestran el estado -->
+                                <circles-info :dataToValidate="step4.location_data_state"></circles-info>
                             </b-card-header>
                             <b-collapse id="accordion-4" accordion="my-accordion" role="tabpanel">
                                 <b-card-body>
@@ -402,8 +420,11 @@
 
                         <!-- Datos de curso -->
                         <b-card no-body class="mb-1">
-                            <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
+                            <b-card-header header-tag="header" class="py-3 bg-light d-flex justify-content-between" role="tab">
                                 <a href="#" v-b-toggle.accordion-5 class="btn-link text-dark lead font-weight-bold">Datos de curso</a>
+
+                                <!-- Círculos que muestran el estado -->
+                                <circles-info :dataToValidate="step5.course_data_state"></circles-info>
                             </b-card-header>
                             <b-collapse id="accordion-5" accordion="my-accordion" role="tabpanel">
                                 <b-card-body>
@@ -451,6 +472,7 @@
                                             outlined
                                             v-model="step5.course_data_state"
                                             required
+                                            :rules="rules.requireRule"
                                             :disabled="courseDataState"
                                             >
                                         </v-select>
@@ -462,163 +484,182 @@
                         </b-card>
 
                         <!-- Datos de pago -->
-                        <b-card no-body class="mb-1">
+                        
+                        <!-- Si es el primer pago o es pago total, muestra el campo para que el admin pueda verificar -->
+                        <b-card no-body class="mb-1" v-if="step6.payment === 1 || step6.payment_data_state === '0' || step6.payment_data_state === null">
                             <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
                                 <a href="#" v-b-toggle.accordion-6 class="btn-link text-dark lead font-weight-bold">Datos de pago</a>
                             </b-card-header>
                             <b-collapse id="accordion-6" accordion="my-accordion" role="tabpanel">
                                 <b-card-body>
                                     <div class="form-row">
-
+                                        <!-- Items pago -->
                                         <div class="col-md-6">
                                             <v-select
-                                            :items="step6.itemsPayment"
-                                            label="PAGO"
-                                            outlined
-                                            v-model="step6.payment"
-                                            :disabled="paymentDataState"
-                                            >
+                                                :items="step6.itemsPayment"
+                                                label="PAGO"
+                                                outlined
+                                                v-model="step6.payment"
+                                                :rules="rules.requireRule"
+                                                :disabled="paymentDataState"
+                                                >
                                             </v-select>
                                         </div>
 
-                                        <div class="col-md-6">
-                                        <v-select
-                                            :items="step6.itemsCoin"
-                                            label="Moneda"
-                                            outlined
-                                            v-model="step6.coin"
-                                            :disabled="paymentDataState"
-                                            >
-                                            </v-select>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="form-row">
-
-                                        <div class="col-md-6">
-                                            <v-text-field
-                                                    type="number"
-                                                    v-model="step6.amount"
-                                                    label="Monto"
-                                                    required
-                                                    outlined
-                                                    :disabled="paymentDataState"
-                                                    >
-                                            </v-text-field>
-                                        </div>
-
+                                        <!-- Moneda -->
                                         <div class="col-md-6">
                                             <v-select
-                                            :items="step6.itemsTypePayment"
-                                            label="Tipo de pago"
-                                            outlined
-                                            v-model="step6.payment_type"
-                                            :disabled="paymentDataState"
-                                            >
-                                        </v-select>
+                                                :items="step6.itemsCoin"
+                                                label="Moneda"
+                                                outlined
+                                                v-model="step6.coin"
+                                                required
+                                                :rules="rules.requireRule"
+                                                :disabled="paymentDataState"
+                                            ></v-select>
                                         </div>
-
                                     </div>
 
                                     <div class="form-row">
-
+                                        <!-- Monto -->
                                         <div class="col-md-6">
                                             <v-text-field
-                                                    type="number"
-                                                    v-model="step6.operation_number"
-                                                    label="Número de operación"
-                                                    required
-                                                    outlined
-                                                    :disabled="paymentDataState"
-                                                    >
-                                            </v-text-field>
+                                                type="number"
+                                                v-model="newPayment.amount"
+                                                label="Monto"
+                                                required
+                                                :rules="rules.requireRule"
+                                                outlined
+                                                :disabled="paymentDataState"
+                                            ></v-text-field>
                                         </div>
 
+                                        <!-- Tipo de pago -->
+                                        <div class="col-md-6">
+                                            <v-select
+                                                :items="step6.itemsTypePayment"
+                                                label="Tipo de pago"
+                                                outlined
+                                                v-model="newPayment.payment_type"
+                                                required
+                                                :rules="rules.requireRule"
+                                                :disabled="paymentDataState"
+                                            ></v-select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <!-- Número de operación -->
+                                        <div class="col-md-6">
+                                            <v-text-field
+                                                type="number"
+                                                v-model="newPayment.operation_number"
+                                                label="Número de operación"
+                                                outlined
+                                                required
+                                                :rules="rules.requireRule"
+                                                :disabled="paymentDataState"
+                                            ></v-text-field>
+                                        </div>
+
+                                        <!-- Nueva cuota fecha de pago -->
                                         <div class="col-md-6">
                                             <v-menu
-                                                v-model="step6.datePicker"
+                                                v-model="newPayment.datePicker"
                                                 :close-on-content-click="false"
                                                 :nudge-right="40"
                                                 transition="scale-transition"
                                                 offset-y
                                                 min-width="290px"
                                             >
-                                                    <template v-slot:activator="{ on }">
-                                                        <v-text-field
-                                                            v-model="step6.operation_date"
-                                                            label="Fecha de operación"
-                                                            required
-                                                            outlined
-                                                            v-on="on"
-                                                            :disabled="paymentDataState"
-                                                        ></v-text-field>
-                                                    </template>
-                                                    <v-date-picker v-model="step6.operation_date" @input="step6.datePicker = false"></v-date-picker>
-                                                </v-menu>
+                                                <template v-slot:activator="{ on }">
+                                                    <v-text-field
+                                                        v-model="newPayment.operation_date"
+                                                        label="Fecha de operación"
+                                                        outlined
+                                                        v-on="on"
+                                                        required
+                                                        :rules="rules.requireRule"
+                                                        :disabled="paymentDataState"
+                                                    ></v-text-field>
+                                                </template>
+                                                <v-date-picker
+                                                v-model="newPayment.operation_date"
+                                                @input="newPayment.datePicker = false"
+                                                ></v-date-picker>
+                                            </v-menu>
                                         </div>
-
-                                    </div>
-
-                                    <div class="form-row">
-
-                                        <div class="col-md-6" v-if="step6.payment_type === 2">
-                                            <v-text-field
-                                                    v-model="step6.bank"
-                                                    label="Banco"
-                                                    required
-                                                    outlined
-                                                    :disabled="paymentDataState"
-                                            ></v-text-field>
-                                        </div>
-
                                     </div>
 
                                     <v-row>
-                                        <div class="col-md-8">
-                                            <span>Voucher</span>
-                                            <img :src="step6.voucher" alt="" class="img-fluid">
+                                        <div class="col-md-6">
+                                            <div v-if="newPayment.voucher != ''">
+                                                <span>Voucher</span>
+                                                <img :src="newPayment.voucher" alt="Imagen de voucher" class="img-fluid" />
+                                            </div>
+                                        </div>
+                                        <!-- Banco -->
+                                        <div class="col-md-6" v-if="newPayment.payment_type === 2">
+                                            <v-text-field v-model="newPayment.bank" label="Banco" required outlined :disabled="paymentDataState"></v-text-field>
                                         </div>
                                     </v-row>
 
-                                <v-row class="justify-content-center mt-5">
-                                    <div class="col-md-8 col-lg-6 text-center py-0">
-                                        <v-select
-                                            :items="itemsStatus"
-                                            label="Estado"
-                                            outlined
-                                            v-model="step6.payment_data_state"
-                                            :rules="rules.requireRule"
-                                            required
-                                            :disabled="paymentDataState"
-                                            >
-                                        </v-select>
-                                    </div>
-                                </v-row>
-
+                                    <v-row class="justify-content-center mt-5">
+                                        <div class="col-md-8 col-lg-6 text-center py-0">
+                                            <v-select
+                                                :items="itemsStatus"
+                                                label="Estado"
+                                                outlined
+                                                v-model="step6.payment_data_state"
+                                                required
+                                                :rules="rules.requireRule"
+                                                :disabled="paymentDataState"
+                                                >
+                                            </v-select>
+                                        </div>
+                                    </v-row>
                                 </b-card-body>
                             </b-collapse>
                         </b-card>
+
+                        <!-- Lista de pagos -->
+                        <template v-if="showPaymentsList">
+                            <payment-list :payments="step6.payments" :paymentDataState="step6.payment_data_state" @approved="changeCuotePaymentState($event)"></payment-list>
+                        </template>
                     </div>
 
                     <!-- Botón de nuevo pago -->
                     
                     <!-- Solo se mostrará si el cliente eligió cuotas y además el admin haya aprobado la sección de pago -->
-                    <div class="text-right mt-3" v-if="showButtonNewPayment">
+                    <div class="text-right mt-5" v-if="showButtonNewPayment">
                         <!-- Solo se mostrará si el usuario eligió pagar en cuotas -->
-                        <v-btn color="primary white--text" @click="step6.payment_data_state = '3'">Nuevo pago</v-btn>
+                        <v-btn color="primary white--text" @click="newPaymentGenerate()">Nuevo pago</v-btn>
                     </div>
 
-                    <!-- Nuevo pago generado -->
-                    <new-payment-generate v-if="step6.payment_data_state === '3'" @deleteCuote="step6.payment_data_state = '1'"></new-payment-generate>
+                    <!-- Alerta cuando el admin genere un anueva cuota -->
+                    <b-card-body class="text-center" v-if="step6.payment_data_state === '3'">
+                        <v-alert type="success" outlined prominent>
+                            <span class="text-success font-weight-bold">Se ha generado la cuota nro {{ numberCuote }}</span>
+                        </v-alert>
+                        <p>
+                            <a href="" class="text-danger" @click.prevent="deleteCuote()">Eliminar cuota generada</a>
+                        </p>
+                    </b-card-body>
 
                     <!-- Botón para enviar formulario -->
-                    <div class="d-flex justify-content-center mt-5">
+                    <div class="d-flex justify-content-between mt-5">
+                        <v-btn class="mb-3 text-decoration-none mt-5" color="red darken-2 white--text" :to="{name: 'Dashboard'}">
+                            <v-icon dark left>mdi-arrow-left</v-icon>
+                            Dashboard
+                        </v-btn>
+
                         <v-btn
                             type="submit"
-                            color="red darken-2 white--text"
+                            color="primary"
+                            class="mt-5"
                         >
                             Guardar
+                            <v-icon dark right>mdi-checkbox-marked-circle</v-icon>
                         </v-btn>
                     </div>
                 </v-form>
@@ -646,7 +687,8 @@ import {
 
 // Components
 import Loader from '@/components/Loader'
-import NewPaymentGenerate from '@/components/NewPaymentGenerate'
+import PaymentList from '@/components/PaymentList'
+import CirclesInfo from '@/components/CirclesInfo'
 
 export default {
     data() {
@@ -733,6 +775,7 @@ export default {
               voucher: '',
               bank: '',
               payment_data_state: '',
+              payments: [],
               newPayment: false
             },
             alert: false
@@ -740,7 +783,8 @@ export default {
     },
     components: {
         Loader,
-        NewPaymentGenerate
+        PaymentList,
+        CirclesInfo
     },
     methods: {
         getUser() {
@@ -831,15 +875,21 @@ export default {
                 // Estado paso 5
                 this.step5.course_data_state = user.course_data_state.toString()
 
+                // Obtiene el primer pago realizado por el usuario 
+                let first_payment = user.payments[user.payments.length - 1]
+
+                // Asigna las cuotas del usuario
+                this.step6.payments = user.payments.reverse()
+
                 // Datos de pago
                 this.step6.coin = user.coin
                 this.step6.payment = user.payment
-                this.step6.amount = user.payments[0].amount
-                this.step6.payment_type = user.payments[0].payment_type
-                this.step6.operation_number = user.payments[0].operation_number
-                this.step6.operation_date = user.payments[0].operation_date
-                this.step6.voucher = user.payments[0].voucher
-                this.step6.bank = user.payments[0].bank
+                this.step6.amount = first_payment.amount
+                this.step6.payment_type = first_payment.payment_type
+                this.step6.operation_number = first_payment.operation_number
+                this.step6.operation_date = first_payment.operation_date
+                this.step6.voucher = first_payment.voucher
+                this.step6.bank = first_payment.bank
 
                 // Estado paso 6
                 this.step6.payment_data_state = user.payment_data_state.toString()
@@ -891,21 +941,31 @@ export default {
                     }
 
                 }).catch(() => {
-                    
                     // Oculta el botón cargando
                     this.$store.state.loading = false
                 })
-
+        } else {
+            // Si los datos del formulario están incompletos
+            alert('Revisa que los campos estén completos')
+            
+            // Oculta el botón cargando
+            this.$store.state.loading = false
+        }
+        },
+        newPaymentGenerate() {
+            if (this.step6.payment_data_state === '2' || this.step6.payment_data_state === '4'){
+                // Si el payment state está como corregir o como pendiente
+                alert('Primero debes aprobar el pago anterior')
             } else {
-                // Si los datos del formulario están incompletos
-                alert('Revisa que los campos estén completos')
-                
-                // Oculta el botón cargando
-                this.$store.state.loading = false
+                this.step6.newPayment = true
+                this.step6.payment_data_state = '3'
             }
         },
-        addnewCuote() {
-            this.step6.payment_data_state = '3'
+        deleteCuote() {
+            this.step6.payment_data_state = '1'
+        },
+        changeCuotePaymentState(e) {
+            this.step6.payment_data_state = e
         }
     },
     mounted() {
@@ -932,14 +992,31 @@ export default {
         paymentDataState: function() {
             return this.step6.payment_data_state === '1' ? true : false
         },
-        showButtonNewPayment: function() {
+        showPaymentsList: function() {
             let status = false
 
-            if(this.step6.payment === 2 && this.step6.payment_data_state === '1' || this.step6.payment === 2 && this.step6.payment_data_state === '3') {
+            // Si eligió pagar en cuotas
+            if(this.step6.payment === 2 && this.step6.payment_data_state != '0' && this.step6.payment_data_state != null) {
                 status = true
             }
 
             return status
+        },
+        showButtonNewPayment: function() {
+            let status = false
+
+            // Si payment es 2 (Cuotas) && payment_data_state = 1 (Aprobado)
+            if(this.step6.payment === 2 && this.step6.payment_data_state === '1' || this.step6.payment === 2 && this.step6.payment_data_state === '2' || this.step6.payment === 2 && this.step6.payment_data_state === '3') {
+                status = true
+            }
+
+            return status
+        },
+        newPayment: function() {
+            return this.step6.payments[0]
+        },
+        numberCuote: function() {
+            return this.step6.payments.length + 1
         }
     }
 }

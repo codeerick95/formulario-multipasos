@@ -38,10 +38,11 @@ const itemsStatus = [
     { value: null, text: 'Estado' },
     { value: '0', text: 'Registrado' },
     { value: '1', text: 'Aprobado' },
-    { value: '2', text: 'Corregir' }
+    { value: '2', text: 'Corregir' },
+    { value: '4', text: 'Pendiente' }
+    // 3 : cuota solo para pagos
 ]
 
-// Esta función solo funciona con el usuario ya que la Api no envía datos correctamente
 const itemsTypeDocument = [
     { value: null, text: 'Tipo de documento' },
     { value: 1, text: 'DNI' },
