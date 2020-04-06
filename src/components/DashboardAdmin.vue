@@ -13,8 +13,8 @@
     <div class="col-md-12">
       <div class="card py-1">
         <div class="card-body">
-          <h2 class="title mb-5">Panel de administración</h2>
-          <p>Bienvenido {{ currentUser.data.name ? currentUser.data.name : headerName}}</p>
+          <h2 class="form-title mb-5">Panel de administración</h2>
+          <p class="font-weight-bold">Bienvenido {{ currentUser.data.name ? currentUser.data.name : headerName}}</p>
 
           <!-- Formulario de filtro -->
           <div class="form-row justify-content-center">

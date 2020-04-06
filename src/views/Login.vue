@@ -3,7 +3,7 @@
     <div class="row justify-content-center">
         <div class="col-md-5">
             <v-card outlined class="mt-5">
-                <h1 class="title mt-3 text-center">Ingresa a tú cuenta</h1>
+                <h1 class="form-title mt-3 text-center">Ingresar</h1>
 
                 <v-form @submit.prevent="submit()" ref="formLogin" v-model="valid" lazy-validation>
                     <!-- Email -->

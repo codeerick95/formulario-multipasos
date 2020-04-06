@@ -1,28 +1,26 @@
+<!-- Route /dashboard -->
 <template>
   <div>
     <loader v-if="loading"></loader>
     <div class="row justify-content-center" v-else>
 
       <!-- Alertas -->
-      <div class="row justify-content-center text-center">
-          <div class="col-md-6">
-              <v-alert color="blue" type="info" outlined dismissible v-if="alert">
-                  Los datos se actualizaron con éxito.
-              </v-alert>
-              <v-alert color="red" type="info" outlined dismissible v-if="formError">
-                  Error con tu red de internet, <a @click.prevent="getUser()" class="link-retry">inténtalo nuevamente.</a>
-              </v-alert>
-          </div>
-      </div>
-
-      <div class="col-md-12">
-        <!-- <pre>
-          {{ user }}
-        </pre> -->
+      <div class="col-md-8 text-center">
+         <v-alert color="info" type="info" outlined dismissible v-if="alert">
+              <span class="text-dark font-weight-bold">Tus datos fueron actualizados.</span>
+          </v-alert>
+          <v-alert color="red" type="info" outlined dismissible v-if="formError">
+              Error con tu red de internet, <a @click.prevent="getUser()" class="link-retry">inténtalo nuevamente.</a>
+          </v-alert>
       </div>
 
       <!-- Form -->
       <div class="col-md-8" v-if="formError.length === 0">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="form-title m-0 text-center">Bienvenido {{ headerName }}</h2>
+            </div>
+        </div>
         <v-form ref="formUpdate" v-model="valid" lazy-validation @submit.prevent="update()">
           <div role="tablist">
             <!-- Collapse 1 -->
@@ -67,7 +65,7 @@
                         :rules="rules.typeDocumentFieldDni"
                         outlined
                         :disabled="identificationState"
-                        v-if="step1.selectTypeDocument === 'DNI' "
+                        v-if="step1.document_type === 1 "
                       ></v-text-field>
 
                       <!-- Campo Pasaporte -->
@@ -79,7 +77,7 @@
                         :rules="rules.typeDocumentFieldPasaport"
                         outlined
                         :disabled="identificationState"
-                        v-if="step1.selectTypeDocument === 'PASAPORTE' "
+                        v-if="step1.document_type === 2 "
                       ></v-text-field>
 
                       <!-- Campo  CE -->
@@ -91,7 +89,7 @@
                         :rules="rules.typeDocumentFieldCe"
                         outlined
                         :disabled="identificationState"
-                        v-if="step1.selectTypeDocument === 'CE' "
+                        v-if="step1.document_type === '3' "
                       ></v-text-field>
                     </div>
                   </div>
@@ -116,6 +114,8 @@
               <b-collapse id="accordion-2" accordion="my-accordion" role="tabpanel">
                 <b-card-body>
                   <div class="form-row mt-5">
+
+                    <!-- Nombre -->
                     <div class="col-md-6 py-0">
                       <v-text-field
                         v-model="step2.name"
@@ -127,6 +127,7 @@
                       ></v-text-field>
                     </div>
 
+                    <!-- Apellido paterno -->
                     <div class="col-md-6 py-0">
                       <v-text-field
                         v-model="step2.last_name"
@@ -140,6 +141,7 @@
                   </div>
 
                   <div class="form-row">
+                    <!-- Apellido materno -->
                     <div class="col-md-6 py-0">
                       <v-text-field
                         v-model="step2.surname"
@@ -152,6 +154,7 @@
                     </div>
 
                     <div class="col-md-6 py-0">
+                      <!-- Fecha de nacimiento -->
                       <v-menu
                         v-model="step2.datePicker"
                         :close-on-content-click="false"
@@ -199,6 +202,7 @@
                 <b-card-body>
                   <div class="form-row">
                     <div class="col-md-6">
+                      <!-- Email principal -->
                       <v-text-field
                         v-model="step3.email_principal"
                         label="Email principal"
@@ -209,6 +213,7 @@
                       ></v-text-field>
                     </div>
 
+                    <!-- Email secundario -->
                     <div class="col-md-6">
                       <v-text-field
                         v-model="step3.email_secundary"
@@ -222,6 +227,7 @@
                   </div>
 
                   <div class="form-row">
+                    <!-- Teléfono principal -->
                     <div class="col-md-6">
                       <v-text-field
                         type="number"
@@ -234,6 +240,7 @@
                       ></v-text-field>
                     </div>
 
+                    <!-- Teléfono secundario -->
                     <div class="col-md-6">
                       <v-text-field
                         type="number"
@@ -248,6 +255,7 @@
                   </div>
 
                   <div class="form-row">
+                    <!-- Celular -->
                     <div class="col-md-6">
                       <v-text-field
                         type="number"
@@ -281,6 +289,7 @@
               <b-collapse id="accordion-4" accordion="my-accordion" role="tabpanel">
                 <b-card-body>
                   <div class="form-row">
+                    <!-- Empresa -->
                     <div class="col-md-6">
                       <v-text-field
                         v-model="step4.company"
@@ -292,6 +301,7 @@
                       ></v-text-field>
                     </div>
 
+                    <!-- Posición -->
                     <div class="col-md-6">
                       <v-text-field
                         v-model="step4.position"
@@ -305,6 +315,7 @@
                   </div>
 
                   <div class="form-row">
+                    <!-- Dirección -->
                     <div class="col-md-6">
                       <v-text-field
                         v-model="step4.address"
@@ -316,12 +327,14 @@
                       ></v-text-field>
                     </div>
 
+                    <!-- City -->
                     <div class="col-md-6">
                       <v-text-field v-model="step4.city" label="Ciudad" required :rules="rules.requireRule" outlined :disabled="locationDataState"></v-text-field>
                     </div>
                   </div>
 
                   <div class="form-row">
+                    <!-- Provincia -->
                     <div class="col-md-6">
                       <v-text-field
                         v-model="step4.province"
@@ -333,6 +346,7 @@
                       ></v-text-field>
                     </div>
 
+                    <!-- País -->
                     <div class="col-md-6">
                       <v-select
                         :items="step4.itemsCountry"
@@ -347,7 +361,8 @@
                   </div>
 
                   <div class="form-row">
-                    <div class="col">
+                    <!-- Observaciones -->
+                    <div class="col-12">
                       <v-textarea
                         v-model="step4.observation"
                         outlined
@@ -380,6 +395,7 @@
               <b-collapse id="accordion-5" accordion="my-accordion" role="tabpanel">
                 <b-card-body>
                   <div class="form-row">
+                    <!-- Tipo de curso -->
                     <div class="col-md-6">
                       <v-select
                         :items="step5.itemsTypeCourse"
@@ -393,7 +409,7 @@
                     </div>
 
                     <div class="col-md-6">
-                      <!-- Selecto con cursos presenciales -->
+                      <!-- Select cursos presenciales -->
                       <v-select
                         :items="step5.itemsCoursesOnline"
                         label="Curso"
@@ -405,7 +421,7 @@
                         :rules="rules.requireRule"
                       ></v-select>
 
-                      <!-- Selecto con cursos online -->
+                      <!-- Select cursos online -->
                       <v-select
                         :items="step5.itemsCoursesPresenciales"
                         label="Curso"
@@ -573,9 +589,9 @@
                   </div>
 
                   <v-row>
-                    <div class="col-md-6">
+                    <div class="col-md-7">
 
-                      <template v-if="step6.payment_data_state != '1' && uploadNewVoucher === false">
+                      <template v-if=" step6.payment_data_state != '1' && uploadNewVoucher === false">
                         <p>
                           <span class="font-weight-bold">Voucher anterior</span>
                           <a href="" class="ml-3" @click.prevent="uploadNewVoucher = true">Subir nuevo voucher</a>
@@ -583,11 +599,7 @@
                         <img :src="step6.voucher" alt class="img-fluid"/>
                         
                       </template>
-
-                    
-                      <!-- <img :src="step6.voucher" alt class="img-fluid" v-if="!step6.urlVoucher"/>
-
-                      <img :src="step6.urlVoucher" alt class="img-fluid" v-if="step6.urlVoucher != ''" /> -->
+                      
                     </div>
                   </v-row>
                   
@@ -678,14 +690,8 @@
 
                   </div>
 
-                  <div class="form-row">
-                    <!-- Nueva cuota banco -->
-                    <div class="col-md-6" v-if="newCuote.payment_type === 2">
-                      <v-text-field v-model="newCuote.bank" label="Banco" required :rules="rules.requireRule" outlined></v-text-field>
-                    </div>
-                  </div>
-
                   <v-row>
+                    <!-- Voucher -->
                     <div class="col-md-6">
                       <v-file-input
                         v-model="newCuote.voucher"
@@ -699,6 +705,11 @@
                         <span>Voucher</span>
                         <img :src="newCuote.urlVoucher" alt="Imagen de voucher" class="img-fluid" />
                       </div>
+                    </div>
+
+                    <!-- Nueva cuota banco -->
+                    <div class="col-md-6" v-if="newCuote.payment_type === 2">
+                      <v-text-field v-model="newCuote.bank" label="Banco" required :rules="rules.requireRule" outlined></v-text-field>
                     </div>
                   </v-row>
                 </b-card-body>
@@ -834,7 +845,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["currentUser", "loading", 'formError']),
+    ...mapState(["currentUser", "loading", 'formError', 'headerName']),
     parseIntUserType: function() {
       return parseInt(this.currentUser.type);
     },
@@ -933,7 +944,7 @@ export default {
     // Guarda los datos devueltos anteriormente en el estado local del componente
     setUser(user) {
       // Test
-      this.user = user;
+      // this.user = user;
 
       if (user) {
         // Datos de identificación
@@ -1059,8 +1070,13 @@ export default {
           if(this.step6.payment_type === 2) {
             formData.append('bank', this.step6.bank)
           }
-          
-          formData.append('voucher', this.step6.voucher)
+
+          // Si el usuario no ha subido un nuevo voucher no actualizamos la imagen
+          if(typeof(this.step6.voucher) != 'string') {
+            formData.append('voucher', this.step6.voucher)
+          }
+
+          console.log(typeof(this.step6.voucher))
         }
 
         // Si el cliente eligió cuotas y el payment state = corregir
@@ -1087,6 +1103,7 @@ export default {
           if(this.step6.payment_type === 2) {
             formData.append('bank', this.newCuote.bank)
           }
+
           formData.append('voucher', this.newCuote.voucher)
         }
 

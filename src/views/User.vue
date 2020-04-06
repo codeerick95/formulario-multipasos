@@ -1,24 +1,18 @@
 <!-- Route /dashboard/users/:id -->
 <template>
+<div>
     <div class="container mt-3">
         <div class="row justify-content-center text-center" v-if="alert">
-            <div class="col-md-6">
-                <v-alert color="blue" type="info" outlined dismissible>
-                    Los datos del usuario se actualizaron con éxito
+            <div class="col-md-7">
+                <v-alert color="info" type="info" outlined dismissible>
+                    <span class="text-dark font-weight-bold">Los datos del usuario fueron actualizados.</span>
                 </v-alert>
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <!-- <pre>
-                    {{ newPayment }}
-                </pre> -->
             </div>
         </div>
         <loader v-if="loading"></loader>
         <div class="row justify-content-center" v-else>
-            <div class="col-md-6">
-                <div>
+            <div class="col-md-7">
+                <div class="mb-5">
                     <v-btn class="mb-3 text-decoration-none" color="red darken-2 white--text" :to="{name: 'Dashboard'}">
                         <v-icon dark left>mdi-arrow-left</v-icon>
                         Dashboard
@@ -26,7 +20,7 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <h2 class="title m-0 text-center">Datos de usuario: #{{ this.$route.params.id }}</h2>
+                        <h2 class="form-title m-0 text-center">Datos de usuario: #{{ this.$route.params.id }}</h2>
                     </div>
                 </div>
                 
@@ -484,11 +478,13 @@
                         </b-card>
 
                         <!-- Datos de pago -->
-                        
                         <!-- Si es el primer pago o es pago total, muestra el campo para que el admin pueda verificar -->
                         <b-card no-body class="mb-1" v-if="step6.payment === 1 || step6.payment_data_state === '0' || step6.payment_data_state === null">
-                            <b-card-header header-tag="header" class="py-3 bg-light" role="tab">
+                            <b-card-header header-tag="header" class="py-3 bg-light d-flex justify-content-between" role="tab">
                                 <a href="#" v-b-toggle.accordion-6 class="btn-link text-dark lead font-weight-bold">Datos de pago</a>
+
+                                <!-- Círculos que muestran el estado -->
+                                <circles-info :dataToValidate="step6.payment_data_state"></circles-info>
                             </b-card-header>
                             <b-collapse id="accordion-6" accordion="my-accordion" role="tabpanel">
                                 <b-card-body>
@@ -607,7 +603,7 @@
                                     <v-row class="justify-content-center mt-5">
                                         <div class="col-md-8 col-lg-6 text-center py-0">
                                             <v-select
-                                                :items="itemsStatus"
+                                                :items="itemsStatusPayment"
                                                 label="Estado"
                                                 outlined
                                                 v-model="step6.payment_data_state"
@@ -667,6 +663,7 @@
             </div>
         </div>
     </div>
+</div>
 </template>
 
 <script>
@@ -778,6 +775,13 @@ export default {
               payments: [],
               newPayment: false
             },
+            itemsStatusPayment: [
+                { value: null, text: 'Estado' },
+                { value: '0', text: 'Registrado' },
+                { value: '1', text: 'Aprobado' },
+                { value: '2', text: 'Corregir' },
+                { value: '4', text: 'Pendiente' }
+            ],
             alert: false
         }
     },
@@ -824,7 +828,7 @@ export default {
         },
         setUser(user) {
             // Test
-            this.user = user
+            // this.user = user
 
             if(user) {
 
@@ -953,9 +957,9 @@ export default {
         }
         },
         newPaymentGenerate() {
-            if (this.step6.payment_data_state === '2' || this.step6.payment_data_state === '4'){
+            if ( this.step6.payment_data_state === '2' || this.step6.payment_data_state === '4' || this.step6.payment_data_state === '3' ){
                 // Si el payment state está como corregir o como pendiente
-                alert('Primero debes aprobar el pago anterior')
+                alert('Primero debes aprobar o eliminar el pago anterior')
             } else {
                 this.step6.newPayment = true
                 this.step6.payment_data_state = '3'
@@ -970,10 +974,16 @@ export default {
     },
     mounted() {
         getCoursesPresenciales()
+
+        // Obtiene los datos del usuario
         this.getUser()
     },
     computed: {
         ...mapState(['currentUser', 'users', 'loading']),
+        isAdmin: function() {
+            let type = parseInt(this.currentUser.type)
+            return type === 1 ? true : false
+        },
         identificationState: function() {
             return this.step1.identification_state === '1' ? true : false
         },
@@ -1021,3 +1031,6 @@ export default {
     }
 }
 </script>
+
+<style lang="scss">
+</style>

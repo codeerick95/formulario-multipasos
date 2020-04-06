@@ -23,6 +23,14 @@
         </template>
         <span>Corregir</span>
     </v-tooltip>
+
+    <!-- Validado -->
+    <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+        <span v-on="on" class="circle-info bg-info" v-if="validate === '4'"></span>
+        </template>
+        <span>Pendiente</span>
+    </v-tooltip>
 </div>
 </template>
 

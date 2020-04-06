@@ -38,9 +38,9 @@ const itemsStatus = [
     { value: null, text: 'Estado' },
     { value: '0', text: 'Registrado' },
     { value: '1', text: 'Aprobado' },
-    { value: '2', text: 'Corregir' },
-    { value: '4', text: 'Pendiente' }
-    // 3 : cuota solo para pagos
+    { value: '2', text: 'Corregir' }
+    // 3: cuota solo para pagos
+    // 4: Pendiente
 ]
 
 const itemsTypeDocument = [

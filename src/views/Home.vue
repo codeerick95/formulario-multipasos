@@ -2,11 +2,8 @@
   <div>
     <div class="container">
       <div class="row justify-content-center">
-        <!-- <form-register :currentViewForm="currentView" class="mt-5"></form-register> -->
         <form-register class="mt-5"></form-register>
       </div>
-      <!-- <img alt="Vue logo" src="../assets/logo.png">
-      <HelloWorld msg="Welcome to Your Vue.js App"/> -->
     </div>
   </div>
 </template>
@@ -27,36 +24,12 @@ export default {
   },
   data() {
     return {
-      currentView: 1
     }
   },
   computed: {
     
   },
   methods: {
-    setCheck(value) {
-      if(value === 1) {
-        this.step1.value = false
-        this.step1.disabled = false
-        this.currentView = value
-      } else if(value === 2 && this.currentView > 1 || value === 2 && this.step1.completed) {
-        this.step2.value = false
-        this.step2.disabled = false
-        this.currentView = value
-      } else if(value === 3 && this.currentView > 2 || value === 3 && this.step2.completed) {
-        this.step3.value = false
-        this.step3.disabled = false
-        this.currentView = value
-      } else if(value === 4 && this.currentView > 3 || value === 4 && this.step3.completed) {
-        this.step4.value = false
-        this.step4.disabled = false
-        this.currentView = value
-      } else if(value === 5 && this.currentView > 4 || value === 5 && this.step4.completed) {
-        this.step5.value = false
-        this.step5.disabled = false
-        this.currentView = value
-      }
-    }
   }
 }
 </script>

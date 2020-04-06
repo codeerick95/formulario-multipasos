@@ -2,7 +2,7 @@
     <div :class="classColumns">
         <v-card class="mt-5">
 
-            <h2 class="form-title text-center pt-3">Registro de usuarios</h2>
+            <h1 class="form-title text-center pt-3">Registro de usuarios</h1>
 
             <!-- Este subtítulo cambia según el paso en el que se encuentre el usuario -->
             <h2 class="subtitle text-center font-weight-regular mt-5 mb-5">{{ setSubtitle }}</h2>
@@ -593,6 +593,7 @@
                                   <v-row class="mb-5 pb-5">
                                     <div class="col-md-6">
                                       <v-file-input v-model="step6.voucher" :rules="rules.requireRule" @change="setUrlVoucher()" required outlined label="Subir voucher"></v-file-input>
+                                      <img :src="step7.urlVoucher" alt="Voucher" class="img-fluid" v-if=" step7.urlVoucher ">
                                     </div>
                                     <!-- Solo se mostrará si selecciona transferencia -->
                                     <div class="col-md-6" v-if="step6.paymentType === 2">
@@ -637,7 +638,10 @@
 
                                     <div class="col-md-10 mb-5">
                                         <!-- Datos de identificación -->
-                                        <h3 class="font-weight-bold lead">Datos de identificación:</h3>
+                                        <h3 class="font-weight-bold lead d-flex justify-content-between align-items-center">
+                                            Datos de identificación:
+                                            <v-icon right class="icon-pen" @click="stepCurrent = 1">mdi-pencil</v-icon>
+                                        </h3>
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <p>
@@ -660,7 +664,10 @@
                                 <div class="row justify-content-center mt-5">
                                     <div class="col-md-10 mb-5">
 
-                                        <h3 class="font-weight-bold lead mb-3">Datos personales:</h3>
+                                        <h3 class="font-weight-bold lead mb-3 d-flex justify-content-between align-items-center">
+                                            Datos personales:
+                                            <v-icon right class="icon-pen" @click="stepCurrent = 2">mdi-pencil</v-icon>
+                                        </h3>
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <p>
@@ -690,7 +697,10 @@
                                 <!-- Datos de contacto -->
                                 <div class="row justify-content-center mt-5">
                                     <div class="col-md-10 mb-5">
-                                        <h3 class="font-weight-bold lead mb-3">Datos de contacto:</h3>
+                                        <h3 class="font-weight-bold lead mb-3 d-flex justify-content-between align-items-center">
+                                            Datos de contacto:
+                                            <v-icon right class="icon-pen" @click="stepCurrent = 3">mdi-pencil</v-icon>
+                                        </h3>
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <p>
@@ -732,7 +742,10 @@
                                 <!-- Datos de ubicación -->
                                 <div class="row justify-content-center mt-5">
                                     <div class="col-md-10 mb-5">
-                                        <h3 class="font-weight-bold lead mb-3">Datos de ubicación:</h3>
+                                        <h3 class="font-weight-bold lead mb-3 d-flex justify-content-between align-items-center">
+                                            Datos de ubicación:
+                                            <v-icon right class="icon-pen" @click="stepCurrent = 4">mdi-pencil</v-icon>
+                                        </h3>
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <p>
@@ -788,7 +801,10 @@
                                 <!-- Datos de curso -->
                                 <div class="row justify-content-center mt-5">
                                     <div class="col-md-10 mb-5">
-                                        <h3 class="font-weight-bold lead mb-3">Datos de curso:</h3>
+                                        <h3 class="font-weight-bold lead mb-3 d-flex justify-content-between align-items-center">
+                                            Datos de curso:
+                                            <v-icon right class="icon-pen" @click="stepCurrent = 5">mdi-pencil</v-icon>
+                                        </h3>
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <p>
@@ -809,7 +825,10 @@
                                 <!-- Datos de curso -->
                                 <div class="row justify-content-center my-5">
                                     <div class="col-md-10 mb-5">
-                                        <h3 class="font-weight-bold lead mb-3">Datos de pago:</h3>
+                                        <h3 class="font-weight-bold lead mb-3 d-flex justify-content-between align-items-center">
+                                            Datos de pago:
+                                            <v-icon right class="icon-pen" @click="stepCurrent = 6">mdi-pencil</v-icon>
+                                        </h3>
                                         <v-row>
                                             <div class="col-md-4">
                                                 <p>
@@ -853,7 +872,7 @@
                                             </div>
                                         </v-row>
                                         <v-row>
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
                                                 <p class="text-muted mr-3">Voucher:</p>
                                                 <img :src="step7.urlVoucher" alt="" class="img-fluid">
                                             </div>
@@ -927,8 +946,8 @@ import { mapState } from 'vuex'
 export default {
     data() {
         return {
-            stepCurrent: 1,
-            steps: 7,
+            stepCurrent: 1, // Paso actual
+            steps: 7, // Número total de pasos
             valid: true, // Indica si el form debe validarse
             rules,
             // Datos para cada paso
@@ -986,6 +1005,9 @@ export default {
               urlVoucher: ''
             },
         }
+    },
+    mounted() {
+        this.$store.commit('setErrorFormMessage', '')
     },
     computed: {
         ...mapState(['loading', 'formError']),
@@ -1197,6 +1219,7 @@ input[type="date"]:before {
     font-family: inherit !important;
 
     .form-title {
+        font-size: 2em;
         font-weight: 700;
     }
 
@@ -1225,6 +1248,15 @@ input[type="date"]:before {
 .error-link {
     &:hover {
         text-decoration: underline !important;
+    }
+}
+
+.icon-pen {
+    transition: color .5s;
+
+    &:hover {
+        color: rgb(30, 32, 32);
+        cursor: pointer;
     }
 }
 </style>
