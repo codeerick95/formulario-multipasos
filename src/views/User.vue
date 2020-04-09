@@ -11,7 +11,7 @@
         </div>
         <loader v-if="loading"></loader>
         <div class="row justify-content-center" v-else>
-            <div class="col-md-7">
+            <div class="col-md-11">
                 <div class="mb-5">
                     <v-btn class="mb-3 text-decoration-none" color="red darken-2 white--text" :to="{name: 'Dashboard'}">
                         <v-icon dark left>mdi-arrow-left</v-icon>
@@ -39,63 +39,66 @@
                                 <circles-info :dataToValidate="step1.identification_state"></circles-info>
                             </b-card-header>
 
-                            <b-collapse id="accordion-1" visible accordion="my-accordion" role="tabpanel">
+                            <b-collapse id="accordion-1" visible accordion="my-accordion-1" role="tabpanel">
                                 <b-card-body>
-                                    <div class="form-row mt-5">
+                                    <div class="form-row justify-content-between mt-5">
 
-                                        <!-- Select tipo de documento -->
-                                        <div class="col-md-6 py-0">
-                                            <div class="form-group mb-0">
-                                                <v-select
-                                                :items="step1.itemsTypeDocument"
-                                                label="Tipo de documento"
-                                                outlined
-                                                v-model="step1.document_type"
-                                                :disabled="identificationState"
-                                                >
-                                                </v-select>
+                                        <div class="col-md-9">
+                                            <div class="form-row">
+                                                <!-- Select tipo de documento -->
+                                                <div class="col-md-6 py-0">
+                                                    <div class="form-group mb-0">
+                                                        <v-select
+                                                        :items="step1.itemsTypeDocument"
+                                                        label="Tipo de documento"
+                                                        outlined
+                                                        v-model="step1.document_type"
+                                                        disabled
+                                                        >
+                                                        </v-select>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Campo tipo de documento -->
+                                                <div class="col-md-6 py-0">
+                                                    <!-- Campo  DNI -->
+                                                    <v-text-field
+                                                    type="number"
+                                                    v-model="step1.document_number"
+                                                    label="DNI"
+                                                    required
+                                                    outlined
+                                                    disabled
+                                                    v-if="step1.document_type === 1"
+                                                    ></v-text-field>
+
+                                                    <!-- Campo Pasaporte -->
+                                                    <v-text-field
+                                                    type="number"
+                                                    v-model="step1.document_number"
+                                                    label="Pasaporte"
+                                                    required
+                                                    outlined
+                                                    :disabled="identificationState"
+                                                    v-if="step1.document_type === 2"
+                                                    ></v-text-field>
+
+                                                    <!-- Campo  CE -->
+                                                    <v-text-field
+                                                    type="number"
+                                                    v-model="step1.document_number"
+                                                    label="Carnet de extranjería"
+                                                    required
+                                                    outlined
+                                                    :disabled="identificationState"
+                                                    v-if="step1.document_type === 3"
+                                                    ></v-text-field>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <!-- Campo tipo de documento -->
-                                        <div class="col-md-6 py-0">
-                                            <!-- Campo  DNI -->
-                                            <v-text-field
-                                            type="number"
-                                            v-model="step1.document_number"
-                                            label="DNI"
-                                            required
-                                            outlined
-                                            :disabled="identificationState"
-                                            v-if="step1.document_type === 1"
-                                            ></v-text-field>
-
-                                            <!-- Campo Pasaporte -->
-                                            <v-text-field
-                                            type="number"
-                                            v-model="step1.document_number"
-                                            label="Pasaporte"
-                                            required
-                                            outlined
-                                            :disabled="identificationState"
-                                            v-if="step1.document_type === 2"
-                                            ></v-text-field>
-
-                                            <!-- Campo  CE -->
-                                            <v-text-field
-                                            type="number"
-                                            v-model="step1.document_number"
-                                            label="Carnet de extranjería"
-                                            required
-                                            outlined
-                                            :disabled="identificationState"
-                                            v-if="step1.document_type === 3"
-                                            ></v-text-field>
-                                        </div>
-
-                                    </div>
-                                    <v-row class="justify-content-center mt-5">
-                                        <div class="col-md-8 col-lg-6 text-center py-0">
+                                        <!-- Identification state -->
+                                        <div class="col-md-2 text-center">
                                             <v-select
                                                 :items="itemsStatus"
                                                 label="Estado"
@@ -103,11 +106,13 @@
                                                 v-model="step1.identification_state"
                                                 :rules="rules.requireRule"
                                                 required
-                                                :disabled="identificationState"
+                                                @change="disabledButtonSave = false"
                                                 >
+                                                <!-- :disabled="identificationState" -->
                                             </v-select>
                                         </div>
-                                    </v-row>
+
+                                    </div>
                                 </b-card-body>
                             </b-collapse>
                         </b-card>
@@ -122,71 +127,71 @@
                                 <circles-info :dataToValidate="step2.personal_data_state"></circles-info>
                             </b-card-header>
 
-                            <b-collapse id="accordion-2" accordion="my-accordion" role="tabpanel">
+                            <b-collapse id="accordion-2" visible accordion="my-accordion-2" role="tabpanel">
                                 <b-card-body>
-                                    <div class="form-row mt-5">
+                                    <div class="form-row justify-content-between mt-5">
 
-                                        <div class="col-md-6 py-0">
-                                            <v-text-field
-                                                v-model="step2.name"
-                                                label="Nombre"
-                                                required
-                                                outlined
-                                                :disabled="personalDataState"
-                                            ></v-text-field>
-                                        </div>
+                                        <div class="col-md-9">
+                                            <div class="row">
 
-                                        <div class="col-md-6 py-0">
-                                            <v-text-field
-                                                    v-model="step2.last_name"
-                                                    label="Apellido paterno"
-                                                    required
-                                                    outlined
-                                                    :disabled="personalDataState"
-                                            ></v-text-field>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="form-row">
-
-                                        <div class="col-md-6 py-0">
-                                            <v-text-field
-                                                v-model="step2.surname"
-                                                label="Apellido materno"
-                                                required
-                                                outlined
-                                                :disabled="personalDataState"
-                                            ></v-text-field>
-                                        </div>
-
-                                        <div class="col-md-6 py-0">
-                                            <v-menu
-                                                v-model="step2.datePicker"
-                                                :close-on-content-click="false"
-                                                :nudge-right="40"
-                                                transition="scale-transition"
-                                                offset-y
-                                                min-width="290px"
-                                            >
-                                                <template v-slot:activator="{ on }">
+                                                <div class="col-md-6 py-0">
                                                     <v-text-field
-                                                        v-model="step2.birthday"
-                                                        label="Fecha de nacimiento"
+                                                        v-model="step2.name"
+                                                        label="Nombre"
                                                         required
                                                         outlined
-                                                        :disabled="personalDataState"
-                                                        v-on="on"
+                                                        disabled
                                                     ></v-text-field>
-                                                </template>
-                                                <v-date-picker v-model="step2.birthday" @input="step2.datePicker = false"></v-date-picker>
-                                            </v-menu>
+                                                </div>
+
+                                                <div class="col-md-6 py-0">
+                                                    <v-text-field
+                                                            v-model="step2.last_name"
+                                                            label="Apellido paterno"
+                                                            required
+                                                            outlined
+                                                            disabled
+                                                    ></v-text-field>
+                                                </div>
+
+                                                <div class="col-md-6 py-0">
+                                                    <v-text-field
+                                                        v-model="step2.surname"
+                                                        label="Apellido materno"
+                                                        required
+                                                        outlined
+                                                        disabled
+                                                    ></v-text-field>
+                                                </div>
+
+                                                <div class="col-md-6 py-0">
+                                                    <v-menu
+                                                        v-model="step2.datePicker"
+                                                        :close-on-content-click="false"
+                                                        :nudge-right="40"
+                                                        transition="scale-transition"
+                                                        offset-y
+                                                        min-width="290px"
+                                                    >
+                                                        <template v-slot:activator="{ on }">
+                                                            <v-text-field
+                                                                :value="formattedBirthdayDate"
+                                                                label="Fecha de nacimiento"
+                                                                required
+                                                                outlined
+                                                                disabled
+                                                                v-on="on"
+                                                            ></v-text-field>
+                                                        </template>
+                                                        <v-date-picker v-model="step2.birthday" @input="step2.datePicker = false"></v-date-picker>
+                                                    </v-menu>
+                                                </div>
+                                            </div>
                                         </div>
 
-                                    </div>
+                                        <!-- Personal data state -->
 
-                                    <v-row class="justify-content-center mt-5">
-                                        <div class="col-md-6 text-center py-0">
+                                        <div class="col-md-2 text-center">
                                             <v-select
                                                 :items="itemsStatus"
                                                 label="Estado"
@@ -194,11 +199,13 @@
                                                 v-model="step2.personal_data_state"
                                                 :rules="rules.requireRule"
                                                 required
-                                                :disabled="personalDataState"
+                                                @change="disabledButtonSave = false"
                                                 >
                                             </v-select>
                                         </div>
-                                    </v-row>
+
+                                    </div> 
+
                                 </b-card-body>
                             </b-collapse>
                         </b-card>
@@ -212,74 +219,69 @@
                                 <circles-info :dataToValidate="step3.contact_data_state"></circles-info>
                             </b-card-header>
 
-                            <b-collapse id="accordion-3" accordion="my-accordion" role="tabpanel">
+                            <b-collapse id="accordion-3" visible accordion="my-accordion-3" role="tabpanel">
                                 <b-card-body>
-                                    <div class="form-row">
+                                    <div class="form-row justify-content-between">
 
-                                        <div class="col-md-6">
-                                            <v-text-field
-                                                v-model="step3.email_principal"
-                                                label="Email principal"
-                                                outlined
-                                                required
-                                                :disabled="contactDataState"
-                                            ></v-text-field>
+                                        <div class="col-md-9">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <v-text-field
+                                                        v-model="step3.email_principal"
+                                                        label="Email principal"
+                                                        outlined
+                                                        required
+                                                        disabled
+                                                    ></v-text-field>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <v-text-field
+                                                        v-model="step3.email_secundary"
+                                                        label="Email secundario"
+                                                        outlined
+                                                        required
+                                                        disabled
+                                                    ></v-text-field>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <v-text-field
+                                                        type="number"
+                                                        v-model="step3.cellphone"
+                                                        label="Celular"
+                                                        required
+                                                        outlined
+                                                        disabled
+                                                    ></v-text-field>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <v-text-field
+                                                        type="number"
+                                                        v-model="step3.phone_principal"
+                                                        label="Teléfono principal"
+                                                        required
+                                                        outlined
+                                                        disabled
+                                                    ></v-text-field>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <v-text-field
+                                                        type="number"
+                                                        v-model="step3.phone_secundary"
+                                                        label="Teléfono de trabajo"
+                                                        required
+                                                        outlined
+                                                        disabled
+                                                    ></v-text-field>
+                                                </div>
+                                            </div>
                                         </div>
 
-                                        <div class="col-md-6">
-                                            <v-text-field
-                                                v-model="step3.email_secundary"
-                                                label="Email secundario"
-                                                outlined
-                                                required
-                                                :disabled="contactDataState"
-                                            ></v-text-field>
-                                        </div>
-   
-                                    </div>
-
-                                    <div class="form-row">
-
-                                        <div class="col-md-6">
-                                            <v-text-field
-                                                type="number"
-                                                v-model="step3.phone_principal"
-                                                label="Teléfono principal"
-                                                required
-                                                outlined
-                                                :disabled="contactDataState"
-                                            ></v-text-field>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <v-text-field
-                                                type="number"
-                                                v-model="step3.phone_secundary"
-                                                label="Teléfono de trabajo"
-                                                required
-                                                outlined
-                                                :disabled="contactDataState"
-                                            ></v-text-field>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="form-row">
-
-                                        <div class="col-md-6">
-                                            <v-text-field
-                                                type="number"
-                                                v-model="step3.cellphone"
-                                                label="Celular"
-                                                required
-                                                outlined
-                                                :disabled="contactDataState"
-                                            ></v-text-field>
-                                        </div>
-
-                                    </div>
-                                    <v-row class="justify-content-center mt-5">
-                                        <div class="col-md-6 text-center py-0">
+                                        <!-- Contact state -->
+                                        <div class="col-md-2 text-center mt-3">
                                             <v-select
                                                 :items="itemsStatus"
                                                 label="Estado"
@@ -287,11 +289,13 @@
                                                 v-model="step3.contact_data_state"
                                                 :rules="rules.requireRule"
                                                 required
-                                                :disabled="contactDataState"
+                                                @change="disabledButtonSave = false"
                                                 >
                                             </v-select>
                                         </div>
-                                    </v-row>
+   
+                                    </div>
+
                                 </b-card-body>
                             </b-collapse>
                         </b-card>
@@ -304,109 +308,106 @@
                                 <!-- Círculos que muestran el estado -->
                                 <circles-info :dataToValidate="step4.location_data_state"></circles-info>
                             </b-card-header>
-                            <b-collapse id="accordion-4" accordion="my-accordion" role="tabpanel">
+                            <b-collapse id="accordion-4" visible accordion="my-accordion-4" role="tabpanel">
                                 <b-card-body>
-                                    <div class="form-row">
+                                    <div class="form-row justify-content-between">
 
-                                    <div class="col-md-6">
-                                        <v-text-field
-                                            v-model="step4.company"
-                                            label="Empresa"
-                                            required
-                                            outlined
-                                            :disabled="locationDataState"
-                                        ></v-text-field>
-                                    </div>
+                                        <div class="col-md-9">
+                                            <div class="row">
+                                                <!-- Empresa -->
+                                                <div class="col-md-6">
+                                                    <v-text-field
+                                                        v-model="step4.company"
+                                                        label="Empresa"
+                                                        required
+                                                        outlined
+                                                        disabled
+                                                    ></v-text-field>
+                                                </div>
 
-                                    <div class="col-md-6">
-                                        <v-text-field
-                                                v-model="step4.position"
-                                                label="Cargo"
-                                                required
+                                                <!-- Posición -->
+                                                <div class="col-md-6">
+                                                    <v-text-field
+                                                            v-model="step4.position"
+                                                            label="Cargo"
+                                                            required
+                                                            outlined
+                                                            disabled
+                                                    ></v-text-field>
+                                                </div>
+
+                                                <!-- Dirección -->
+                                                <div class="col-md-6">
+                                                    <v-text-field
+                                                        v-model="step4.address"
+                                                        label="Dirección"
+                                                        required
+                                                        outlined
+                                                        disabled
+                                                    ></v-text-field>
+                                                </div>
+
+                                                <!-- Ciudad -->
+                                                <div class="col-md-6">
+                                                    <v-text-field
+                                                        v-model="step4.city"
+                                                        label="Ciudad"
+                                                        required
+                                                        outlined
+                                                        disabled
+                                                    ></v-text-field>
+                                                </div>
+
+                                                <!-- Province -->
+                                                <div class="col-md-6">
+                                                    <v-text-field
+                                                        v-model="step4.province"
+                                                        label="Provincia"
+                                                        required
+                                                        outlined
+                                                        disabled
+                                                    ></v-text-field>
+                                                </div>
+
+                                                <!-- Country -->
+                                                <div class="col-md-6">
+                                                    <v-select
+                                                        :items="step4.itemsCountry"
+                                                        label="País"
+                                                        outlined
+                                                        v-model="step4.country"
+                                                        disabled
+                                                        >
+                                                    </v-select>
+                                                </div>
+
+                                                <!-- Observations -->
+                                                <div class="col">
+                                                    <v-textarea
+                                                        v-model="step4.observation"
+                                                        outlined
+                                                        name="input-7-4"
+                                                        label="Observaciones"
+                                                        disabled
+                                                    ></v-textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-2 text-center mt-5 py-0">
+                                            <v-select
+                                                :items="itemsStatus"
+                                                label="Estado"
                                                 outlined
-                                                :disabled="locationDataState"
-                                        ></v-text-field>
+                                                v-model="step4.location_data_state"
+                                                :rules="rules.requireRule"
+                                                required
+                                                @change="disabledButtonSave = false"
+                                                >
+                                            </v-select>
+                                        </div>
+
                                     </div>
-
-                                </div>
-
-                                <div class="form-row">
-
-                                    <div class="col-md-6">
-                                         <v-text-field
-                                            v-model="step4.address"
-                                            label="Dirección"
-                                            required
-                                            outlined
-                                            :disabled="locationDataState"
-                                        ></v-text-field>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <v-text-field
-                                            v-model="step4.city"
-                                            label="Ciudad"
-                                            required
-                                            outlined
-                                            :disabled="locationDataState"
-                                        ></v-text-field>
-                                    </div>
-
-                                </div>
-
-                                <div class="form-row">
-
-                                    <div class="col-md-6">
-                                        <v-text-field
-                                            v-model="step4.province"
-                                            label="Provincia"
-                                            required
-                                            outlined
-                                            :disabled="locationDataState"
-                                        ></v-text-field>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <v-select
-                                            :items="step4.itemsCountry"
-                                            label="País"
-                                            outlined
-                                            v-model="step4.country"
-                                            :disabled="locationDataState"
-                                            >
-                                        </v-select>
-                                    </div>
-
-                                </div>
-
-                                <div class="form-row">
-
-                                    <div class="col">
-                                        <v-textarea
-                                            v-model="step4.observation"
-                                            outlined
-                                            name="input-7-4"
-                                            label="Observaciones"
-                                            :disabled="locationDataState"
-                                        ></v-textarea>
-                                    </div>
-
-                                </div>
-
-                                <v-row class="justify-content-center mt-5">
-                                    <div class="col-md-6 text-center py-0">
-                                        <v-select
-                                            :items="itemsStatus"
-                                            label="Estado"
-                                            outlined
-                                            v-model="step4.location_data_state"
-                                            :rules="rules.requireRule"
-                                            required
-                                            :disabled="locationDataState"
-                                            >
-                                        </v-select>
-                                    </div>
-                                </v-row>
 
                                 </b-card-body>
                             </b-collapse>
@@ -420,46 +421,47 @@
                                 <!-- Círculos que muestran el estado -->
                                 <circles-info :dataToValidate="step5.course_data_state"></circles-info>
                             </b-card-header>
-                            <b-collapse id="accordion-5" accordion="my-accordion" role="tabpanel">
+                            <b-collapse id="accordion-5" visible accordion="my-accordion-5" role="tabpanel">
                                 <b-card-body>
-                                    <div class="form-row">
+                                    <div class="form-row justify-content-between">
 
-                                    <div class="col-md-6">
-                                        <v-select
-                                            :items="step5.itemsTypeCourse"
-                                            label="Tipo de curso"
-                                            outlined
-                                            v-model="step5.course_type"
-                                            :disabled="courseDataState"
-                                        >
-                                        </v-select>
+                                    <div class="col-md-9">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <v-select
+                                                    :items="step5.itemsTypeCourse"
+                                                    label="Tipo de curso"
+                                                    outlined
+                                                    v-model="step5.course_type"
+                                                    disabled
+                                                >
+                                                </v-select>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <v-select
+                                                    :items="step5.itemsCoursesOnline"
+                                                    label="Curso"
+                                                    outlined
+                                                    v-model="step5.course_name"
+                                                    v-if="step5.course_type === 1"
+                                                    disabled
+                                                    >
+                                                </v-select>
+                                                <v-select
+                                                    :items="step5.itemsCoursesPresenciales"
+                                                    label="Curso"
+                                                    outlined
+                                                    v-model="step5.course_name"
+                                                    v-if="step5.course_type === 2"
+                                                    disabled
+                                                    >
+                                                </v-select>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <v-select
-                                                :items="step5.itemsCoursesOnline"
-                                                label="Curso"
-                                                outlined
-                                                v-model="step5.course_name"
-                                                v-if="step5.course_type === 1"
-                                                :disabled="courseDataState"
-                                                >
-                                            </v-select>
-                                            <v-select
-                                                :items="step5.itemsCoursesPresenciales"
-                                                label="Curso"
-                                                outlined
-                                                v-model="step5.course_name"
-                                                v-if="step5.course_type === 2"
-                                                :disabled="courseDataState"
-                                                >
-                                            </v-select>
-                                    </div>
-
-                                </div>
-
-                                <v-row class="justify-content-center mt-5">
-                                    <div class="col-md-8 col-lg-6 text-center py-0">
+                                    <div class="col-md-2 text-center mt-5 py-0">
                                         <v-select
                                             :items="itemsStatus"
                                             label="Estado"
@@ -467,11 +469,12 @@
                                             v-model="step5.course_data_state"
                                             required
                                             :rules="rules.requireRule"
-                                            :disabled="courseDataState"
+                                            @change="disabledButtonSave = false"
                                             >
                                         </v-select>
                                     </div>
-                                </v-row>
+
+                                    </div>
 
                                 </b-card-body>
                             </b-collapse>
@@ -486,122 +489,120 @@
                                 <!-- Círculos que muestran el estado -->
                                 <circles-info :dataToValidate="step6.payment_data_state"></circles-info>
                             </b-card-header>
-                            <b-collapse id="accordion-6" accordion="my-accordion" role="tabpanel">
+                            <b-collapse id="accordion-6" visible accordion="my-accordion-6" role="tabpanel">
                                 <b-card-body>
-                                    <div class="form-row">
-                                        <!-- Items pago -->
-                                        <div class="col-md-6">
-                                            <v-select
-                                                :items="step6.itemsPayment"
-                                                label="PAGO"
-                                                outlined
-                                                v-model="step6.payment"
-                                                :rules="rules.requireRule"
-                                                :disabled="paymentDataState"
-                                                >
-                                            </v-select>
-                                        </div>
-
-                                        <!-- Moneda -->
-                                        <div class="col-md-6">
-                                            <v-select
-                                                :items="step6.itemsCoin"
-                                                label="Moneda"
-                                                outlined
-                                                v-model="step6.coin"
-                                                required
-                                                :rules="rules.requireRule"
-                                                :disabled="paymentDataState"
-                                            ></v-select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-row">
-                                        <!-- Monto -->
-                                        <div class="col-md-6">
-                                            <v-text-field
-                                                type="number"
-                                                v-model="newPayment.amount"
-                                                label="Monto"
-                                                required
-                                                :rules="rules.requireRule"
-                                                outlined
-                                                :disabled="paymentDataState"
-                                            ></v-text-field>
-                                        </div>
-
-                                        <!-- Tipo de pago -->
-                                        <div class="col-md-6">
-                                            <v-select
-                                                :items="step6.itemsTypePayment"
-                                                label="Tipo de pago"
-                                                outlined
-                                                v-model="newPayment.payment_type"
-                                                required
-                                                :rules="rules.requireRule"
-                                                :disabled="paymentDataState"
-                                            ></v-select>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-row">
-                                        <!-- Número de operación -->
-                                        <div class="col-md-6">
-                                            <v-text-field
-                                                type="number"
-                                                v-model="newPayment.operation_number"
-                                                label="Número de operación"
-                                                outlined
-                                                required
-                                                :rules="rules.requireRule"
-                                                :disabled="paymentDataState"
-                                            ></v-text-field>
-                                        </div>
-
-                                        <!-- Nueva cuota fecha de pago -->
-                                        <div class="col-md-6">
-                                            <v-menu
-                                                v-model="newPayment.datePicker"
-                                                :close-on-content-click="false"
-                                                :nudge-right="40"
-                                                transition="scale-transition"
-                                                offset-y
-                                                min-width="290px"
-                                            >
-                                                <template v-slot:activator="{ on }">
-                                                    <v-text-field
-                                                        v-model="newPayment.operation_date"
-                                                        label="Fecha de operación"
+                                    <div class="form-row justify-content-between">
+                                        <div class="col-md-9">
+                                            <div class="row">
+                                                <!-- Items pago -->
+                                                <div class="col-md-6">
+                                                    <v-select
+                                                        :items="step6.itemsPayment"
+                                                        label="PAGO"
                                                         outlined
-                                                        v-on="on"
+                                                        v-model="step6.payment"
+                                                        :rules="rules.requireRule"
+                                                        disabled
+                                                        >
+                                                    </v-select>
+                                                </div>
+
+                                                <!-- Moneda -->
+                                                <div class="col-md-6">
+                                                    <v-select
+                                                        :items="step6.itemsCoin"
+                                                        label="Moneda"
+                                                        outlined
+                                                        v-model="step6.coin"
                                                         required
                                                         :rules="rules.requireRule"
-                                                        :disabled="paymentDataState"
-                                                    ></v-text-field>
-                                                </template>
-                                                <v-date-picker
-                                                v-model="newPayment.operation_date"
-                                                @input="newPayment.datePicker = false"
-                                                ></v-date-picker>
-                                            </v-menu>
-                                        </div>
-                                    </div>
+                                                        disabled
+                                                    ></v-select>
+                                                </div>
 
-                                    <v-row>
-                                        <div class="col-md-6">
-                                            <div v-if="newPayment.voucher != ''">
-                                                <span>Voucher</span>
-                                                <img :src="newPayment.voucher" alt="Imagen de voucher" class="img-fluid" />
+                                                <!-- Monto -->
+                                                <div class="col-md-6">
+                                                    <v-text-field
+                                                        type="number"
+                                                        v-model="newPayment.amount"
+                                                        label="Monto"
+                                                        required
+                                                        :rules="rules.requireRule"
+                                                        outlined
+                                                        disabled
+                                                    ></v-text-field>
+                                                </div>
+
+                                                <!-- Tipo de pago -->
+                                                <div class="col-md-6">
+                                                    <v-select
+                                                        :items="step6.itemsTypePayment"
+                                                        label="Tipo de pago"
+                                                        outlined
+                                                        v-model="newPayment.payment_type"
+                                                        required
+                                                        :rules="rules.requireRule"
+                                                        disabled
+                                                    ></v-select>
+                                                </div>
+
+                                                <!-- Número de operación -->
+                                                <div class="col-md-6">
+                                                    <v-text-field
+                                                        type="number"
+                                                        v-model="newPayment.operation_number"
+                                                        label="Número de operación"
+                                                        outlined
+                                                        required
+                                                        :rules="rules.requireRule"
+                                                        disabled
+                                                    ></v-text-field>
+                                                </div>
+
+                                                <!-- Nueva cuota fecha de pago -->
+                                                <div class="col-md-6">
+                                                    <v-menu
+                                                        v-model="newPayment.datePicker"
+                                                        :close-on-content-click="false"
+                                                        :nudge-right="40"
+                                                        transition="scale-transition"
+                                                        offset-y
+                                                        min-width="290px"
+                                                    >
+                                                        <template v-slot:activator="{ on }">
+                                                            <v-text-field
+                                                                :value="formattedOperationDate"
+                                                                label="Fecha de operación"
+                                                                outlined
+                                                                v-on="on"
+                                                                required
+                                                                :rules="rules.requireRule"
+                                                                disabled
+                                                            ></v-text-field>
+                                                        </template>
+                                                        <v-date-picker
+                                                        v-model="newPayment.operation_date"
+                                                        @input="newPayment.datePicker = false"
+                                                        ></v-date-picker>
+                                                    </v-menu>
+                                                </div>
+
+                                                <!-- Voucher -->
+                                                <div class="col-md-6">
+                                                    <div v-if="newPayment.voucher != ''">
+                                                        <span>Voucher</span>
+                                                        <img :src="newPayment.voucher" alt="Imagen de voucher" class="img-fluid" />
+                                                    </div>
+                                                </div>
+
+                                                <!-- Banco -->
+                                                <div class="col-md-6" v-if="newPayment.payment_type === 2">
+                                                    <v-text-field v-model="newPayment.bank" label="Banco" required outlined disabled></v-text-field>
+                                                </div>
                                             </div>
                                         </div>
-                                        <!-- Banco -->
-                                        <div class="col-md-6" v-if="newPayment.payment_type === 2">
-                                            <v-text-field v-model="newPayment.bank" label="Banco" required outlined :disabled="paymentDataState"></v-text-field>
-                                        </div>
-                                    </v-row>
 
-                                    <v-row class="justify-content-center mt-5">
-                                        <div class="col-md-8 col-lg-6 text-center py-0">
+                                         <div class="col-md-2 text-center mt-5 py-0">
                                             <v-select
                                                 :items="itemsStatusPayment"
                                                 label="Estado"
@@ -609,11 +610,12 @@
                                                 v-model="step6.payment_data_state"
                                                 required
                                                 :rules="rules.requireRule"
-                                                :disabled="paymentDataState"
+                                                @change="disabledButtonSave = false"
                                                 >
                                             </v-select>
                                         </div>
-                                    </v-row>
+                                    </div>
+
                                 </b-card-body>
                             </b-collapse>
                         </b-card>
@@ -633,14 +635,18 @@
                     </div>
 
                     <!-- Alerta cuando el admin genere un anueva cuota -->
-                    <b-card-body class="text-center" v-if="step6.payment_data_state === '3'">
-                        <v-alert type="success" outlined prominent>
-                            <span class="text-success font-weight-bold">Se ha generado la cuota nro {{ numberCuote }}</span>
-                        </v-alert>
-                        <p>
-                            <a href="" class="text-danger" @click.prevent="deleteCuote()">Eliminar cuota generada</a>
-                        </p>
-                    </b-card-body>
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <b-card-body class="text-center" v-if="step6.payment_data_state === '3'">
+                            <v-alert type="success" outlined prominent>
+                                <span class="text-success font-weight-bold">Se ha generado la cuota nro {{ numberCuote }}</span>
+                            </v-alert>
+                            <p>
+                                <a href="" class="text-danger" @click.prevent="deleteCuote()">Eliminar cuota generada</a>
+                            </p>
+                        </b-card-body>
+                        </div>
+                    </div>
 
                     <!-- Botón para enviar formulario -->
                     <div class="d-flex justify-content-between mt-5">
@@ -652,7 +658,8 @@
                         <v-btn
                             type="submit"
                             color="primary"
-                            class="mt-5"
+                            class="mt-5 button-save"
+                            :disabled="disabledButtonSave"
                         >
                             Guardar
                             <v-icon dark right>mdi-checkbox-marked-circle</v-icon>
@@ -669,6 +676,7 @@
 <script>
 import { mapState } from 'vuex'
 import axios from 'axios'
+import moment from 'moment'
 
 // Importa objetos estáticos para el formulario
 import {
@@ -776,13 +784,13 @@ export default {
               newPayment: false
             },
             itemsStatusPayment: [
-                { value: null, text: 'Estado' },
                 { value: '0', text: 'Registrado' },
                 { value: '1', text: 'Aprobado' },
                 { value: '2', text: 'Corregir' },
                 { value: '4', text: 'Pendiente' }
             ],
-            alert: false
+            alert: false,
+            disabledButtonSave: true
         }
     },
     components: {
@@ -942,6 +950,9 @@ export default {
                         this.alert = true
                         // Oculta el botón cargando
                         this.$store.state.loading = false
+
+                        // Desabilita el botón de guardar
+                        this.disabledButtonSave = true
                     }
 
                 }).catch(() => {
@@ -963,17 +974,23 @@ export default {
             } else {
                 this.step6.newPayment = true
                 this.step6.payment_data_state = '3'
+                this.disabledButtonSave = false
             }
         },
         deleteCuote() {
             this.step6.payment_data_state = '1'
+            this.disabledButtonSave = false
         },
         changeCuotePaymentState(e) {
             this.step6.payment_data_state = e
+            this.disabledButtonSave = false
         }
     },
     mounted() {
         getCoursesPresenciales()
+
+        // Desabilita el botón de guardar
+        this.disabledButtonSave = true
 
         // Obtiene los datos del usuario
         this.getUser()
@@ -1027,10 +1044,45 @@ export default {
         },
         numberCuote: function() {
             return this.step6.payments.length + 1
+        },
+        formattedBirthdayDate: function() {
+            let result = ''
+
+            if(this.step2.birthday != '') {
+                result = moment(this.step2.birthday).format('L')
+            }
+
+            return result
+        },
+        formattedOperationDate: function() {
+            let result = ''
+
+            if(this.step6.operation_date != '') {
+                result = moment(this.step6.operation_date).format('L')
+            }
+
+            return result
         }
     }
 }
 </script>
 
 <style lang="scss">
+.theme--light.v-label--is-disabled,
+.v-application--is-ltr .v-text-field .v-label {
+    color: rgb(68, 67, 67) !important;
+    font-weight: bold !important;
+}
+
+.theme--light.v-select .v-select__selection--disabled,
+.theme--light.v-input--is-disabled input,
+.theme--light.v-input--is-disabled textarea {
+    color: rgb(117, 115, 115);
+}
+
+.button-save {
+    position: fixed !important;
+    bottom: 6%;
+    right: 13%;
+}
 </style>

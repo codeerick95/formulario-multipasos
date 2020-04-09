@@ -36,107 +36,111 @@
       
     </b-card-header>
 
-    <b-collapse :id="accordionName(index)" accordion="my-accordion" role="tabpanel">
+    <b-collapse :id="accordionName(index)" :visible="isAdmin" :accordion="accordionName(index)" role="tabpanel">
       <b-card-body>
-        <div class="form-row">
-          <div class="col-md-6">
-            <v-text-field type="number" v-model="payment.amount" label="Monto" :disabled="enabledFieldsIsClient(index)" outlined required
-              :rules="rules.requireRule"></v-text-field>
-          </div>
+        <div class="form-row justify-content-between">
+          <div :class="isAdmin ? 'col-md-9' : 'col-md-12'">
+            <div class="row">
 
-          <div class="col-md-6">
-            <v-select
-              :items="itemsTypePayment"
-              label="Tipo de pago"
-              outlined
-              v-model="payment.payment_type"
-              :disabled="enabledFieldsIsClient(index)"
-              :required="requiredField"
-              :rules="rules.requireRule"
-            ></v-select>
-          </div>
-        </div>
+              <!-- Monto -->
+              <div class="col-md-6">
+                <v-text-field type="number" v-model="payment.amount" label="Monto" :disabled="enabledFieldsIsClient(index)" outlined required
+                  :rules="rules.requireRule"></v-text-field>
+              </div>
 
-        <div class="form-row">
-          <div class="col-md-6">
-            <v-text-field
-              type="number"
-              v-model="payment.operation_number"
-              label="Número de operación"
-              outlined
-              :disabled="enabledFieldsIsClient(index)"
-              :required="requiredField"
-              :rules="rules.requireRule"
-            ></v-text-field>
-          </div>
-
-          <div class="col-md-6">
-            <v-menu
-              :ref="index"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-model="payment.operation_date"
-                  label="Fecha de operación"
+              <!-- Tipo de pago -->
+              <div class="col-md-6">
+                <v-select
+                  :items="itemsTypePayment"
+                  label="Tipo de pago"
                   outlined
-                  :disabled="enabledDatePicker(index)"
-                  v-on="on"
+                  v-model="payment.payment_type"
+                  :disabled="enabledFieldsIsClient(index)"
+                  :required="requiredField"
+                  :rules="rules.requireRule"
+                ></v-select>
+              </div>
+
+              <!-- Número de operación -->
+              <div class="col-md-6">
+                <v-text-field
+                  type="number"
+                  v-model="payment.operation_number"
+                  label="Número de operación"
+                  outlined
+                  :disabled="enabledFieldsIsClient(index)"
                   :required="requiredField"
                   :rules="rules.requireRule"
                 ></v-text-field>
-              </template>
-              <v-date-picker v-model="payment.operation_date" @input="index = false"></v-date-picker>
-            </v-menu>
+              </div>
+
+              <!-- Fecha de operación -->
+              <div class="col-md-6">
+                  <v-menu
+                    :ref="index"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="290px"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        :value="formattedOperationDate(payment)"
+                        label="Fecha de operación"
+                        outlined
+                        :disabled="enabledDatePicker(index)"
+                        v-on="on"
+                        :required="requiredField"
+                        :rules="rules.requireRule"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker v-model="payment.operation_date" @input="index = false"></v-date-picker>
+                  </v-menu>
+                </div>
+
+                <!-- Voucher -->
+                <div class="col-md-6">
+                  <v-file-input
+                    v-model="payment.voucher"
+                    @change="setUrlVoucher($event)"
+                    :required="requiredField"
+                    :rules="rules.requireRule"
+                    outlined
+                    :disabled="enabledFieldsIsClient(index)"
+                    label="Subir voucher"
+                    v-if="paymentDataState === '2' && uploadNewVoucher"
+                  ></v-file-input>
+
+                  <!-- Si payment_state = 2 (corregir) && nuevo voucher && es cliente -->
+                  <template v-if=" paymentDataState === '2' && uploadNewVoucher === false && isClient">
+                    <p v-if="index === (payments.length - 1)">
+                      <span class="font-weight-bold">Voucher anterior</span>
+                      <a href="" class="ml-3" @click.prevent="uploadNewVoucher = true">Subir nuevo voucher</a>
+                    </p>
+                    <img :src="payment.voucher" alt class="img-fluid"/>
+                  </template>
+
+                  <!-- Si es admin solo se mostrará la imagen -->
+                  <template v-if="isAdmin">
+                    <span class="font-weight-bold">Voucher</span>
+                    <img :src="payment.voucher" alt class="img-fluid"/>
+                  </template>
+
+                  <!-- Muestra la vista previa de la imagen -->
+                  <img :src="urlVoucher" alt class="img-fluid" v-if="urlVoucher" />
+                  <img :src="payment.voucher" alt="voucher" class="img-fluid" v-if="!urlVoucher && !isAdmin && paymentDataState != '2'">
+              </div>
+              
+              <div class="col-md-6" v-if="payment.payment_type === 2">
+                <v-text-field v-model="payment.bank" label="Banco" outlined :disabled="enabledFieldsIsClient(index)" :required="requiredField"></v-text-field>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div class="form-row">
-          <div class="col-md-6">
-              <v-file-input
-                v-model="payment.voucher"
-                @change="setUrlVoucher($event)"
-                :required="requiredField"
-                :rules="rules.requireRule"
-                outlined
-                :disabled="enabledFieldsIsClient(index)"
-                label="Subir voucher"
-                v-if="paymentDataState === '2' && uploadNewVoucher"
-              ></v-file-input>
-
-              <!-- Si payment_state = 2 (corregir) && nuevo voucher && es cliente -->
-              <template v-if=" paymentDataState === '2' && uploadNewVoucher === false && isClient">
-                <p v-if="index === (payments.length - 1)">
-                  <span class="font-weight-bold">Voucher anterior</span>
-                  <a href="" class="ml-3" @click.prevent="uploadNewVoucher = true">Subir nuevo voucher</a>
-                </p>
-                <img :src="payment.voucher" alt class="img-fluid"/>
-              </template>
-
-              <!-- Si es admin solo se mostrará la imagen -->
-              <template v-if="isAdmin">
-                <span class="font-weight-bold">Voucher</span>
-                <img :src="payment.voucher" alt class="img-fluid"/>
-              </template>
-
-              <!-- Muestra la vista previa de la imagen -->
-              <img :src="urlVoucher" alt class="img-fluid" v-if="urlVoucher" />
-              <img :src="payment.voucher" alt="voucher" class="img-fluid" v-if="!urlVoucher && !isAdmin && paymentDataState != '2'">
-          </div>
-          
-          <div class="col-md-6" v-if="payment.payment_type === 2">
-            <v-text-field v-model="payment.bank" label="Banco" outlined :disabled="enabledFieldsIsClient(index)" :required="requiredField"></v-text-field>
-          </div>
-        </div>
-
-
-        <!-- Solo se mostrará el select con status en el último elemento -->
-        <v-row class="justify-content-center" v-if="index === (payments.length - 1) && showStatus === true">
-          <div class="col-md-6">
+          <!-- Payment state -->
+          <!-- Solo se mostrará el select con status en el último elemento -->
+          <div class="col-md-2 mt-3 text-center" v-if="isAdmin">
             <v-select
                 :items="itemsStatusPayment"
                 label="Estado"
@@ -145,11 +149,12 @@
                 :rules="rules.requireRule"
                 v-model="paymentState"
                 @change="setItemApproved($event, index)"
-                :disabled="paymentDataState === '1' || paymentDataState === '3' ? true : false"
+                :disabled="index != (payments.length - 1) ? true : false"
                 >
             </v-select>
           </div>
-        </v-row>
+        </div>
+
       </b-card-body>
     </b-collapse>
   </b-card>
@@ -158,6 +163,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import moment from 'moment'
 
 // Importa objetos estáticos para el formulario
 import {
@@ -240,6 +246,15 @@ export default {
       
       return status
     },
+    formattedOperationDate: function(payment) {
+        let result = ''
+
+        if(payment.operation_date != '') {
+             result = moment(payment.operation_date).format('L')
+        }
+
+        return result
+      }
   },
   computed: {
     ...mapState(['currentUser']),

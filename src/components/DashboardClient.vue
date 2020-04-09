@@ -121,7 +121,7 @@
                         v-model="step2.name"
                         label="Nombre"
                         required
-                        :rules="rules.requireRule"
+                        :rules="rules.requireText"
                         outlined
                         :disabled="personalDataState"
                       ></v-text-field>
@@ -133,7 +133,7 @@
                         v-model="step2.last_name"
                         label="Apellido paterno"
                         required
-                        :rules="rules.requireRule"
+                        :rules="rules.requireText"
                         outlined
                         :disabled="personalDataState"
                       ></v-text-field>
@@ -147,7 +147,7 @@
                         v-model="step2.surname"
                         label="Apellido materno"
                         required
-                        :rules="rules.requireRule"
+                        :rules="rules.requireText"
                         outlined
                         :disabled="personalDataState"
                       ></v-text-field>
@@ -165,13 +165,15 @@
                       >
                         <template v-slot:activator="{ on }">
                           <v-text-field
-                            v-model="step2.birthday"
+                            :value="formattedBirthdayDate"
                             label="Fecha de nacimiento"
                             required
                             :rules="rules.requireRule"
                             outlined
                             :disabled="personalDataState"
                             v-on="on"
+                            @input="step2.datePicker = true"
+                            @click="step2.datePicker = true"
                           ></v-text-field>
                         </template>
                         <v-date-picker v-model="step2.birthday" @input="step2.datePicker = false"></v-date-picker>
@@ -234,7 +236,7 @@
                         v-model="step3.phone_principal"
                         label="Teléfono principal"
                         required
-                        :rules="rules.requireRule"
+                        :rules="rules.phone"
                         outlined
                         :disabled="contactDataState"
                       ></v-text-field>
@@ -247,7 +249,7 @@
                         v-model="step3.phone_secundary"
                         label="Teléfono de trabajo"
                         required
-                        :rules="rules.requireRule"
+                        :rules="rules.phone"
                         outlined
                         :disabled="contactDataState"
                       ></v-text-field>
@@ -262,7 +264,7 @@
                         v-model="step3.cellphone"
                         label="Celular"
                         required
-                        :rules="rules.requireRule"
+                        :rules="rules.phone"
                         outlined
                         :disabled="contactDataState"
                       ></v-text-field>
@@ -295,7 +297,7 @@
                         v-model="step4.company"
                         label="Empresa"
                         required
-                        :rules="rules.requireRule"
+                        :rules="rules.requireText"
                         outlined
                         :disabled="locationDataState"
                       ></v-text-field>
@@ -307,7 +309,7 @@
                         v-model="step4.position"
                         label="Cargo"
                         required
-                        :rules="rules.requireRule"
+                        :rules="rules.requireText"
                         outlined
                         :disabled="locationDataState"
                       ></v-text-field>
@@ -329,7 +331,7 @@
 
                     <!-- City -->
                     <div class="col-md-6">
-                      <v-text-field v-model="step4.city" label="Ciudad" required :rules="rules.requireRule" outlined :disabled="locationDataState"></v-text-field>
+                      <v-text-field v-model="step4.city" label="Ciudad" required :rules="rules.requireText" outlined :disabled="locationDataState"></v-text-field>
                     </div>
                   </div>
 
@@ -340,7 +342,7 @@
                         v-model="step4.province"
                         label="Provincia"
                         required
-                        :rules="rules.requireRule"
+                        :rules="rules.requireText"
                         outlined
                         :disabled="locationDataState"
                       ></v-text-field>
@@ -370,7 +372,6 @@
                         label="Observaciones"
                         :disabled="locationDataState"
                         required
-                        :rules="rules.requireRule"
                       ></v-textarea>
                     </div>
                   </div>
@@ -503,7 +504,7 @@
                         v-model="step6.amount"
                         label="Monto"
                         required
-                        :rules="rules.requireRule"
+                        :rules="rules.amount"
                         outlined
                         :disabled="paymentDataState"
                       ></v-text-field>
@@ -529,7 +530,7 @@
                         v-model="step6.operation_number"
                         label="Número de operación"
                         required
-                        :rules="rules.requireRule"
+                        :rules="rules.amount"
                         outlined
                         :disabled="paymentDataState"
                       ></v-text-field>
@@ -546,13 +547,14 @@
                       >
                         <template v-slot:activator="{ on }">
                           <v-text-field
-                            v-model="step6.operation_date"
+                            :value="formattedOperationDate"
                             label="Fecha de operación"
                             required
                             :rules="rules.requireRule"
                             outlined
                             v-on="on"
                             :disabled="paymentDataState"
+                            @input="step6.datePicker = true"
                           ></v-text-field>
                         </template>
                         <v-date-picker
@@ -581,7 +583,7 @@
                         v-model="step6.bank"
                         label="Banco"
                         required
-                        :rules="rules.requireRule"
+                        :rules="rules.requireText"
                         outlined
                         :disabled="paymentDataState"
                       ></v-text-field>
@@ -629,7 +631,7 @@
                         v-model="newCuote.amount"
                         label="Monto"
                         required
-                        :rules="rules.requireRule"
+                        :rules="rules.amount"
                         outlined
                       ></v-text-field>
                     </div>
@@ -657,7 +659,7 @@
                         label="Número de operación"
                         outlined
                         required
-                        :rules="rules.requireRule"
+                        :rules="rules.amount"
                       ></v-text-field>
                     </div>
 
@@ -673,12 +675,13 @@
                       >
                         <template v-slot:activator="{ on }">
                           <v-text-field
-                            v-model="newCuote.operation_date"
+                            :value="formattedNewCuoteOperationDate"
                             label="Fecha de operación"
                             outlined
                             v-on="on"
                             required
                             :rules="rules.requireRule"
+                            @input="newCuote.datePicker = true"
                           ></v-text-field>
                         </template>
                         <v-date-picker
@@ -709,7 +712,7 @@
 
                     <!-- Nueva cuota banco -->
                     <div class="col-md-6" v-if="newCuote.payment_type === 2">
-                      <v-text-field v-model="newCuote.bank" label="Banco" required :rules="rules.requireRule" outlined></v-text-field>
+                      <v-text-field v-model="newCuote.bank" label="Banco" required :rules="rules.requireText" outlined></v-text-field>
                     </div>
                   </v-row>
                 </b-card-body>
@@ -734,6 +737,7 @@
 <script>
 import { mapState } from "vuex";
 import axios from "axios";
+import moment from 'moment'
 
 // Components
 import Loader from "@/components/Loader";
@@ -897,7 +901,34 @@ export default {
     },
     isTotal: function() {
       return this.step6.payment === 1 ? true : false
-    }
+    },
+    formattedBirthdayDate: function() {
+        let result = ''
+
+        if(this.step2.birthday != '') {
+             result = moment(this.step2.birthday).format('L')
+        }
+
+        return result
+      },
+      formattedOperationDate: function() {
+        let result = ''
+
+        if(this.step6.operation_date != '') {
+             result = moment(this.step6.operation_date).format('L')
+        }
+
+        return result
+      },
+      formattedNewCuoteOperationDate: function() {
+        let result = ''
+
+        if(this.newCuote.operation_date != '') {
+             result = moment(this.newCuote.operation_date).format('L')
+        }
+
+        return result
+      }
   },
   methods: {
     // Hace la petición cuando carga el componente
@@ -1075,8 +1106,6 @@ export default {
           if(typeof(this.step6.voucher) != 'string') {
             formData.append('voucher', this.step6.voucher)
           }
-
-          console.log(typeof(this.step6.voucher))
         }
 
         // Si el cliente eligió cuotas y el payment state = corregir

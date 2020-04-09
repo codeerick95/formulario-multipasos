@@ -50,12 +50,20 @@
                                     lazy-validation
                                     @submit.prevent="submit(n)"
                                 >
-                                    <v-row class="my-5 pb-5">
+                                    <v-row class="my-5 mt-5 mt-md-1 pb-5">
+
+                                        <div class="col-md-12">
+                                            <p>
+                                                <span class="font-weight-bold">*</span> 
+                                                (Requerido)
+                                            </p>
+                                        </div>
+
                                         <!-- Select tipo de documento -->
                                         <div class="col-md-6 py-0">
                                             <v-select
                                                 :items="step1.itemsTypeDocument"
-                                                label="Tipo de documento"
+                                                label="Tipo de documento *"
                                                 outlined
                                                 v-model="step1.documentType"
                                                 :rules="rules.requireRule"
@@ -71,10 +79,12 @@
                                             
                                             <!-- Campo  DNI -->
                                             <v-text-field
-                                            type="number"
+                                            value="1"
+                                            min="0"
+                                            step="1"
                                             v-model="step1.documentNumber"
                                             :rules="rules.typeDocumentFieldDni"
-                                            label="DNI"
+                                            label="DNI *"
                                             required
                                             outlined
                                             v-if="step1.documentType === 1"
@@ -82,10 +92,9 @@
 
                                             <!-- Campo Pasaporte -->
                                             <v-text-field
-                                            type="number"
                                             v-model="step1.documentNumber"
                                             :rules="rules.typeDocumentFieldPasaport"
-                                            label="Pasaporte"
+                                            label="Pasaporte *"
                                             required
                                             outlined
                                             v-if="step1.documentType === 2"
@@ -93,16 +102,18 @@
 
                                             <!-- Campo  CE -->
                                             <v-text-field
-                                            type="number"
                                             v-model="step1.documentNumber"
                                             :rules="rules.typeDocumentFieldCe"
-                                            label="Carnet de extranjería"
+                                            label="Carnet de extranjería *"
                                             required
                                             outlined
                                             v-if="step1.documentType === 3"
                                             ></v-text-field>
                                         </div>
+
                                     </v-row>
+
+                                   
 
                                     <!-- Button submit -->
                                     <div class="d-flex justify-content-end blue-grey darken-4 py-2 px-5 mb-0 button-form-container">
@@ -124,13 +135,20 @@
                                     lazy-validation
                                     @submit.prevent="submit(n)"
                                 >
-                                    <div class="form-row mt-5 pb-5">
+                                    <div class="form-row mt-5 mt-md-1 pb-5">
+
+                                        <div class="col-md-12">
+                                            <p>
+                                                <span class="font-weight-bold">*</span> 
+                                                (Requerido)
+                                            </p>
+                                        </div>
 
                                         <div class="col-md-6 py-0">
                                             <v-text-field
                                                 v-model="step2.name"
-                                                :rules="rules.requireRule"
-                                                label="Nombre"
+                                                :rules="rules.requireText"
+                                                label="Nombre *"
                                                 required
                                                 outlined
                                             ></v-text-field>
@@ -139,8 +157,8 @@
                                         <div class="col-md-6 py-0">
                                             <v-text-field
                                                 v-model="step2.lastName"
-                                                :rules="rules.requireRule"
-                                                label="Apellido paterno"
+                                                :rules="rules.requireText"
+                                                label="Apellido paterno *"
                                                 required
                                                 outlined
                                             ></v-text-field>
@@ -153,8 +171,8 @@
                                         <div class="col-md-6 py-0">
                                             <v-text-field
                                                 v-model="step2.surname"
-                                                :rules="rules.requireRule"
-                                                label="Apellido materno"
+                                                :rules="rules.requireText"
+                                                label="Apellido materno *"
                                                 required
                                                 outlined
                                             ></v-text-field>
@@ -172,14 +190,17 @@
                                             >
                                                 <template v-slot:activator="{ on }">
                                                     <v-text-field
-                                                        v-model="step2.birthday"
+                                                        :value="formattedBirthdayDate"
                                                         :rules="rules.requireRule"
-                                                        label="Fecha de nacimiento"
+                                                        label="Fecha de nacimiento *"
                                                         required
                                                         outlined
                                                         v-on="on"
+                                                        :first-day-of-week="1"
+                                                        locale="es-PE"
+                                                        @input="step2.datePicker = true"
                                                     ></v-text-field>
-                                                </template>
+                                                </template> 
                                                 <v-date-picker v-model="step2.birthday" @input="step2.datePicker = false"></v-date-picker>
                                             </v-menu>
                                         </div>
@@ -219,13 +240,20 @@
                                     lazy-validation
                                     @submit.prevent="submit(n)"
                                 >
-                                    <div class="form-row mt-5">
+                                    <div class="form-row mt-5 mt-md-1">
+
+                                        <div class="col-md-12">
+                                            <p>
+                                                <span class="font-weight-bold">*</span> 
+                                                (Requerido)
+                                            </p>
+                                        </div>
 
                                         <div class="col-md-6 py-0">
                                             <v-text-field
                                                 v-model="step3.email"
                                                 :rules="rules.email"
-                                                label="Email principal"
+                                                label="Email principal *"
                                                 outlined
                                                 required
                                             ></v-text-field>
@@ -234,10 +262,8 @@
                                         <div class="col-md-6 py-0">
                                             <v-text-field
                                                 v-model="step3.emailSecundary"
-                                                :rules="rules.email"
                                                 label="Email secundario"
                                                 outlined
-                                                required
                                             ></v-text-field>
                                         </div>
 
@@ -246,20 +272,18 @@
                                     <v-row>
                                         <v-col cols="12" md="6" class="py-0">
                                             <v-text-field
-                                                type="number"
-                                                v-model="step3.phone"
-                                                :rules="rules.requireRule"
-                                                label="Teléfono principal"
+                                                v-model="step3.cellphone"
+                                                :rules="rules.phone"
+                                                label="Celular *"
                                                 required
                                                 outlined
                                             ></v-text-field>
                                         </v-col>
                                         <v-col cols="12" md="6" class="py-0">
                                             <v-text-field
-                                                type="number"
-                                                v-model="step3.phoneSecundary"
-                                                :rules="rules.requireRule"
-                                                label="Teléfono de trabajo"
+                                                v-model="step3.phone"
+                                                :rules="rules.phone"
+                                                label="Teléfono principal *"
                                                 required
                                                 outlined
                                             ></v-text-field>
@@ -271,10 +295,9 @@
 
                                         <div class="col-md-6 py-0">
                                             <v-text-field
-                                                type="number"
-                                                v-model="step3.cellphone"
+                                                v-model="step3.phoneSecundary"
                                                 :rules="rules.requireRule"
-                                                label="Celular"
+                                                label="Teléfono de trabajo *"
                                                 required
                                                 outlined
                                             ></v-text-field>
@@ -315,14 +338,21 @@
                                     @submit.prevent="submit(n)"
                                 >
 
-                                <div class="form-row mt-5">
+                                <div class="form-row mt-5 mt-md-1">
+
+                                    <div class="col-md-12">
+                                        <p>
+                                            <span class="font-weight-bold">*</span> 
+                                            (Requerido)
+                                        </p>
+                                    </div>
 
                                     <div class="col-md-6 py-0">
                                         <v-text-field
                                             v-model="step4.company"
-                                            label="Empresa"
+                                            label="Empresa *"
                                             required
-                                            :rules="rules.requireRule"
+                                            :rules="rules.requireText"
                                             outlined
                                         ></v-text-field>
                                     </div>
@@ -330,9 +360,9 @@
                                     <div class="col-md-6 py-0">
                                         <v-text-field
                                                 v-model="step4.position"
-                                                label="Cargo"
+                                                label="Cargo *"
                                                 required
-                                                :rules="rules.requireRule"
+                                                :rules="rules.requireText"
                                                 outlined
                                         ></v-text-field>
                                     </div>
@@ -345,7 +375,7 @@
                                         <v-text-field
                                             v-model="step4.address"
                                             :rules="rules.requireRule"
-                                            label="Dirección"
+                                            label="Dirección *"
                                             required
                                             outlined
                                         ></v-text-field>
@@ -354,8 +384,8 @@
                                     <div class="col-md-6 py-0">
                                         <v-text-field
                                             v-model="step4.city"
-                                            :rules="rules.requireRule"
-                                            label="Ciudad"
+                                            :rules="rules.requireText"
+                                            label="Ciudad *"
                                             required
                                             outlined
                                         ></v-text-field>
@@ -368,8 +398,8 @@
                                     <div class="col-md-6 py-0">
                                         <v-text-field
                                             v-model="step4.province"
-                                            :rules="rules.requireRule"
-                                            label="Provincia"
+                                            :rules="rules.requireText"
+                                            label="Provincia *"
                                             required
                                             outlined
                                         ></v-text-field>
@@ -378,7 +408,7 @@
                                     <div class="col-md-6 py-0">
                                         <v-select
                                             :items="step4.itemsCountry"
-                                            label="País"
+                                            label="País *"
                                             outlined
                                             v-model="step4.country"
                                             :rules="rules.requireRule"
@@ -436,12 +466,19 @@
                                 >
 
                                 
-                                    <div class="form-row mt-5 mb-5 pb-5">
+                                    <div class="form-row mt-5 mt-md-1 mb-5 pb-5">
+
+                                        <div class="col-md-12">
+                                            <p>
+                                                <span class="font-weight-bold">*</span> 
+                                                (Requerido)
+                                            </p>
+                                        </div>
 
                                         <div class="col-md-6 py-0 mt-5 mt-md-0">
                                             <v-select
                                                 :items="step5.itemsTypeCourse"
-                                                label="Tipo de curso"
+                                                label="Tipo de curso *"
                                                 outlined
                                                 v-model="step5.typeCourse"
                                                 :rules="rules.requireRule"
@@ -452,7 +489,7 @@
                                         <div class="col-md-6 py-0">
                                             <v-select
                                                 :items="step5.itemsCoursesOnline"
-                                                label="Curso"
+                                                label="Curso *"
                                                 outlined
                                                 :rules="rules.requireRule"
                                                 v-model="step5.course"
@@ -461,7 +498,7 @@
                                             </v-select>
                                             <v-select
                                                 :items="step5.itemsCoursesPresenciales"
-                                                label="Curso"
+                                                label="Curso *"
                                                 outlined
                                                 :rules="rules.requireRule"
                                                 v-model="step5.course"
@@ -506,11 +543,19 @@
                                       @submit.prevent="submit(n)"
                                   >
 
-                                  <v-row class="mt-5">
+                                  <v-row class="mt-5 mt-md-1">
+
+                                      <div class="col-md-12">
+                                            <p>
+                                                <span class="font-weight-bold">*</span> 
+                                                (Requerido)
+                                            </p>
+                                      </div>
+
                                       <div class="col-md-6 py-0 mt-5 mt-md-0">
                                         <v-select
                                           :items="step6.itemsPayment"
-                                          label="PAGO"
+                                          label="PAGO *"
                                           outlined
                                           v-model="step6.payment"
                                           :rules="rules.requireRule"
@@ -520,7 +565,7 @@
                                       <div class="col-md-6 py-0 mt-5 mt-md-0">
                                         <v-select
                                           :items="step6.itemsCoin"
-                                          label="Moneda"
+                                          label="Moneda *"
                                           outlined
                                           v-model="step6.coin"
                                           :rules="rules.requireRule"
@@ -532,10 +577,10 @@
                                   <v-row>
                                     <div class="col-md-6 py-0">
                                       <v-text-field
-                                            type="number"
+                                            min="0"
                                             v-model="step6.amount"
-                                            :rules="rules.requireRule"
-                                            label="Monto"
+                                            :rules="rules.amount"
+                                            label="Monto *"
                                             required
                                             outlined
                                             >
@@ -544,7 +589,7 @@
                                     <div class="col-md-6 py-0">
                                       <v-select
                                           :items="step6.itemsTypePayment"
-                                          label="Tipo de pago"
+                                          label="Tipo de pago *"
                                           outlined
                                           v-model="step6.paymentType"
                                           :rules="rules.requireRule"
@@ -557,10 +602,10 @@
                                   <v-row>
                                     <div class="col-md-6 py-0">
                                       <v-text-field
-                                            type="number"
+                                            min="0"
                                             v-model="step6.operationNumber"
-                                            :rules="rules.requireRule"
-                                            label="Número de operación"
+                                            :rules="rules.amount"
+                                            label="Número de operación *"
                                             required
                                             outlined
                                             >
@@ -577,12 +622,13 @@
                                       >
                                             <template v-slot:activator="{ on }">
                                                 <v-text-field
-                                                    v-model="step6.operationDate"
+                                                    :value="formattedOperationDate"
                                                     :rules="rules.requireRule"
-                                                    label="Fecha de operación"
+                                                    label="Fecha de operación *"
                                                     required
                                                     outlined
                                                     v-on="on"
+                                                    @input="step6.datePicker = true"
                                                 ></v-text-field>
                                             </template>
                                             <v-date-picker v-model="step6.operationDate" @input="step6.datePicker = false"></v-date-picker>
@@ -592,15 +638,15 @@
 
                                   <v-row class="mb-5 pb-5">
                                     <div class="col-md-6">
-                                      <v-file-input v-model="step6.voucher" :rules="rules.requireRule" @change="setUrlVoucher()" required outlined label="Subir voucher"></v-file-input>
+                                      <v-file-input v-model="step6.voucher" :rules="rules.requireRule" @change="setUrlVoucher()" required outlined label="Subir voucher *"></v-file-input>
                                       <img :src="step7.urlVoucher" alt="Voucher" class="img-fluid" v-if=" step7.urlVoucher ">
                                     </div>
                                     <!-- Solo se mostrará si selecciona transferencia -->
                                     <div class="col-md-6" v-if="step6.paymentType === 2">
                                       <v-text-field
                                             v-model="step6.bank"
-                                            label="Banco"
-                                            :rules="rules.requireRule"
+                                            label="Banco *"
+                                            :rules="rules.requireText"
                                             required
                                             outlined
                                       ></v-text-field>
@@ -636,259 +682,327 @@
                             <template v-if="n === 7">
                                 <div class="row justify-content-center mt-5">
 
-                                    <div class="col-md-10 mb-5">
-                                        <!-- Datos de identificación -->
-                                        <h3 class="font-weight-bold lead d-flex justify-content-between align-items-center">
-                                            Datos de identificación:
-                                            <v-icon right class="icon-pen" @click="stepCurrent = 1">mdi-pencil</v-icon>
-                                        </h3>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <p>
-                                                    <span class="text-muted mr-3">Tipo de documento:</span>
-                                                    <span>{{ setNameTypeDocument }}</span>
-                                                </p>
-                                            </div>
+                                    <div class="col-md-11 mb-5">
+                                        <v-card>
+                                            <v-card-text>
+                                                <!-- Datos de identificación -->
+                                                <h3 class="font-weight-bold lead d-flex justify-content-between align-items-center">
+                                                    Datos de identificación:
+                                                    
+                                                    <!-- Icono para editar -->
+                                                    <v-tooltip bottom>
+                                                        <template v-slot:activator="{ on }">
+                                                            <v-icon right class="icon-pen" @click="stepCurrent = 1" v-on="on">mdi-pencil</v-icon>
+                                                        </template>
+                                                        <span>Editar</span>
+                                                    </v-tooltip>
+                                                </h3>
+                                                <div class="row mt-5">
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Tipo de documento:</span>
+                                                            <span>{{ setNameTypeDocument }}</span>
+                                                        </p>
+                                                    </div>
 
-                                            <div class="col-md-6">
-                                                <p>
-                                                    <span class="text-muted mr-3">Número de documento:</span>
-                                                    <span>{{ step1.documentNumber }}</span>
-                                                </p>
-                                            </div>
-                                        </div>
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Número de documento:</span>
+                                                            <span>{{ step1.documentNumber }}</span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
                                     </div>
                                 </div>
 
                                 <!-- Datos personales -->
                                 <div class="row justify-content-center mt-5">
-                                    <div class="col-md-10 mb-5">
+                                    <div class="col-md-11 mb-5">
+                                        <v-card>
+                                            <v-card-text>
+                                                <h3 class="font-weight-bold lead mb-3 d-flex justify-content-between align-items-center">
+                                                    Datos personales:
+                                                    
+                                                    <!-- Icono para editar -->
+                                                    <v-tooltip bottom>
+                                                        <template v-slot:activator="{ on }">
+                                                            <v-icon right class="icon-pen" @click="stepCurrent = 2" v-on="on">mdi-pencil</v-icon>
+                                                        </template>
+                                                        <span>Editar</span>
+                                                    </v-tooltip>
+                                                </h3>
+                                                <div class="row mt-5">
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Nombre:</span>
+                                                            <span>{{ step2.name }}</span>
+                                                        </p>
+                                                    </div>
 
-                                        <h3 class="font-weight-bold lead mb-3 d-flex justify-content-between align-items-center">
-                                            Datos personales:
-                                            <v-icon right class="icon-pen" @click="stepCurrent = 2">mdi-pencil</v-icon>
-                                        </h3>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-3">Nombre:</span>
-                                                    <span>{{ step2.name }}</span>
-                                                </p>
-                                            </div>
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Apellidos:</span>
+                                                            <span>{{ step2.lastName }} {{ step2.surname }}</span>
+                                                        </p>
+                                                    </div>
 
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-3">Apellidos:</span>
-                                                    <span>{{ step2.lastName }} {{ step2.surname }}</span>
-                                                </p>
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-1 mr-md-3">Fecha de nacimiento:</span>
-                                                    <span>{{ step2.birthday }}</span>
-                                                </p>
-                                            </div>
-                                            
-                                        </div>
+                                                    <div class="col-md-12 subtitle-1">
+                                                        <p>
+                                                            <span class="text-muted mr-1 mr-md-3 font-weight-bold">Fecha de nacimiento:</span>
+                                                            <span>{{ formattedBirthdayDate }}</span>
+                                                        </p>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
                                     </div>
                                 </div>
 
                                 <!-- Datos de contacto -->
                                 <div class="row justify-content-center mt-5">
-                                    <div class="col-md-10 mb-5">
-                                        <h3 class="font-weight-bold lead mb-3 d-flex justify-content-between align-items-center">
-                                            Datos de contacto:
-                                            <v-icon right class="icon-pen" @click="stepCurrent = 3">mdi-pencil</v-icon>
-                                        </h3>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-3">Email principal:</span>
-                                                    <span>{{ step3.email }}</span>
-                                                </p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-3">Email secundario:</span>
-                                                    <span>{{ step3.emailSecundary }}</span>
-                                                </p>
-                                            </div>
+                                    <div class="col-md-11 mb-5">
+                                        <v-card>
+                                            <v-card-text>
+                                                <h3 class="font-weight-bold lead mb-3 d-flex justify-content-between align-items-center">
+                                                    Datos de contacto:
 
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-3">Teléfono particular:</span>
-                                                    <span>{{ step3.phone }}</span>
-                                                </p>
-                                            </div>
+                                                    <!-- Icono para editar -->
+                                                    <v-tooltip bottom>
+                                                        <template v-slot:activator="{ on }">
+                                                            <v-icon right class="icon-pen" @click="stepCurrent = 3" v-on="on">mdi-pencil</v-icon>
+                                                        </template>
+                                                        <span>Editar</span>
+                                                    </v-tooltip>
+                                                </h3>
+                                                <div class="row mt-5">
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Email principal:</span>
+                                                            <span>{{ step3.email }}</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Email secundario:</span>
+                                                            <span>{{ step3.emailSecundary }}</span>
+                                                        </p>
+                                                    </div>
 
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-3">Teléfono de trabajo:</span>
-                                                    <span>{{ step3.phoneSecundary }}</span>
-                                                </p>
-                                            </div>
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Celular:</span>
+                                                            <span>{{ step3.cellphone }}</span>
+                                                        </p>
+                                                    </div>
 
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-3">Celular:</span>
-                                                    <span>{{ step3.cellphone }}</span>
-                                                </p>
-                                            </div>
-                                        </div>
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Teléfono particular:</span>
+                                                            <span>{{ step3.phone }}</span>
+                                                        </p>
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Teléfono de trabajo:</span>
+                                                            <span>{{ step3.phoneSecundary }}</span>
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
                                     </div>
                                 </div>
 
                                 <!-- Datos de ubicación -->
                                 <div class="row justify-content-center mt-5">
-                                    <div class="col-md-10 mb-5">
-                                        <h3 class="font-weight-bold lead mb-3 d-flex justify-content-between align-items-center">
-                                            Datos de ubicación:
-                                            <v-icon right class="icon-pen" @click="stepCurrent = 4">mdi-pencil</v-icon>
-                                        </h3>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-3">Empresa:</span>
-                                                    <span>{{ step4.company }}</span>
-                                                </p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-3">Cargo:</span>
-                                                    <span>{{ step4.position }}</span>
-                                                </p>
-                                            </div>
+                                    <div class="col-md-11 mb-5">
+                                        <v-card>
+                                            <v-card-text>
+                                                <h3 class="font-weight-bold lead mb-3 d-flex justify-content-between align-items-center">
+                                                    Datos de ubicación:
+                                                    
+                                                    <!-- Icono para editar -->
+                                                    <v-tooltip bottom>
+                                                        <template v-slot:activator="{ on }">
+                                                            <v-icon right class="icon-pen" @click="stepCurrent = 4" v-on="on">mdi-pencil</v-icon>
+                                                        </template>
+                                                        <span>Editar</span>
+                                                    </v-tooltip>
+                                                </h3>
+                                                <div class="row mt-5">
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Empresa:</span>
+                                                            <span>{{ step4.company }}</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Cargo:</span>
+                                                            <span>{{ step4.position }}</span>
+                                                        </p>
+                                                    </div>
 
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-3">Dirección:</span>
-                                                    <span>{{ step4.address }}</span>
-                                                </p>
-                                            </div>
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Dirección:</span>
+                                                            <span>{{ step4.address }}</span>
+                                                        </p>
+                                                    </div>
 
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-3">Ciudad:</span>
-                                                    <span>{{ step4.city }}</span>
-                                                </p>
-                                            </div>
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Ciudad:</span>
+                                                            <span>{{ step4.city }}</span>
+                                                        </p>
+                                                    </div>
 
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-3">Estado/Provincia:</span>
-                                                    <span>{{ step4.province }}</span>
-                                                </p>
-                                            </div>
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Estado/Provincia:</span>
+                                                            <span>{{ step4.province }}</span>
+                                                        </p>
+                                                    </div>
 
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-3">País:</span>
-                                                    <span>{{ step4.country }}</span>
-                                                </p>
-                                            </div>
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">País:</span>
+                                                            <span>{{ step4.country }}</span>
+                                                        </p>
+                                                    </div>
 
-                                            <div class="col-md-12">
-                                                    <div class="pl-1">
-                                                    <span class="text-muted mr-3">Observaciones:</span>
-                                                    <span>{{ step4.observations }}</span>
+                                                    <div class="col-md-12">
+                                                        <div class="pl-1">
+                                                            <span class="text-muted mr-3 subtitle-1 font-weight-bold">Observaciones:</span>
+                                                            <span>{{ step4.observations }}</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
+                                            </v-card-text>
+                                        </v-card>
                                     </div>
                                 </div>
 
                                 <!-- Datos de curso -->
                                 <div class="row justify-content-center mt-5">
-                                    <div class="col-md-10 mb-5">
-                                        <h3 class="font-weight-bold lead mb-3 d-flex justify-content-between align-items-center">
-                                            Datos de curso:
-                                            <v-icon right class="icon-pen" @click="stepCurrent = 5">mdi-pencil</v-icon>
-                                        </h3>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-3">Tipo de curso:</span>
-                                                    <span>{{ setNameTypeCourse }}</span>
-                                                </p>
-                                            </div>
-                                            <div class="col-md-8">
-                                                    <p>
-                                                    <span class="text-muted mr-3">Curso:</span>
-                                                    <span>{{ step5.course }}</span>
-                                                </p>
-                                            </div>
-                                        </div>
+                                    <div class="col-md-11 mb-5">
+                                        <v-card>
+                                            <v-card-text>
+                                                <h3 class="font-weight-bold lead mb-3 d-flex justify-content-between align-items-center">
+                                                    Datos de curso:
+                                                    
+                                                    <!-- Icono para editar -->
+                                                    <v-tooltip bottom>
+                                                        <template v-slot:activator="{ on }">
+                                                            <v-icon right class="icon-pen" @click="stepCurrent = 5" v-on="on">mdi-pencil</v-icon>
+                                                        </template>
+                                                        <span>Editar</span>
+                                                    </v-tooltip>
+                                                </h3>
+                                                <div class="row mt-5">
+                                                    <div class="col-md-12">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Tipo de curso:</span>
+                                                            <span>{{ setNameTypeCourse }}</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Curso:</span>
+                                                            <span>{{ step5.course }}</span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
                                     </div>
                                 </div>
 
                                 <!-- Datos de curso -->
                                 <div class="row justify-content-center my-5">
-                                    <div class="col-md-10 mb-5">
-                                        <h3 class="font-weight-bold lead mb-3 d-flex justify-content-between align-items-center">
-                                            Datos de pago:
-                                            <v-icon right class="icon-pen" @click="stepCurrent = 6">mdi-pencil</v-icon>
-                                        </h3>
-                                        <v-row>
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-3">Pago:</span>
-                                                    <span>{{ setNamePayment }}</span>
-                                                </p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                    <p>
-                                                    <span class="text-muted mr-3">Moneda:</span>
-                                                    <span>{{ step6.coin }}</span>
-                                                </p>
-                                            </div>
-                                        </v-row>
-                                        <v-row>
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-3">Monto:</span>
-                                                    <span>{{ step6.amount }}</span>
-                                                </p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                    <p>
-                                                    <span class="text-muted mr-3">Tipo de pago:</span>
-                                                    <span>{{ step6.paymentType }}</span>
-                                                </p>
-                                            </div>
-                                        </v-row>
-                                        <v-row>
-                                            <div class="col-md-4">
-                                                <p>
-                                                    <span class="text-muted mr-3">Número de operación:</span>
-                                                    <span>{{ step6.operationNumber }}</span>
-                                                </p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                    <p>
-                                                    <span class="text-muted mr-3">Fecha de operación:</span>
-                                                    <span>{{ step6.operationDate }}</span>
-                                                </p>
-                                            </div>
-                                        </v-row>
-                                        <v-row>
-                                            <div class="col-md-4">
-                                                <p class="text-muted mr-3">Voucher:</p>
-                                                <img :src="step7.urlVoucher" alt="" class="img-fluid">
-                                            </div>
-                                            <div class="col-md-6" v-if="step6.paymentType === 2">
-                                                <span class="text-muted mr-3">Banco:</span>
-                                                <span>{{ step6.bank }}</span>
-                                            </div>
-                                        </v-row>
-                                        <v-row>
-                                            <div class="col-md-12">
-                                                <!-- Mensaje de error -->
-                                                <div class="text-center" v-if="formError">
-                                                    <a @click.prevent="stepCurrent = 3" class="text-danger error-link">{{ formError }}</a>
-                                                </div>
-                                            </div>
-                                        </v-row>
+                                    <div class="col-md-11 mb-5">
+                                        <v-card>
+                                            <v-card-text>
+                                                <h3 class="font-weight-bold lead mb-3 d-flex justify-content-between align-items-center">
+                                                    Datos de pago:
+                                                    
+                                                    <!-- Icono para editar -->
+                                                    <v-tooltip bottom>
+                                                        <template v-slot:activator="{ on }">
+                                                            <v-icon right class="icon-pen" @click="stepCurrent = 6" v-on="on">mdi-pencil</v-icon>
+                                                        </template>
+                                                        <span>Editar</span>
+                                                    </v-tooltip>
+                                                </h3>
+                                                <v-row>
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Pago:</span>
+                                                            <span>{{ setNamePayment }}</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Moneda:</span>
+                                                            <span>{{ step6.coin }}</span>
+                                                        </p>
+                                                    </div>
+                                                </v-row>
+                                                <v-row>
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Monto:</span>
+                                                            <span>{{ step6.amount }}</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Tipo de pago:</span>
+                                                            <span>{{ step6.paymentType }}</span>
+                                                        </p>
+                                                    </div>
+                                                </v-row>
+                                                <v-row>
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Número de operación:</span>
+                                                            <span>{{ step6.operationNumber }}</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Fecha de operación:</span>
+                                                            <span>{{ formattedOperationDate }}</span>
+                                                        </p>
+                                                    </div>
+                                                </v-row>
+                                                <v-row>
+                                                    <div class="col-md-6">
+                                                        <p class="text-muted mr-3 subtitle-1 font-weight-bold">Voucher:</p>
+                                                        <img :src="step7.urlVoucher" alt="" class="img-fluid w-75">
+                                                    </div>
+                                                    <div class="col-md-6" v-if="step6.paymentType === 2">
+                                                        <p class="subtitle-1">
+                                                            <span class="text-muted mr-3 font-weight-bold">Banco:</span>
+                                                            <span>{{ step6.bank }}</span>
+                                                        </p>
+                                                    </div>
+                                                </v-row>
+                                                <v-row>
+                                                    <div class="col-md-12">
+                                                        <!-- Mensaje de error -->
+                                                        <div class="text-center" v-if="formError">
+                                                            <a @click.prevent="stepCurrent = 3" class="text-danger error-link">{{ formError }}</a>
+                                                        </div>
+                                                    </div>
+                                                </v-row>
+                                            </v-card-text>
+                                        </v-card>
                                     </div>
                                 </div>
 
@@ -940,8 +1054,9 @@ import {
 
 // Importa las reglas para cada item del form
 import { rules } from '@/utilities/rules.js'
-
 import { mapState } from 'vuex'
+import moment from 'moment'
+moment.locale('es')
 
 export default {
     data() {
@@ -961,7 +1076,7 @@ export default {
                 lastName: '',
                 surname: '',
                 datePicker: false, // Muestro u oculta el datepicker
-                birthday: '',
+                birthday: ''
             },
             step3: {
                 email: '',
@@ -991,7 +1106,7 @@ export default {
               itemsPayment,
               payment: 1,
               itemsCoin,
-              coin: '',
+              coin: 'Soles',
               amount: '',
               itemsTypePayment,
               paymentType: 1,
@@ -1100,6 +1215,24 @@ export default {
           }
 
           return name
+      },
+      formattedBirthdayDate: function() {
+        let result = ''
+
+        if(this.step2.birthday != '') {
+             result = moment(this.step2.birthday).format('L')
+        }
+
+        return result
+      },
+      formattedOperationDate: function() {
+        let result = ''
+
+        if(this.step6.operationDate != '') {
+             result = moment(this.step6.operationDate).format('L')
+        }
+
+        return result
       }
     },
     methods: {

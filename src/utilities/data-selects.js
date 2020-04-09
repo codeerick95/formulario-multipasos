@@ -6,7 +6,6 @@ import coursesOnline from '@/assets/courses-online.json'
 
 
 const itemsPayment = [
-    { value: null, text: 'Pago' },
     { value: 1, text: 'TOTAL' },
     { value: 2, text: 'CUOTAS' }
 ]
@@ -35,7 +34,6 @@ const itemsTypePayment = [
 ]
 
 const itemsStatus = [
-    { value: null, text: 'Estado' },
     { value: '0', text: 'Registrado' },
     { value: '1', text: 'Aprobado' },
     { value: '2', text: 'Corregir' }
@@ -44,20 +42,17 @@ const itemsStatus = [
 ]
 
 const itemsTypeDocument = [
-    { value: null, text: 'Tipo de documento' },
     { value: 1, text: 'DNI' },
     { value: 2, text: 'PASAPORTE' },
     { value: 3, text: 'C.E.' }
 ]
 
 const itemsTypeCourse = [
-    { value: null, text: 'Tipo de curso' },
     { value: 1, text: 'Virtual' },
     { value: 2, text: 'Presencial' }
 ]
 
 const itemsCoin = [
-    { value: null, text: 'Moneda' },
     { value: 'Soles', text: 'Soles' },
     { value: 'Dólares', text: 'Dólares' }
 ]

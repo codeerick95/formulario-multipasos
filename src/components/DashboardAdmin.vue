@@ -26,12 +26,13 @@
                     size="lg"
                     type="search"
                     id="filterInput"
-                    placeholder="Filtrar por algún dato"
+                    placeholder="Presione ENTER para buscar"
                     class="py-5"
+                    :debounce="setDebounceTime"
+                    @keypress.enter="filterActive()"
                   ></b-form-input>
-
                   <b-input-group-append>
-                    <b-button :disabled="!filter" @click="filter = ''">Limpiar filtros</b-button>
+                    <b-button :disabled="!filter" @click="filterOff()">Limpiar filtros</b-button>
                   </b-input-group-append>
                 </b-input-group>
               </b-form-group>
@@ -137,7 +138,8 @@ export default {
       sortBy: "state",
       sortDesc: true,
       sortDirection: "asc",
-      totalRows: 1
+      totalRows: 1,
+      filterButton: true
     };
   },
   mounted() {
@@ -164,6 +166,13 @@ export default {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
+    },
+    filterActive() {
+      this.debounceTime = 0
+    },
+    filterOff() {
+      this.debounceTime = 100000000
+      this.filter = null
     },
     setUserFullName() {
       this.users.forEach(user => {
@@ -258,6 +267,13 @@ export default {
         .map(f => {
           return { text: f.label, value: f.key }
         })
+    },
+    setDebounceTime: function() {
+      let time = 0
+      if(this.filter === '' || this.filter === null) {
+        time = 100000000
+      }
+      return time
     }
   }
 };
