@@ -7,7 +7,7 @@
       <!-- Alertas -->
       <div class="col-md-8 text-center">
          <v-alert color="info" type="info" outlined dismissible v-if="alert">
-              <span class="text-dark font-weight-bold">Tus datos fueron actualizados.</span>
+              <span class="text-dark font-weight-bold">Tus datos fueron enviados para su validación.</span>
           </v-alert>
           <v-alert color="red" type="info" outlined dismissible v-if="formError">
               Error con tu red de internet, <a @click.prevent="getUser()" class="link-retry">inténtalo nuevamente.</a>
@@ -35,7 +35,7 @@
                 <!-- <span class="text-danger" v-if="step1.identification_state === '2'">Corregir datos</span> -->
               </b-card-header>
 
-              <b-collapse id="accordion-1" accordion="my-accordion" role="tabpanel">
+              <b-collapse id="accordion-1" visible accordion="my-accordion-1" role="tabpanel">
                 <b-card-body>
                   <div class="form-row mt-5">
                     <!-- Select tipo de documento -->
@@ -111,7 +111,7 @@
                 <circles-info :dataToValidate="step2.personal_data_state"></circles-info>
                 
               </b-card-header>
-              <b-collapse id="accordion-2" accordion="my-accordion" role="tabpanel">
+              <b-collapse id="accordion-2" visible accordion="my-accordion-2" role="tabpanel">
                 <b-card-body>
                   <div class="form-row mt-5">
 
@@ -200,7 +200,7 @@
 
               </b-card-header>
 
-              <b-collapse id="accordion-3" accordion="my-accordion" role="tabpanel">
+              <b-collapse id="accordion-3" visible accordion="my-accordion-3" role="tabpanel">
                 <b-card-body>
                   <div class="form-row">
                     <div class="col-md-6">
@@ -221,8 +221,6 @@
                         v-model="step3.email_secundary"
                         label="Email secundario"
                         outlined
-                        required
-                        :rules="rules.requireRule"
                         :disabled="contactDataState"
                       ></v-text-field>
                     </div>
@@ -288,7 +286,7 @@
                 <circles-info :dataToValidate="step4.location_data_state"></circles-info>
 
               </b-card-header>
-              <b-collapse id="accordion-4" accordion="my-accordion" role="tabpanel">
+              <b-collapse id="accordion-4" visible accordion="my-accordion-4" role="tabpanel">
                 <b-card-body>
                   <div class="form-row">
                     <!-- Empresa -->
@@ -393,7 +391,7 @@
                 <circles-info :dataToValidate="step5.course_data_state"></circles-info>
 
               </b-card-header>
-              <b-collapse id="accordion-5" accordion="my-accordion" role="tabpanel">
+              <b-collapse id="accordion-5" visible accordion="my-accordion-5" role="tabpanel">
                 <b-card-body>
                   <div class="form-row">
                     <!-- Tipo de curso -->
@@ -440,7 +438,7 @@
               </b-collapse>
             </b-card>
 
-            <!-- Datos de pago solo se mostrará cuando el cliente se encuentre como registrado -->
+            <!-- Datos de pago solo se mostrará cuando el cliente se encuentre como registrado o como pago total -->
             <b-card no-body class="mb-1" v-if="isTotal && step6.payment_data_state === '0' || isTotal && step6.payment_data_state === '1' || isTotal && step6.payment_data_state === '2'">
               <b-card-header header-tag="header" class="py-3 bg-light d-flex justify-content-between" role="tab">
                 <a
@@ -473,7 +471,7 @@
                 </v-tooltip>
 
               </b-card-header>
-              <b-collapse id="accordion-6" accordion="my-accordion" role="tabpanel">
+              <b-collapse id="accordion-6" visible accordion="my-accordion-6" role="tabpanel">
                 <b-card-body>
                   <div class="form-row">
                     <div class="col-md-6">
@@ -621,7 +619,7 @@
                   class="btn-link text-danger lead"
                 >Pendiente la cuota nro {{ step6.payments.length + 1 }}</a>
               </b-card-header>
-              <b-collapse id="accordion-7" visible accordion="my-accordion" role="tabpanel">
+              <b-collapse id="accordion-7" visible accordion="my-accordion-7" role="tabpanel">
                 <b-card-body>
                   <div class="form-row">
                     <!-- Nueva cuota monto -->
@@ -998,7 +996,15 @@ export default {
 
         // Datos de contacto
         this.step3.email_principal = user.email_principal;
+
+        if(!user.email_secundary) {
+          this.step3.email_secundary = ''
+        } else {
+          this.step3.email_secundary = user.email_secundary;
+        }
+
         this.step3.email_secundary = user.email_secundary;
+
         this.step3.phone_principal = user.phone_principal;
         this.step3.phone_secundary = user.phone_secundary;
         this.step3.cellphone = user.cellphone;
@@ -1013,7 +1019,12 @@ export default {
         this.step4.country = user.country;
         this.step4.city = user.city;
         this.step4.province = user.province;
-        this.step4.observation = user.observation;
+        
+        if(!user.observation) {
+          this.step4.observation = ''
+        } else {
+          this.step4.observation = user.observation;
+        }
 
         // Estado paso 4
         this.step4.location_data_state = user.location_data_state.toString();

@@ -198,6 +198,7 @@
                                                         v-on="on"
                                                         :first-day-of-week="1"
                                                         locale="es-PE"
+                                                        autocomplete="off"
                                                         @input="step2.datePicker = true"
                                                     ></v-text-field>
                                                 </template> 
@@ -619,6 +620,7 @@
                                           transition="scale-transition"
                                           offset-y
                                           min-width="290px"
+                                          autocomplete="off"
                                       >
                                             <template v-slot:activator="{ on }">
                                                 <v-text-field
@@ -1278,7 +1280,7 @@ export default {
             user.documentType = this.step1.documentType
 
             // Pasamos los valores a Integer porque en la instancia es String
-            user.documentNumber = parseInt(this.step1.documentNumber)
+            user.documentNumber = this.step1.documentNumber
 
             // Paso 2
             user.name = this.step2.name
@@ -1292,8 +1294,8 @@ export default {
 
             // Pasamos los valores a Integer porque en la instancia es String
             user.phone = parseInt(this.step3.phone)
-            user.phoneSecundary = parseInt(this.step3.phoneSecundary)
-            user.cellphone = parseInt(this.step3.cellphone)
+            user.phoneSecundary = this.step3.phoneSecundary
+            user.cellphone = this.step3.cellphone
 
             // Paso 4
             user.company = this.step4.company

@@ -1,3 +1,4 @@
+// Se valida con expresiones regulares
 const rules = {
     require: 'Este campo es requerido',
     requireRule: [
@@ -5,7 +6,8 @@ const rules = {
     ],
     requireText: [
         v => !!v || rules.require,
-        v => /\D/.test(v) ? true : false || 'El campo solo debe contener texto'
+        v => /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)+$/i.test(v) ? true : false || 'El campo solo debe contener texto'
+        // v => /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/i.test(v) ? true : false || 'El campo solo debe contener texto'
     ],
     email: [
         v => !!v || rules.require,

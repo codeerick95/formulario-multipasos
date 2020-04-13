@@ -18,21 +18,23 @@
 
           <!-- Formulario de filtro -->
           <div class="form-row justify-content-center">
-            <div class="col-md-6 col-lg-4">
-              <b-form-group class="d-flex justify-content-center">
-                <b-input-group size="sm">
+            <div class="col-md-6">
+              <b-form-group class="d-flex justify-content-center py-5">
+                <b-input-group size="sm" class="py-5">
                   <b-form-input
                     v-model="filter"
                     size="lg"
                     type="search"
                     id="filterInput"
+                    autocomplete="off"
                     placeholder="Presione ENTER para buscar"
                     class="py-5"
                     :debounce="setDebounceTime"
                     @keypress.enter="filterActive()"
                   ></b-form-input>
                   <b-input-group-append>
-                    <b-button :disabled="!filter" @click="filterOff()">Limpiar filtros</b-button>
+                    <b-button variant="primary">Buscar</b-button>
+                    <b-button :disabled="!filter" @click="filterOff()">Limpiar</b-button>
                   </b-input-group-append>
                 </b-input-group>
               </b-form-group>
@@ -133,7 +135,7 @@ export default {
       ],
       filter: null,
       filterOn: [],
-      perPage: 5,
+      perPage: 10,
       currentPage: 1,
       sortBy: "state",
       sortDesc: true,
@@ -191,10 +193,14 @@ export default {
     },
     setStateName() {
       this.users.forEach(user => {
-        if(user.state === 1) {
+        if(user.state === 0) {
           user.state = 'Registrado'
-        } else if(user.state === 2) {
+        } else if(user.state === 1) {
           user.state = 'Aprobado'
+        } else if(user.state === 2) {
+          user.state = 'Datos por corregir'
+        } else if(user.state === 3 || user.state === 4) {
+          user.state = 'Validación pendiente'
         }
       });
     },

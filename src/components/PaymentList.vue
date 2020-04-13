@@ -36,7 +36,7 @@
       
     </b-card-header>
 
-    <b-collapse :id="accordionName(index)" :visible="isAdmin" :accordion="accordionName(index)" role="tabpanel">
+    <b-collapse :id="accordionName(index)" visible :accordion="accordionName(index)" role="tabpanel">
       <b-card-body>
         <div class="form-row justify-content-between">
           <div :class="isAdmin ? 'col-md-9' : 'col-md-12'">
@@ -150,6 +150,16 @@
                 v-model="paymentState"
                 @change="setItemApproved($event, index)"
                 :disabled="index != (payments.length - 1) ? true : false"
+                v-if="index === payments.length - 1"
+                >
+            </v-select>
+            <v-select
+                :items="itemsStatusPayment"
+                label="Estado"
+                outlined
+                v-model="paymentApproved"
+                disabled
+                v-else
                 >
             </v-select>
           </div>
@@ -198,6 +208,7 @@ export default {
           { value: '2', text: 'Corregir' },
           { value: '4', text: 'Pendiente' }
       ],
+      paymentApproved: '1'
     };
   },
   methods: {
