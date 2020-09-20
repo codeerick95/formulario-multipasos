@@ -3,8 +3,8 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <v-card outlined class="p-3 text-center">
-              <h1 class="mt-3">Gracias por registrarte</h1>
-              <p class="lead">Validaremos tus datos y te enviaremos tus credenciales de acceso al email registrado.</p>
+              <h1 class="mt-3">Gracias por registrarse</h1>
+              <p class="lead">Validaremos sus datos y le enviaremos sus credenciales de acceso al correo registrado.</p>
               <v-btn
                   :to="{name: 'Home'}"
                   color="red darken-2 white--text"

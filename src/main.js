@@ -3,8 +3,14 @@ import App from './App.vue'
 import router from './router'
 import { store } from './store'
 
-import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+import axios from 'axios'
 
+// URL base de Api
+axios.defaults.baseURL = 'https://apiformulario.josejollja.com/public/api/v1';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
+// Bootstrap
+import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 

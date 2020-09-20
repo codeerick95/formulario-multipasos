@@ -1,4 +1,4 @@
-<!-- Route /dashboard/users/:id -->
+<!-- Esta ruta muestra los datos de un cliente desde el administrador Route /dashboard/users/:id -->
 <template>
 <div>
     <div class="container mt-3">
@@ -9,7 +9,9 @@
                 </v-alert>
             </div>
         </div>
+
         <loader v-if="loading"></loader>
+
         <div class="row justify-content-center" v-else>
             <div class="col-md-11">
                 <div class="mb-5">
@@ -79,7 +81,7 @@
                                                     label="Pasaporte"
                                                     required
                                                     outlined
-                                                    :disabled="identificationState"
+                                                    disabled
                                                     v-if="step1.document_type === 2"
                                                     ></v-text-field>
 
@@ -90,7 +92,7 @@
                                                     label="Carnet de extranjería"
                                                     required
                                                     outlined
-                                                    :disabled="identificationState"
+                                                    disabled
                                                     v-if="step1.document_type === 3"
                                                     ></v-text-field>
                                                 </div>
@@ -107,8 +109,8 @@
                                                 :rules="rules.requireRule"
                                                 required
                                                 @change="disabledButtonSave = false"
+                                                :disabled="identificationState"
                                                 >
-                                                <!-- :disabled="identificationState" -->
                                             </v-select>
                                         </div>
 
@@ -200,6 +202,7 @@
                                                 :rules="rules.requireRule"
                                                 required
                                                 @change="disabledButtonSave = false"
+                                                :disabled="personalDataState"
                                                 >
                                             </v-select>
                                         </div>
@@ -290,6 +293,7 @@
                                                 :rules="rules.requireRule"
                                                 required
                                                 @change="disabledButtonSave = false"
+                                                :disabled="contactDataState"
                                                 >
                                             </v-select>
                                         </div>
@@ -403,6 +407,7 @@
                                                 :rules="rules.requireRule"
                                                 required
                                                 @change="disabledButtonSave = false"
+                                                :disabled="locationDataState"
                                                 >
                                             </v-select>
                                         </div>
@@ -470,6 +475,7 @@
                                             required
                                             :rules="rules.requireRule"
                                             @change="disabledButtonSave = false"
+                                            :disabled="courseDataState"
                                             >
                                         </v-select>
                                     </div>
@@ -715,7 +721,8 @@ export default {
                 itemsTypeDocument,
                 document_type: '',
                 document_number: '',
-                identification_state: ''
+                identification_state: '',
+                toggleDisabledIdentificationState: false
             },
             step2: {
                 value: false,
@@ -726,7 +733,8 @@ export default {
                 last_name: '',
                 surname: '',
                 birthday: '',
-                personal_data_state: ''
+                personal_data_state: '',
+                toggleDisabledPersonalDataState: false
             },
             step3: {
                 value: false,
@@ -738,7 +746,8 @@ export default {
                 phone_principal: '',
                 phone_secundary: '',
                 cellphone: '',
-                contact_data_state: ''
+                contact_data_state: '',
+                toggleDisabledContactDataState: false
             },
             step4: {
                 value: false,
@@ -753,7 +762,8 @@ export default {
                 itemsCountry: getCountries(),
                 country: '',
                 observation: '',
-                location_data_state: ''
+                location_data_state: '',
+                toggleDisabledLocationDataState: false
             },
             step5: {
                 value: false,
@@ -764,7 +774,8 @@ export default {
                 itemsCoursesOnline: getCoursesOnline(),
                 course_type: '',
                 course_name: '',
-                course_data_state: ''
+                course_data_state: '',
+                toggleDisabledCourseDataState: false
             },
             step6: {
               itemsPayment, // Total o cuotas
@@ -804,7 +815,7 @@ export default {
             this.$store.commit('setLoading', true)
 
             let id = this.$route.params.id,
-            url = `http://174.138.39.59/form-api/api/v1/users/${id}`
+            url = `/users/${id}`
 
             // Envíamos el token
             const config = {
@@ -817,13 +828,10 @@ export default {
             if(this.currentUser.type == 1) {
                 axios.get(url, config)
                 .then(res => {
-                    if(res.statusText === 'OK') {
+                    // Envía el usuario
+                    this.setUser(res.data.message)
 
-                        // Envía el usuario
-                        this.setUser(res.data.message)
-
-                        this.$store.commit('setLoading', false)
-                    }
+                    this.$store.commit('setLoading', false)
                 }).catch((error) => {
                     // Si el usuario no existe, redirige al dashboard
                     if(error.message === 'Request failed with status code 500') {
@@ -835,6 +843,8 @@ export default {
             }
         },
         setUser(user) {
+            // Esta función asigna datos de la api a la data de Vue para mostrarlos en el form
+
             // Test
             // this.user = user
 
@@ -848,6 +858,14 @@ export default {
                 // Se convierte a string para poder compararlo, de lo contrario tomaría el valor 0 como false
                 this.step1.identification_state = user.identification_state.toString()
 
+                console.log(this.step1.identification_state)
+                console.log(typeof(this.step1.identification_state))
+
+                // Si en la api viene como aprobado se deshabilita el select
+                if(this.step1.identification_state === '1') {
+                    this.step1.toggleDisabledIdentificationState = true
+                }
+
                 // Datos personales
                 this.step2.name = user.name
                 this.step2.last_name = user.last_name
@@ -856,6 +874,11 @@ export default {
 
                 // Estado paso 2
                 this.step2.personal_data_state = user.personal_data_state.toString()
+
+                // Si en la api viene como aprobado se deshabilita el select
+                if(this.step2.personal_data_state === '1') {
+                    this.step2.toggleDisabledPersonalDataState = true
+                }
 
                 // Datos de contacto
                 this.step3.email_principal = user.email_principal
@@ -866,6 +889,11 @@ export default {
 
                 // Estado paso 3
                 this.step3.contact_data_state = user.contact_data_state.toString()
+
+                // Si en la api viene como aprobado se deshabilita el select
+                if(this.step3.contact_data_state === '1') {
+                    this.step3.toggleDisabledContactDataState = true
+                }
 
                 // Datos de ubicación
                 this.step4.company = user.company
@@ -879,6 +907,11 @@ export default {
                 // Estado paso 4
                 this.step4.location_data_state = user.location_data_state.toString()
 
+                // Si en la api viene como aprobado se deshabilita el select
+                if(this.step4.location_data_state === '1') {
+                    this.step4.toggleDisabledLocationDataState = true
+                }
+
                 
                 // Datos de curso
                 this.step5.course_type = user.course_type
@@ -886,6 +919,11 @@ export default {
 
                 // Estado paso 5
                 this.step5.course_data_state = user.course_data_state.toString()
+
+                // Si en la api viene como aprobado se deshabilita el select
+                if(this.step5.course_data_state === '1') {
+                    this.step5.toggleDisabledCourseDataState = true
+                }
 
                 // Obtiene el primer pago realizado por el usuario 
                 let first_payment = user.payments[user.payments.length - 1]
@@ -919,6 +957,8 @@ export default {
 
                 let iduser = this.$route.params.id
 
+                // Aquí se envía el borrador del estado
+
                 let statusData = {
                     identification_state: parseInt(this.step1.identification_state),
                     personal_state: parseInt(this.step2.personal_data_state),
@@ -942,18 +982,18 @@ export default {
                         Authorization: `Bearer ${this.$store.state.token}`
                     },
                     data: statusData,
-                    url: 'http://174.138.39.59/form-api/api/v1/users/admin',
+                    url: '/users/admin',
                 };
 
-                axios(options).then(res => {
-                    if(res.statusText == 'OK') {
-                        this.alert = true
-                        // Oculta el botón cargando
-                        this.$store.state.loading = false
+                axios(options).then(() => {
+                    this.alert = true
+                    // Oculta el botón cargando
+                    this.$store.state.loading = false
 
-                        // Desabilita el botón de guardar
-                        this.disabledButtonSave = true
-                    }
+                    // Desabilita el botón de guardar
+                    this.disabledButtonSave = true
+
+                    this.getUser()
 
                 }).catch(() => {
                     // Oculta el botón cargando
@@ -1002,22 +1042,28 @@ export default {
             return type === 1 ? true : false
         },
         identificationState: function() {
-            return this.step1.identification_state === '1' ? true : false
+            // Retornar true si el estado es aprobado
+            return this.step1.identification_state === '1' && this.step1.toggleDisabledIdentificationState ? true : false
         },
         personalDataState: function() {
-            return this.step2.personal_data_state === '1' ? true : false
+            // Retornar true si el estado es aprobado
+            return this.step2.personal_data_state === '1' && this.step2.toggleDisabledPersonalDataState ? true : false
         },
         contactDataState: function() {
-            return this.step3.contact_data_state === '1' ? true : false
+            // Retornar true si el estado es aprobado
+            return this.step3.contact_data_state === '1' && this.step3.toggleDisabledContactDataState ? true : false
         },
         locationDataState: function() {
-            return this.step4.location_data_state === '1' ? true : false
+            // Retornar true si el estado es aprobado
+            return this.step4.location_data_state === '1' && this.step4.toggleDisabledLocationDataState ? true : false
         },
         courseDataState: function() {
-            return this.step5.course_data_state === '1' ? true : false
+            // Retornar true si el estado es aprobado
+            return this.step5.course_data_state === '1' && this.step5.toggleDisabledCourseDataState ? true : false
         },
         paymentDataState: function() {
-            return this.step6.payment_data_state === '1' ? true : false
+            // Retornar true si el estado es aprobado
+            return this.step6.draft_payment_data_state === '1' ? true : false
         },
         showPaymentsList: function() {
             let status = false

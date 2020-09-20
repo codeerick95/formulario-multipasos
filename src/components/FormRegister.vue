@@ -965,7 +965,7 @@
                                                     <div class="col-md-6">
                                                         <p class="subtitle-1">
                                                             <span class="text-muted mr-3 font-weight-bold">Tipo de pago:</span>
-                                                            <span>{{ step6.paymentType }}</span>
+                                                            <span>{{ setTypePayment }}</span>
                                                         </p>
                                                     </div>
                                                 </v-row>
@@ -1214,6 +1214,23 @@ export default {
                 name = 'TOTAL'
           } else if(this.step6.payment === 2) {
             name = 'CUOTAS'
+          }
+
+          return name
+      },
+      setTypePayment: function() {
+          let name = ''
+
+          if(this.step6.paymentType === 1) {
+              name = 'Depósito a cuenta BCP'
+          } else if(this.step6.paymentType === 2) {
+              name = 'Tranferencia bancaria'
+          } else if(this.step6.paymentType === 3) {
+              name = 'Pago presencial con tarjeta'
+          } else if(this.step6.paymentType === 4) {
+              name = 'Pago online (Payu, Visanet)'
+          } else if(this.step6.paymentType === 5) {
+              name = 'Efectivo'
           }
 
           return name

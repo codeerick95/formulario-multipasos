@@ -1,4 +1,5 @@
 <template>
+<!-- Este componente muestra una lista de pagos en caso el usuario haya elegido cuotas -->
 <div>
   <b-card no-body class="mt-3 mb-1" v-for="(payment, index) in payments" :key="payment.idpayments">
 

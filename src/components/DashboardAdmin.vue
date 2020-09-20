@@ -217,7 +217,7 @@ export default {
           headers: {
             Authorization: `Bearer ${this.$store.state.token}`
           },
-          url: "http://174.138.39.59/form-api/api/v1/users"
+          url: "/users"
         };
 
         // Petición

@@ -3,7 +3,6 @@ import Vuex from 'vuex'
 import router from '@/router/index.js'
 
 import axios from 'axios'
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 Vue.use(Vuex)
 
@@ -69,18 +68,16 @@ export const store = new Vuex.Store({
         method: 'POST',
         headers: { 'content-type': 'application/x-www-form-urlencoded' },
         data: formData,
-        url: 'http://174.138.39.59/form-api/api/v1/users/signup',
+        url: '/users/signup',
       };
 
       // Petición de registro
-      axios(options).then(res => {
-        if(res.statusText === 'Created'){
-          // Muestra el loading
-          state.commit('setLoading', false)
+      axios(options).then(() => {
+        // Muestra el loading
+        state.commit('setLoading', false)
 
-          // Redirección final
-          router.push('/registered')
-        }
+        // Redirección final
+        router.push('/registered')
       }).catch(error => {
         // Agregamos el error de error
         if(error.message === 'Request failed with status code 422') {
@@ -103,77 +100,82 @@ export const store = new Vuex.Store({
       // Mostramos el botón cargando
       state.commit('setLoading', true)
 
-      // Petición login
-      axios.post('http://174.138.39.59/form-api/api/v1/users/signin', {
+      let data =  {
         email: credentials.email,
         password: credentials.password
-      })
+      }
+
+      let config = {
+        method: 'POST',
+        url: '/users/signin',
+        data,
+      }
+
+      // Petición login
+      axios(config)
         .then(function (response) {
           // let user = {}
           let token = '',
           data = {}
 
           // Si la respuesta fue exitosa
-          if (response.statusText === 'OK') {
+          // Asignamos el token
+          token = response.data.token
 
-             // Asignamos el token
-             token = response.data.token
+          // Guarda el access_token en localStorage
+         localStorage.setItem('access_token', token)
 
-             // Guarda el access_token en localStorage
-            localStorage.setItem('access_token', token)
+         // Verifiacmos si la respuesta trae un user o admin
+         if(response.data.admin) {
+           
+           data = {
+             status: true,
+             dataUser: response.data.admin,
+             users: response.data.users,
+             userType: response.data.admin.type,
+             headerName: response.data.admin.name,
+           }
 
-            // Verifiacmos si la respuesta trae un user o admin
-            if(response.data.admin) {
-              
-              data = {
-                status: true,
-                dataUser: response.data.admin,
-                users: response.data.users,
-                userType: response.data.admin.type,
-                headerName: response.data.admin.name,
-              }
+           // Guarda el id del usuario autenticado para realizar peticiones posteriores
+           localStorage.setItem('userId', data.dataUser.iduser)
 
-              // Guarda el id del usuario autenticado para realizar peticiones posteriores
-              localStorage.setItem('userId', data.dataUser.iduser)
+           // Aquí asignamos el valor que viene en la api como tipo de usuario como referencia para posteriores condiciones
+           localStorage.setItem('userType', data.dataUser.type)
 
-              // Aquí asignamos el valor que viene en la api como tipo de usuario como referencia para posteriores condiciones
-              localStorage.setItem('userType', data.dataUser.type)
+           // Guardamos el nombre del admin
+           localStorage.setItem('headerName', data.headerName)
 
-              // Guardamos el nombre del admin
-              localStorage.setItem('headerName', data.headerName)
+         } else {
 
-            } else {
+           data = {
+             userId: response.data.user.iduser,
+             status: true,
+             dataUser: response.data.user,
+             userType: 2,
+             headerName: response.data.user.name,
+           }
 
-              data = {
-                userId: response.data.user.iduser,
-                status: true,
-                dataUser: response.data.user,
-                userType: 2,
-                headerName: response.data.user.name,
-              }
+           // Guarda el id del usuario autenticado para realizar peticiones posteriores
+           localStorage.setItem('userId', data.dataUser.iduser)
 
-              // Guarda el id del usuario autenticado para realizar peticiones posteriores
-              localStorage.setItem('userId', data.dataUser.iduser)
+           // Aquí asignamos 2 como tipo de usuario como referencia para posteriores condiciones
+           localStorage.setItem('userType', 2)
 
-              // Aquí asignamos 2 como tipo de usuario como referencia para posteriores condiciones
-              localStorage.setItem('userType', 2)
+           // Guardamos el nombre del admin
+           localStorage.setItem('headerName', data.headerName)
+         }
 
-              // Guardamos el nombre del admin
-              localStorage.setItem('headerName', data.headerName)
-            }
+         // Autorización por token
+         axios.defaults.headers.common['Authorization'] = token
 
-            // Autorización por token
-            axios.defaults.headers.common['Authorization'] = token
+         state.commit('setToken', token)
 
-            state.commit('setToken', token)
+         state.commit('setUser', data)
 
-            state.commit('setUser', data)
+         // Cambia el valor de loading
+         state.commit('setLoading', false)
 
-            // Cambia el valor de loading
-            state.commit('setLoading', false)
-
-            router.push('/dashboard')
-          }
+         router.push('/dashboard')
         })
         .catch(function (error) {
           // Cambiamos el valor del loading a false

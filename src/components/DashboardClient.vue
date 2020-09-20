@@ -477,7 +477,7 @@
                     <div class="col-md-6">
                       <v-select
                         :items="step6.itemsPayment"
-                        label="PAGO"
+                        label="Pago"
                         outlined
                         v-model="step6.payment"
                         disabled
@@ -939,7 +939,7 @@ export default {
       let id = this.currentUser.userId;
 
       if (id) {
-        let url = `http://174.138.39.59/form-api/api/v1/users/${id}`;
+        let url = `/users/${id}`;
         // Envíamos el token
         const config = {
           headers: { Authorization: `Bearer ${this.$store.state.token}` }
@@ -949,12 +949,10 @@ export default {
         axios
           .get(url, config)
           .then(res => {
-            if (res.statusText === "OK") {
-              // Envía el usuario
-              this.setUser(res.data.message);
+            // Envía el usuario
+            this.setUser(res.data.message);
 
-              this.$store.commit("setLoading", false);
-            }
+            this.$store.commit("setLoading", false);
           })
           .catch((error) => {
             if(error.message === 'Request failed with status code 500') {
@@ -1154,7 +1152,7 @@ export default {
             Authorization: `Bearer ${this.$store.state.token}`
           },
           data: formData,
-          url: "http://174.138.39.59/form-api/api/v1/users"
+          url: "/users"
         };
         axios(options)
           .then(() => {

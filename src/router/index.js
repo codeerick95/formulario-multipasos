@@ -60,6 +60,7 @@ router.beforeEach((to, from, next) => {
   admin = parseInt(store.state.currentUser.type) ===  1 ? true : false,
   typeUser = parseInt(store.state.currentUser.type) // Evalúa y devuelve el valor como entero, ya que local storage lo guarda como String
 
+  
   if (requiresAuth && !currentUser) {
     next('/login')
   } else if(requiresAuth && currentUser && requireAdmin && !admin) {
